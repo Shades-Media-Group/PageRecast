@@ -15,7 +15,7 @@ const links: Record<string, string> = {
   repo: REPO,
   shades: SHADES,
   format: `${REPO}/blob/main/docs/scene-format.md`,
-  privacy: `${REPO}/blob/main/PRIVACY.md`,
+  privacy: '/privacy/',
   changelog: `${REPO}/blob/main/CHANGELOG.md`,
   releases: `${REPO}/releases`,
   issues: `${REPO}/issues/new/choose`,

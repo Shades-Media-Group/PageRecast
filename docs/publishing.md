@@ -81,7 +81,7 @@ Source code: https://github.com/Shades-Media-Group/PageRecast
 | `unlimitedStorage` | Keeps the user's recent captures, which include page screenshots, on their device.                                                                                                                                                 |
 | Remote code        | No, I am not using remote code.                                                                                                                                                                                                    |
 | Data usage         | Tick nothing. Certify that data is not sold, not used for unrelated purposes and not used for creditworthiness.                                                                                                                    |
-| Privacy policy     | https://github.com/Shades-Media-Group/PageRecast/blob/main/PRIVACY.md                                                                                                                                                              |
+| Privacy policy     | https://pagerecast.shades.md/privacy/                                                                                                                                                                                                |
 
 4. **Distribution:** Public, all regions. Then **Submit for review**. Extensions that use `debugger` get a manual review, which usually takes a few days.
 

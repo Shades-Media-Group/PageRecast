@@ -1,6 +1,6 @@
 # Privacy policy
 
-_Last updated: 10 October 2026_
+_Last updated: 11 October 2026_
 
 PageRecast is a Chrome extension and a Figma plugin made by Shades Media Group. This policy covers both.
 
@@ -36,4 +36,6 @@ Changes to this policy are published in this file and noted in the [changelog](C
 
 ## Contact
 
-privacy@shades.md · [Shades Media Group](https://shades.md)
+support@shades.md · [Shades Media Group](https://shades.md)
+
+This policy is also published at https://pagerecast.shades.md/privacy/.

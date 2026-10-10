@@ -29,6 +29,15 @@ for (const a of document.querySelectorAll<HTMLAnchorElement>('[data-link]')) {
 // The wordmark follows the text colour, so the logo works in both themes.
 const themedLogo = logo.replace('fill="#0A0A0B" transform', 'fill="currentColor" transform')
 for (const el of document.querySelectorAll('[data-logo]')) el.innerHTML = themedLogo
+// The footer sign-off: the wordmark alone, its viewBox fitted to the letters.
+for (const el of document.querySelectorAll('[data-wordmark]')) {
+  const word = themedLogo.match(/<path fill="currentColor"[^>]*\/>/)?.[0]
+  if (!word) continue
+  el.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><g>${word}</g></svg>`
+  const svg = el.querySelector('svg')!
+  const box = svg.querySelector('g')!.getBBox()
+  svg.setAttribute('viewBox', `${box.x} ${box.y} ${box.width} ${box.height}`)
+}
 for (const el of document.querySelectorAll('[data-version]')) el.textContent = __VERSION__
 
 /** Produced by scripts/explode.mjs from this site and a capture of it. */

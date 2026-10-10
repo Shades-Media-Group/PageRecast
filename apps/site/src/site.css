@@ -654,13 +654,14 @@ code {
   align-content: start;
   gap: 20px;
 }
-.footer-logo svg {
-  display: block;
-  height: 26px;
-  width: auto;
+.footer-brand h2 {
+  max-width: 420px;
+  font-size: clamp(26px, 2.6vw, 34px);
+  line-height: 1.1;
 }
 .footer-brand p {
   max-width: 340px;
+  margin-top: -8px;
   color: var(--ink-2);
   font-size: 16px;
 }
@@ -708,16 +709,20 @@ code {
   text-underline-offset: 3px;
 }
 .footer-mark {
+  display: block;
   max-width: var(--measure);
-  margin: clamp(32px, 5vw, 56px) auto 0;
-  aspect-ratio: 716.4 / 100;
-  overflow: hidden;
+  margin: clamp(40px, 6vw, 72px) auto 0;
+  padding-bottom: clamp(24px, 3vw, 40px);
   color: var(--ink);
 }
 .footer-mark svg {
   display: block;
   width: 100%;
   height: auto;
+  overflow: visible;
+}
+.footer-mark:hover {
+  color: var(--red);
 }
 
 @media (max-width: 860px) {

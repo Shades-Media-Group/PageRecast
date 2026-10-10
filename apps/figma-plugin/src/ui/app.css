@@ -6,13 +6,83 @@ body,
 
 .app {
   position: relative;
-  display: grid;
-  grid-template-rows: auto auto 1fr auto;
+  display: flex;
+  flex-direction: column;
   height: 100%;
+}
+.app > .pr-header {
+  flex: none;
 }
 
 .scroll {
+  flex: 1;
+  min-height: 0;
   overflow-y: auto;
+}
+
+/* A title row in place of the tabs while reviewing or importing. */
+.pr-tabs--title button {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--ink);
+  font-weight: 600;
+}
+.flip {
+  transform: scaleX(-1);
+  color: var(--ink-3);
+}
+
+/* Settings, feedback and help, always at the bottom. */
+.toolbar {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 36px;
+  padding: 0 4px;
+  border-top: 1px solid var(--line);
+  font-size: 11px;
+}
+.toolbar a {
+  color: var(--ink-2);
+  text-decoration: none;
+}
+.toolbar a:hover {
+  color: var(--ink);
+  text-decoration: underline;
+}
+.toolbar .pr-icon-button[aria-pressed='true'] {
+  background: var(--hover);
+  color: var(--ink);
+}
+
+.credit {
+  padding: 16px var(--pad) 20px;
+  color: var(--ink-3);
+  font-size: 11px;
+}
+.credit a {
+  color: var(--ink-2);
+}
+.hint {
+  margin-top: 6px;
+  color: var(--ink-3);
+  font-size: 11px;
+  line-height: 1.45;
+}
+.hint a {
+  color: var(--ink-2);
+}
+.scope select {
+  flex: 1;
+  appearance: none;
+  padding-right: 24px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath d='M6 8l4 4 4-4' fill='none' stroke='%236e6d6b' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 6px center;
+  background-size: 16px;
+  cursor: pointer;
 }
 
 /* Stage: the one brand-owned area. */
@@ -146,21 +216,12 @@ body,
 }
 
 .dock {
+  flex: none;
   display: flex;
   align-items: center;
   gap: 8px;
   padding: 10px var(--pad) 12px;
   border-top: 1px solid var(--line);
-}
-.colophon {
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
-  color: var(--ink-3);
-  font-size: 11px;
-}
-.colophon a {
-  color: var(--ink-2);
 }
 
 .drop {

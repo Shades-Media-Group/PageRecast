@@ -12,6 +12,8 @@ export default defineConfig({
     outDir: 'dist',
     emptyOutDir: true,
     target: 'es2020',
+    // The CSP allows fonts and images from this origin only, never data: URLs.
+    assetsInlineLimit: 0,
     rollupOptions: {
       input: {
         main: fileURLToPath(new URL('index.html', import.meta.url)),

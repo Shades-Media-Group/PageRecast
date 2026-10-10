@@ -43,23 +43,31 @@
           Capture what your browser shows. Paste it into Figma as layers you can edit, every one of
           them.
         </p>
-        <p class="hero-links">
-          <a data-link="chrome">Add to Chrome <span aria-hidden="true">›</span></a>
-          <a data-link="figma">Get the Figma plugin <span aria-hidden="true">›</span></a>
+        <p class="cta">
+          <a class="btn btn--primary" data-link="chrome"
+            >Add to Chrome, free<span class="btn-arrow" aria-hidden="true"></span
+          ></a>
+          <a class="btn btn--secondary" data-link="figma">Get the Figma plugin</a>
         </p>
-        <figure
-          class="explode"
-          data-explode
-          aria-label="A captured web page separating into its Figma layers"
-        >
+        <p class="cta-note">
+          Works on pages behind a login. <a href="/sample/">Try it on a sample page</a>
+        </p>
+      </section>
+
+      <section
+        class="explode"
+        data-explode
+        aria-label="The sample page separating into its Figma layers"
+      >
+        <div class="explode-sticky">
           <div class="explode-stage"></div>
-          <figcaption class="explode-stats">
+          <div class="explode-stats">
             <div><b data-stat="layers">—</b><span>layers</span></div>
-            <div><b data-stat="texts">—</b><span>text layers</span></div>
-            <div><b data-stat="images">—</b><span>images and vectors</span></div>
-            <p>From one capture of this page at 1440 px, imported without a single edit.</p>
-          </figcaption>
-        </figure>
+            <div><b data-stat="texts">—</b><span>text</span></div>
+            <div><b data-stat="images">—</b><span>images</span></div>
+            <p>One capture of the <a href="/sample/">sample page</a> at 1440 px, imported as is.</p>
+          </div>
+        </div>
       </section>
 
       <section class="chapter chapter--ink" id="widths">
@@ -71,7 +79,23 @@
             a Light and a Dark mode.
           </p>
         </div>
-        <div class="widths" data-widths></div>
+        <div class="viewer" data-viewer data-reveal>
+          <div class="viewer-controls">
+            <div class="seg" role="radiogroup" aria-label="Width" data-viewer-widths></div>
+            <div class="seg" role="radiogroup" aria-label="Theme">
+              <button type="button" role="radio" aria-checked="true" data-theme="light">
+                Light
+              </button>
+              <button type="button" role="radio" aria-checked="false" data-theme="dark">
+                Dark
+              </button>
+            </div>
+          </div>
+          <div class="viewer-stage">
+            <div class="viewer-frame"><img alt="" data-viewer-image /></div>
+          </div>
+          <p class="viewer-caption" aria-live="polite" data-viewer-caption></p>
+        </div>
       </section>
 
       <section class="chapter" id="layers">
@@ -163,9 +187,11 @@
             PageRecast is MIT licensed, and captures are <code>.recast</code> files: gzipped JSON
             with a documented schema you can read, write and build on.
           </p>
-          <p class="hero-links hero-links--left">
-            <a data-link="repo">View on GitHub <span aria-hidden="true">›</span></a>
-            <a data-link="format">Read the format <span aria-hidden="true">›</span></a>
+          <p class="cta cta--left">
+            <a class="btn btn--dark" data-link="repo"
+              >View on GitHub<span class="btn-arrow" aria-hidden="true"></span
+            ></a>
+            <a class="btn btn--secondary" data-link="format">Read the format</a>
           </p>
         </div>
         <pre class="code" data-reveal aria-label="An excerpt of a .recast file"><code>{
@@ -186,21 +212,21 @@
         <h2>Two parts. Two minutes.</h2>
         <div class="install-row" data-reveal>
           <a class="install-item" data-link="chrome">
-            <span>Chrome extension</span>
-            <strong>Captures the page</strong>
-            <em>Add to Chrome ›</em>
+            <strong>Chrome extension</strong>
+            <span>Captures the page, at every width, in light and dark.</span>
+            <em class="btn btn--primary btn--small"
+              >Add to Chrome<span class="btn-arrow" aria-hidden="true"></span
+            ></em>
           </a>
           <a class="install-item" data-link="figma">
-            <span>Figma plugin</span>
-            <strong>Builds the layers</strong>
-            <em>Get the plugin ›</em>
-          </a>
-          <a class="install-item" data-link="docs">
-            <span>Guides</span>
-            <strong>Start in two minutes</strong>
-            <em>Read the guides ›</em>
+            <strong>Figma plugin</strong>
+            <span>Builds the layers, with Auto Layout, variables and styles.</span>
+            <em class="btn btn--dark btn--small"
+              >Get the plugin<span class="btn-arrow" aria-hidden="true"></span
+            ></em>
           </a>
         </div>
+        <p class="install-guide">New here? <a data-link="docs">Read the two-minute guide</a></p>
       </section>
     </main>
 

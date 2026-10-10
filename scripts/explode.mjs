@@ -1,6 +1,10 @@
-// Turns a capture of the PageRecast site into the website's exploded hero and
-// width gallery. Usage: node scripts/explode.mjs <capture.recast>
-import { mkdir, readFile, writeFile } from 'node:fs/promises'
+// Builds the website's demo from the sample page:
+//  - four real layer rasters (page, surfaces, images and vectors, text) for the
+//    exploded hero, rendered by restyling the sample page itself;
+//  - layer counts from a PageRecast capture of that page;
+//  - the top of every captured width and theme for the width viewer.
+// Usage: node scripts/explode.mjs <capture.recast> <sample-page-url>
+import { mkdir, readFile, rm, writeFile } from 'node:fs/promises'
 import { gunzipSync } from 'node:zlib'
 import { join } from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -8,79 +12,99 @@ import { chromium } from '@playwright/test'
 
 const root = fileURLToPath(new URL('..', import.meta.url))
 const out = join(root, 'apps/site/public/demo')
-const input = process.argv[2]
-if (!input) {
-  console.error('Usage: node scripts/explode.mjs <capture.recast>')
+const [input, sampleUrl] = process.argv.slice(2)
+if (!input || !sampleUrl) {
+  console.error('Usage: node scripts/explode.mjs <capture.recast> <sample-page-url>')
   process.exit(1)
 }
 const file = JSON.parse(gunzipSync(await readFile(input)).toString('utf8'))
+await rm(out, { recursive: true, force: true })
 await mkdir(out, { recursive: true })
 
-const CROP = 1100
+const WIDTH = 1440
+const HEIGHT = 1000
+
+// Counts from the real capture of the page at 1440, light.
 const desktop =
-  file.captures.find((c) => c.viewport.width >= 1200 && c.theme === 'light') ?? file.captures[0]
-
-// Cut from the privacy chapter down (red band, code, install), so the page never
-// shows its own hero exploding inside itself.
-const find = (n, test) =>
-  test(n) ? n : n.type === 'frame' ? n.children.map((c) => find(c, test)).find(Boolean) : null
-const anchorY = (capture) =>
-  Math.round(find(capture.root, (n) => n.html?.includes('#privacy'))?.y ?? 0)
-const OFFSET = anchorY(desktop)
-
-// Planes from back to front: the page, its sections, its media, its text.
-const planes = [
-  { name: 'Page', boxes: [[0, 0, desktop.width, CROP]] },
-  { name: 'Sections', boxes: [] },
-  { name: 'Images and vectors', boxes: [] },
-  { name: 'Text', boxes: [] },
-]
+  file.captures.find((c) => c.viewport.width === WIDTH && c.theme === 'light') ?? file.captures[0]
 const stats = { layers: 0, texts: 0, images: 0 }
-const clip = (n) => {
-  const x = Math.max(0, n.x)
-  const y = Math.max(0, n.y - OFFSET)
-  const w = Math.min(desktop.width, n.x + n.width) - x
-  const h = Math.min(CROP, n.y - OFFSET + n.height) - y
-  return w > 2 && h > 2 ? [Math.round(x), Math.round(y), Math.round(w), Math.round(h)] : null
-}
-const visit = (n, depth) => {
+const count = (n) => {
   stats.layers++
   if (n.type === 'text') stats.texts++
   if (n.type === 'image' || n.type === 'svg' || n.type === 'raster') stats.images++
-  const box = clip(n)
-  if (box && depth > 0) {
-    if (n.type === 'text') planes[3].boxes.push(box)
-    else if (n.type !== 'frame') planes[2].boxes.push(box)
-    else if (n.fills?.length && n.width * n.height > desktop.width * 40) planes[1].boxes.push(box)
-  }
-  if (n.type === 'frame') for (const c of n.children) visit(c, depth + 1)
+  if (n.type === 'frame') n.children.forEach(count)
 }
-for (const capture of file.captures) visit(capture.root, 0)
-// Stats describe one capture, the one the hero shows.
-Object.assign(stats, { layers: 0, texts: 0, images: 0 })
-planes.slice(1).forEach((p) => (p.boxes.length = 0))
-visit(desktop.root, 0)
+count(desktop.root)
 
-// Crop screenshots with a browser: the top of each capture.
 const browser = await chromium.launch()
-const crop = async (capture, name, height, offset = 0) => {
-  const asset = file.assets[capture.screenshot]
-  const page = await browser.newPage({
-    viewport: { width: capture.width, height },
-    deviceScaleFactor: 1,
+
+// Each plane hides everything except one kind of layer.
+const page = await browser.newPage({
+  viewport: { width: WIDTH, height: HEIGHT },
+  colorScheme: 'light',
+})
+await page.goto(sampleUrl, { waitUntil: 'networkidle' })
+await page.evaluate(() => document.fonts.ready)
+await page.evaluate(() => {
+  // Surfaces: anything with its own background that isn't a full-width band.
+  for (const el of document.querySelectorAll('body *')) {
+    const cs = getComputedStyle(el)
+    const r = el.getBoundingClientRect()
+    if (cs.backgroundColor !== 'rgba(0, 0, 0, 0)' && r.width < innerWidth * 0.95) {
+      el.setAttribute('data-surface', '')
+    }
+  }
+})
+const hideText =
+  '*{color:transparent!important;-webkit-text-fill-color:transparent!important;text-shadow:none!important}' +
+  'input,select,textarea,button{color:transparent!important}'
+const hideMedia = 'svg,img{visibility:hidden!important}'
+const clearAll =
+  '*,*::before,*::after{background:transparent!important;border-color:transparent!important;box-shadow:none!important;outline:none!important}' +
+  'html,body{background:transparent!important}'
+const flatten =
+  '[data-surface]{background:transparent!important;border-color:transparent!important;box-shadow:none!important}'
+const onlySurfaces =
+  '*:not([data-surface]){background:transparent!important;border-color:transparent!important;box-shadow:none!important}' +
+  'html,body{background:transparent!important}'
+const planes = [
+  { name: 'Page', file: 'plane-page.jpg', css: hideText + hideMedia + flatten, png: false },
+  {
+    name: 'Surfaces',
+    file: 'plane-surfaces.png',
+    css: hideText + hideMedia + onlySurfaces,
+    png: true,
+  },
+  { name: 'Images and vectors', file: 'plane-media.png', css: hideText + clearAll, png: true },
+  { name: 'Text', file: 'plane-text.png', css: hideMedia + clearAll, png: true },
+]
+for (const plane of planes) {
+  const handle = await page.addStyleTag({ content: plane.css })
+  await page.screenshot({
+    path: join(out, plane.file),
+    clip: { x: 0, y: 0, width: WIDTH, height: HEIGHT },
+    omitBackground: plane.png,
+    ...(plane.png ? {} : { type: 'jpeg', quality: 88 }),
   })
-  await page.setContent(
-    `<body style="margin:0;overflow:hidden"><img style="display:block;width:${capture.width}px;margin-top:${-offset}px" src="data:${asset.mime};base64,${asset.data}">`,
-    { waitUntil: 'load' },
-  )
-  await page.screenshot({ path: join(out, name), type: 'jpeg', quality: 86 })
-  await page.close()
+  await handle.evaluate((el) => el.remove())
 }
-await crop(desktop, 'page.jpg', CROP, OFFSET)
+await page.close()
+
+// The top of every captured width and theme, from the capture's own screenshots.
 const widths = []
 for (const capture of file.captures) {
+  const asset = file.assets[capture.screenshot]
   const name = `w-${capture.viewport.width}-${capture.theme}.jpg`
-  await crop(capture, name, Math.round(capture.width * 1.15), anchorY(capture))
+  const shot = await browser.newPage({
+    viewport: { width: capture.width, height: HEIGHT },
+    deviceScaleFactor: 1,
+  })
+  await shot.setContent(
+    `<body style="margin:0;overflow:hidden"><img style="display:block;width:${capture.width}px" src="data:${asset.mime};base64,${asset.data}">`,
+    { waitUntil: 'load' },
+  )
+  await shot.screenshot({ path: join(out, name), type: 'jpeg', quality: 86 })
+  await shot.close()
   widths.push({
     file: name,
     label: `${capture.viewport.width} · ${capture.theme === 'dark' ? 'Dark' : 'Light'}`,
@@ -91,8 +115,14 @@ await browser.close()
 
 await writeFile(
   join(out, 'explode.json'),
-  JSON.stringify({ width: desktop.width, height: CROP, image: 'page.jpg', planes, stats, widths }),
+  JSON.stringify({
+    width: WIDTH,
+    height: HEIGHT,
+    planes: planes.map(({ name, file }) => ({ name, image: file })),
+    stats,
+    widths,
+  }),
 )
 console.log(
-  `demo: ${planes.map((p) => `${p.name} ${p.boxes.length}`).join(', ')}; ${stats.layers} layers`,
+  `demo: ${planes.length} planes; ${stats.layers} layers, ${stats.texts} text, ${stats.images} images`,
 )

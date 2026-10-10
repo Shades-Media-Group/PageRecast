@@ -3,241 +3,280 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Harbour Line · Crossings today</title>
+    <title>Test page · PageRecast</title>
     <meta
       name="description"
-      content="A fictional ferry operator's page, made as a sample for trying PageRecast."
+      content="A page made to be captured with PageRecast: type, colour, layout, surfaces, vectors, images and controls, in light and dark."
     />
-    <meta name="robots" content="noindex" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
   </head>
   <body>
-    <div class="sample-note">
-      A sample page for trying <a href="/">PageRecast</a>. Harbour Line is fictional.
-    </div>
-
-    <header class="top">
-      <a class="brand" href="#" aria-label="Harbour Line">
-        <svg viewBox="0 0 40 40" width="32" height="32" aria-hidden="true">
-          <rect width="40" height="40" rx="10" fill="var(--sea)" />
-          <path
-            d="M7 24c3.5 0 3.5-3 7-3s3.5 3 7 3 3.5-3 7-3 3.5 3 6 3"
-            fill="none"
-            stroke="var(--foam)"
-            stroke-width="2.6"
-            stroke-linecap="round"
-          />
-          <path
-            d="M7 30c3.5 0 3.5-3 7-3s3.5 3 7 3 3.5-3 7-3 3.5 3 6 3"
-            fill="none"
-            stroke="var(--teal)"
-            stroke-width="2.6"
-            stroke-linecap="round"
-          />
-          <path d="M14 18l6-9 6 9z" fill="var(--amber)" />
-        </svg>
-        <span>Harbour Line</span>
-      </a>
-      <nav aria-label="Main">
-        <a href="#" aria-current="page">Departures</a>
-        <a href="#">Routes</a>
-        <a href="#">Fares</a>
-        <a href="#">Freight</a>
-        <a href="#">Help</a>
+    <header class="bar">
+      <a class="bar-logo" href="/" aria-label="PageRecast home" data-logo></a>
+      <nav aria-label="Sections">
+        <a href="#type">Type</a>
+        <a href="#colour">Colour</a>
+        <a href="#layout">Layout</a>
+        <a href="#surfaces">Surfaces</a>
+        <a href="#controls">Controls</a>
       </nav>
-      <a class="book" href="#book">Book a crossing</a>
+      <a class="pill pill--ink" href="/#install">Install PageRecast</a>
     </header>
 
     <main>
-      <section class="today">
-        <div class="today-copy">
-          <p class="date">Saturday 11 October</p>
-          <h1>Crossings today</h1>
-          <ul class="weather" aria-label="Sea conditions">
-            <li><strong>14 kn</strong> wind from the northwest</li>
-            <li><strong>Moderate</strong> sea, 1.2 m swell</li>
-            <li><strong>12°</strong> and clear until evening</li>
-          </ul>
+      <section class="intro">
+        <h1>A page made<br />to be <em>recast.</em></h1>
+        <div class="intro-side">
+          <p>
+            Every section below uses something PageRecast turns into a Figma feature. Capture this
+            page at a few widths, in light and dark, paste it into Figma and compare the two.
+          </p>
+          <ol class="steps">
+            <li><b>1</b>Open the PageRecast side panel</li>
+            <li><b>2</b>Pick widths and both themes, then Capture</li>
+            <li><b>3</b>Paste into the PageRecast plugin in Figma</li>
+          </ol>
         </div>
-        <figure class="map" aria-label="Route map">
-          <svg viewBox="0 0 520 300" role="img" aria-label="Three routes from Northpoint">
-            <path class="land" d="M0 0h190c-20 40 10 70-14 108s-60 30-62 82 46 70 26 110H0z" />
-            <path
-              class="land"
-              d="M360 40c40-18 96-10 116 26s-8 70 18 100-6 74-58 76-86-34-92-82 2-102 16-120z"
-            />
-            <path class="land" d="M250 236c18-14 52-10 60 8s-10 40-34 42-44-36-26-50z" />
-            <path class="route route--teal" d="M150 150C230 120 300 110 372 120" />
-            <path class="route route--amber" d="M150 150C200 200 230 240 262 252" />
-            <path class="route route--coral" d="M150 150C250 170 330 200 420 236" />
-            <g class="port">
-              <circle cx="150" cy="150" r="7" />
-              <text x="96" y="182">Northpoint</text>
-            </g>
-            <g class="port">
-              <circle cx="372" cy="120" r="6" />
-              <text x="384" y="112">Isle of Kell</text>
-            </g>
-            <g class="port">
-              <circle cx="262" cy="252" r="6" />
-              <text x="196" y="262">Saltby</text>
-            </g>
-            <g class="port">
-              <circle cx="420" cy="236" r="6" />
-              <text x="356" y="276">Fenwick</text>
-            </g>
-          </svg>
-        </figure>
       </section>
 
-      <section class="board-wrap">
-        <div class="board">
-          <div class="board-head">
-            <h2>Departures from Northpoint</h2>
-            <p>Updated 09:12</p>
+      <section class="spec" id="type">
+        <div class="spec-head">
+          <h2>Type</h2>
+          <p>Two families, nine weights, an optical-size axis and mixed inline styles.</p>
+          <p class="becomes">Text layers and text styles</p>
+        </div>
+        <div class="spec-body type">
+          <div class="type-hero">
+            <span class="glyphs" aria-hidden="true">Ag</span>
+            <dl>
+              <div>
+                <dt>Fraunces</dt>
+                <dd>Variable serif, optical size 9 to 144</dd>
+              </div>
+              <div>
+                <dt>Hanken Grotesk</dt>
+                <dd>Variable sans, weights 100 to 900</dd>
+              </div>
+            </dl>
           </div>
-          <table>
+          <div class="scale">
+            <p class="t-display">Display 64</p>
+            <p class="t-title">Title 40, set tight</p>
+            <p class="t-head">Headline 24 in the sans</p>
+            <p class="t-body">
+              Body 17 keeps <strong>bold runs</strong>, <em>italic runs</em>,
+              <a href="#type">links</a>, <code>inline code</code> and
+              <mark>highlighted words</mark> inside one text layer, with the line breaks exactly
+              where the browser put them.
+            </p>
+          </div>
+          <ul class="weights" aria-label="Hanken Grotesk weights">
+            <li style="font-weight: 200">200</li>
+            <li style="font-weight: 300">300</li>
+            <li style="font-weight: 400">400</li>
+            <li style="font-weight: 500">500</li>
+            <li style="font-weight: 600">600</li>
+            <li style="font-weight: 700">700</li>
+            <li style="font-weight: 800">800</li>
+            <li style="font-weight: 900">900</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="spec" id="colour">
+        <div class="spec-head">
+          <h2>Colour</h2>
+          <p>Eight tokens that change between light and dark. Capture both themes.</p>
+          <p class="becomes">Colour variables with Light and Dark modes</p>
+        </div>
+        <ul class="spec-body swatches">
+          <li style="--c: var(--signal)"><span></span><b>Signal</b><code data-hex></code></li>
+          <li style="--c: var(--rose)"><span></span><b>Rose</b><code data-hex></code></li>
+          <li style="--c: var(--sun)"><span></span><b>Sun</b><code data-hex></code></li>
+          <li style="--c: var(--moss)"><span></span><b>Moss</b><code data-hex></code></li>
+          <li style="--c: var(--sea)"><span></span><b>Sea</b><code data-hex></code></li>
+          <li style="--c: var(--sky)"><span></span><b>Sky</b><code data-hex></code></li>
+          <li style="--c: var(--ink)"><span></span><b>Ink</b><code data-hex></code></li>
+          <li style="--c: var(--paper)"><span></span><b>Paper</b><code data-hex></code></li>
+        </ul>
+      </section>
+
+      <section class="spec" id="layout">
+        <div class="spec-head">
+          <h2>Layout</h2>
+          <p>Rows, columns, gaps, padding, wrapping and alignment, all from flexbox.</p>
+          <p class="becomes">Auto Layout, checked child by child</p>
+        </div>
+        <div class="spec-body layout">
+          <article class="card">
+            <span class="card-icon" style="--c: var(--signal)" data-icon="layers"></span>
+            <h3>Frames</h3>
+            <p>Every box with a fill, border, radius or clip becomes a frame.</p>
+            <div class="chips"><span>Fill</span><span>Stroke</span><span>Clip</span></div>
+          </article>
+          <article class="card">
+            <span class="card-icon" style="--c: var(--sea)" data-icon="autolayout"></span>
+            <h3>Auto Layout</h3>
+            <p>Kept only where every child lands within 1.5 px of the page.</p>
+            <div class="chips"><span>Gap 12</span><span>Padding 24</span><span>Wrap</span></div>
+          </article>
+          <article class="card">
+            <span class="card-icon" style="--c: var(--sun)" data-icon="font"></span>
+            <h3>Text styles</h3>
+            <p>Repeated type becomes a style you can change in one place.</p>
+            <div class="chips"><span>Display</span><span>Title</span><span>Body</span></div>
+          </article>
+          <div class="row-demo" aria-label="Alignment">
+            <span>Start</span><span class="grow">Fill</span><span>End</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="spec" id="surfaces">
+        <div class="spec-head">
+          <h2>Surfaces</h2>
+          <p>Gradients, shadows, blur, borders and corners set one by one.</p>
+          <p class="becomes">Fills, strokes and effects</p>
+        </div>
+        <div class="spec-body surfaces">
+          <div class="s s--linear"><span>Linear</span></div>
+          <div class="s s--radial"><span>Radial</span></div>
+          <div class="s s--conic"><span>Angular</span></div>
+          <div class="s s--shadow"><span>Shadow</span></div>
+          <div class="s s--glass">
+            <div class="glass"><span>Background blur</span></div>
+          </div>
+          <div class="s s--dashed"><span>Dashed</span></div>
+          <div class="s s--corners"><span>Corners</span></div>
+          <div class="s s--inset"><span>Inner shadow</span></div>
+        </div>
+      </section>
+
+      <section class="spec" id="media">
+        <div class="spec-head">
+          <h2>Vectors and images</h2>
+          <p>Inline SVG stays vector. Images keep their crop and fit.</p>
+          <p class="becomes">Vector layers and image fills</p>
+        </div>
+        <div class="spec-body media">
+          <figure class="art" aria-label="Vector artwork">
+            <svg viewBox="0 0 320 240" role="img" aria-label="Overlapping shapes">
+              <rect width="320" height="240" fill="var(--sea)" />
+              <circle cx="232" cy="78" r="44" fill="var(--sun)" />
+              <path d="M0 176c54-40 106-40 160 0s106 40 160 0v64H0z" fill="var(--sky)" />
+              <path
+                d="M0 200c54-30 106-30 160 0s106 30 160 0v40H0z"
+                fill="var(--paper)"
+                opacity=".9"
+              />
+              <rect x="40" y="56" width="92" height="112" rx="16" fill="var(--signal)" />
+              <rect x="88" y="32" width="92" height="112" rx="16" fill="var(--rose)" />
+              <path d="M88 56h28a16 16 0 0 1 16 16v72H104a16 16 0 0 1-16-16z" fill="var(--ink)" />
+            </svg>
+            <figcaption>SVG, 7 shapes</figcaption>
+          </figure>
+          <figure class="photo">
+            <img
+              src="./poster.jpg"
+              alt="Abstract poster in red, rose and ink"
+              width="640"
+              height="800"
+            />
+            <figcaption>JPEG, cover fit</figcaption>
+          </figure>
+          <div class="icons" aria-label="Icons">
+            <span data-icon="capture"></span>
+            <span data-icon="layers"></span>
+            <span data-icon="font"></span>
+            <span data-icon="image"></span>
+            <span data-icon="vector"></span>
+            <span data-icon="variable"></span>
+          </div>
+        </div>
+      </section>
+
+      <section class="spec" id="controls">
+        <div class="spec-head">
+          <h2>Controls</h2>
+          <p>Form fields are captured as they are right now: typed, checked or chosen.</p>
+          <p class="becomes">Frames and text, at their current state</p>
+        </div>
+        <form class="spec-body controls" onsubmit="return false">
+          <label class="field">
+            <span>Page address</span>
+            <input type="text" value="https://staging.example.com/pricing" />
+          </label>
+          <label class="field">
+            <span>Width</span>
+            <select>
+              <option>Desktop · 1440</option>
+              <option>Tablet · 768</option>
+              <option>Mobile · 390</option>
+            </select>
+          </label>
+          <div class="segmented" role="radiogroup" aria-label="Theme">
+            <button type="button" role="radio" aria-checked="false">Light</button>
+            <button type="button" role="radio" aria-checked="false">Dark</button>
+            <button type="button" role="radio" aria-checked="true">Both</button>
+          </div>
+          <label class="switch">
+            <input type="checkbox" checked />
+            <span class="switch-track"></span>
+            Hide cookie banners
+          </label>
+          <label class="check"><input type="checkbox" checked /> Load lazy images first</label>
+          <label class="check"><input type="checkbox" /> Keep the scrollbar</label>
+          <div class="buttons">
+            <button type="submit" class="pill pill--signal">Capture</button>
+            <button type="button" class="pill pill--line">Cancel</button>
+          </div>
+        </form>
+      </section>
+
+      <section class="spec" id="table">
+        <div class="spec-head">
+          <h2>Tables</h2>
+          <p>Rows and cells keep their borders, alignment and numbers.</p>
+          <p class="becomes">Nested frames with tabular figures</p>
+        </div>
+        <div class="spec-body">
+          <table class="widths">
             <thead>
               <tr>
-                <th>Time</th>
-                <th>To</th>
-                <th>Vessel</th>
-                <th>Gate</th>
-                <th>Status</th>
-                <th>Seats</th>
+                <th>Frame</th>
+                <th class="n">Width</th>
+                <th>Sized for</th>
+                <th>Theme</th>
               </tr>
             </thead>
             <tbody>
               <tr>
-                <td class="time">09:40</td>
-                <td><span class="line line--teal"></span>Isle of Kell</td>
-                <td>MV Skerry</td>
-                <td>2</td>
-                <td><span class="status status--boarding">Boarding</span></td>
-                <td>
-                  <span class="seats"><i style="width: 18%"></i></span
-                  ><span class="seats-n">31</span>
-                </td>
+                <td>Desktop</td>
+                <td class="n">1440</td>
+                <td>Laptops and desktop displays</td>
+                <td><span class="tag">Light</span></td>
               </tr>
               <tr>
-                <td class="time">10:15</td>
-                <td><span class="line line--amber"></span>Saltby</td>
-                <td>MV Tern</td>
-                <td>4</td>
-                <td><span class="status status--ok">On time</span></td>
-                <td>
-                  <span class="seats"><i style="width: 62%"></i></span
-                  ><span class="seats-n">112</span>
-                </td>
+                <td>Tablet</td>
+                <td class="n">768</td>
+                <td>Tablets held upright</td>
+                <td><span class="tag tag--dark">Dark</span></td>
               </tr>
               <tr>
-                <td class="time">11:00</td>
-                <td><span class="line line--coral"></span>Fenwick</td>
-                <td>MV Gannet</td>
-                <td>1</td>
-                <td><span class="status status--late">Delayed 15 min</span></td>
-                <td>
-                  <span class="seats"><i style="width: 44%"></i></span
-                  ><span class="seats-n">86</span>
-                </td>
-              </tr>
-              <tr>
-                <td class="time">12:30</td>
-                <td><span class="line line--teal"></span>Isle of Kell</td>
-                <td>MV Skerry</td>
-                <td>2</td>
-                <td><span class="status status--ok">On time</span></td>
-                <td>
-                  <span class="seats"><i style="width: 80%"></i></span
-                  ><span class="seats-n">140</span>
-                </td>
-              </tr>
-              <tr>
-                <td class="time">14:05</td>
-                <td><span class="line line--coral"></span>Fenwick</td>
-                <td>MV Puffin</td>
-                <td>3</td>
-                <td><span class="status status--off">Cancelled</span></td>
-                <td><span class="seats-n">—</span></td>
+                <td>Mobile</td>
+                <td class="n">390</td>
+                <td>Most current phones</td>
+                <td><span class="tag">Light</span></td>
               </tr>
             </tbody>
           </table>
         </div>
-
-        <form class="booking" id="book" onsubmit="return false">
-          <h2>Book a crossing</h2>
-          <label
-            >From<select>
-              <option>Northpoint</option>
-            </select></label
-          >
-          <label
-            >To<select>
-              <option>Isle of Kell</option>
-            </select></label
-          >
-          <div class="pair">
-            <label>Date<input type="text" value="Sat 11 Oct" /></label>
-            <label>Passengers<input type="text" value="2 adults" /></label>
-          </div>
-          <label class="check"><input type="checkbox" checked /> I'm bringing a car</label>
-          <button type="submit">Find crossings</button>
-          <p class="small">Free cancellation up to 24 hours before departure.</p>
-        </form>
       </section>
-
-      <section class="fares">
-        <h2>Fares to Isle of Kell</h2>
-        <table>
-          <thead>
-            <tr>
-              <th></th>
-              <th>Off-peak</th>
-              <th>Peak</th>
-              <th>Return</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <th>Foot passenger</th>
-              <td>€9</td>
-              <td>€12</td>
-              <td>€19</td>
-            </tr>
-            <tr>
-              <th>Car and driver</th>
-              <td>€38</td>
-              <td>€46</td>
-              <td>€79</td>
-            </tr>
-            <tr>
-              <th>Bicycle</th>
-              <td>€2</td>
-              <td>€2</td>
-              <td>€3</td>
-            </tr>
-          </tbody>
-        </table>
-      </section>
-
-      <aside class="notice">
-        <strong>Winter timetable from 26 October.</strong>
-        <span>The 14:05 to Fenwick moves to 13:40, and Saltby sailings drop to four a day.</span>
-        <a href="#">See the new times</a>
-      </aside>
     </main>
 
-    <footer class="foot">
-      <div>
-        <strong>Harbour Line</strong>
-        <p>Ferries between Northpoint and the islands since 1962.</p>
-      </div>
-      <nav aria-label="Footer">
-        <a href="#">Accessibility</a>
-        <a href="#">Lost property</a>
-        <a href="#">Careers</a>
-        <a href="#">Contact</a>
-      </nav>
+    <footer class="end">
+      <p>This page is part of PageRecast, free and open source.</p>
+      <a class="pill pill--signal" href="/#install">Get PageRecast</a>
     </footer>
 
     <script type="module" src="./sample.ts"></script>

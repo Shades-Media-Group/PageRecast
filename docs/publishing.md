@@ -110,7 +110,7 @@ The manifest now carries the permanent Community ID `1690893819753299295`. For a
 | Icon (128 × 128)        | `assets/brand/png/app-icon-128.png`                     |
 | Cover art (1920 × 1080) | `assets/store/figma-cover.png`                          |
 | Tags                    | import, website, html, web to figma, capture            |
-| Support contact         | https://github.com/Shades-Media-Group/PageRecast/issues |
+| Support contact         | hello@shades.md                                         |
 | Publisher               | Shades Media Group                                      |
 
 **Description**

@@ -4,11 +4,12 @@ import { icons, renderIcon, type IconName } from './icons'
 describe('icon set', () => {
   const names = Object.keys(icons) as IconName[]
 
-  it('draws every icon inside the 20-unit grid', () => {
+  it('draws every icon inside the 24-unit grid', () => {
     for (const name of names) {
-      const numbers = icons[name].match(/-?\d+(\.\d+)?/g)?.map(Number) ?? []
-      // Coordinates stay on the canvas (path deltas can be negative, absolutes cannot exceed 20).
-      expect(Math.max(...numbers), name).toBeLessThanOrEqual(20)
+      // SVG path syntax lets numbers run together: ".55.45" is 0.55 then 0.45.
+      const numbers = icons[name].match(/-?(\d+\.?\d*|\.\d+)/g)?.map(Number) ?? []
+      // Coordinates stay on the canvas (path deltas can be negative, absolutes cannot exceed 24).
+      expect(Math.max(...numbers), name).toBeLessThanOrEqual(24)
     }
   })
 

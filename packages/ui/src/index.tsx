@@ -24,12 +24,8 @@ export function Icon({
       class={`pr-icon ${className}`}
       width={size}
       height={size}
-      viewBox="0 0 20 20"
-      fill="none"
-      stroke="currentColor"
-      stroke-width="1.5"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      viewBox="0 0 24 24"
+      fill="currentColor"
       aria-hidden="true"
       dangerouslySetInnerHTML={{ __html: icons[name] }}
     />

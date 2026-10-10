@@ -17,7 +17,13 @@ import type {
 import { FontResolver } from './fonts'
 import { rotatedTransform } from './geometry'
 import { hex, imagePaint, solid, toBlend, toEffects, toPaints } from './paints'
-import { createTextStyles, createVariables, type ColorRef, type TextRef } from './tokens'
+import {
+  applyLocalStyles,
+  createTextStyles,
+  createVariables,
+  type ColorRef,
+  type TextRef,
+} from './tokens'
 
 const CAPTURE_GAP = 160
 const REFERENCE_GAP = 80
@@ -70,6 +76,7 @@ export async function importFile(
     vectors: 0,
     rasters: 0,
     autoLayouts: 0,
+    reusedStyles: 0,
     variables: 0,
     textStyles: 0,
     substitutions: [],
@@ -135,6 +142,8 @@ export async function importFile(
       )
   }
 
+  const nameOf = (scene: Scene) => (options.htmlNames && scene.html ? scene.html : scene.name)
+
   function size(node: SceneNode & LayoutMixin, width: number, height: number) {
     node.resize(Math.max(width, 0.01), Math.max(height, 0.01))
   }
@@ -153,7 +162,7 @@ export async function importFile(
     const base = scene.style
     text.fontName = fontFor(base)
     text.characters = characters
-    text.name = scene.name
+    text.name = options.htmlNames && scene.html ? scene.html : scene.name
     text.fontSize = base.fontSize
     text.lineHeight = base.lineHeight
       ? { value: base.lineHeight, unit: 'PIXELS' }
@@ -193,7 +202,8 @@ export async function importFile(
           text.setRangeTextDecoration(start, end, DECORATION[s.decoration])
         if (s.transform !== base.transform)
           text.setRangeTextCase(start, end, TEXT_CASE[s.transform])
-        if (s.href) text.setRangeHyperlink(start, end, { type: 'URL', value: s.href })
+        if (s.href && options.hyperlinks)
+          text.setRangeHyperlink(start, end, { type: 'URL', value: s.href })
       }
       start = end
     }
@@ -252,7 +262,7 @@ export async function importFile(
     try {
       const svg = figma.createNodeFromSvg(markup)
       parent.appendChild(svg)
-      svg.name = scene.name === 'Vector' || scene.name === 'Image' ? scene.name : scene.name
+      svg.name = nameOf(scene)
       svg.clipsContent = false
       if (Math.abs(svg.width - scene.width) > 0.5 || Math.abs(svg.height - scene.height) > 0.5) {
         svg.rescale(
@@ -392,7 +402,7 @@ export async function importFile(
         if (asset?.kind === 'svg') return buildSvg(asset.markup, scene, parent, ox, oy)
         const rect = figma.createRectangle()
         parent.appendChild(rect)
-        rect.name = scene.name
+        rect.name = nameOf(scene)
         size(rect, scene.width, scene.height)
         const hash = hashes.get(scene.asset)
         rect.fills = hash
@@ -425,7 +435,7 @@ export async function importFile(
       case 'frame': {
         const frame = figma.createFrame()
         parent.appendChild(frame)
-        frame.name = scene.name
+        frame.name = nameOf(scene)
         size(frame, scene.width, scene.height)
         frame.fills = toPaints(scene.fills, scene.width, scene.height, hashes)
         frame.clipsContent = scene.clips
@@ -513,6 +523,8 @@ export async function importFile(
   }
 
   progress({ type: 'progress', phase: 'styles', done: 0, total: 1 })
+  // Styles already in the file win; only what is left gets new variables and styles.
+  if (options.useLocalStyles) report.reusedStyles = await applyLocalStyles(colorRefs, textRefs)
   if (options.variables) report.variables = createVariables(colorRefs, file, roots)
   if (options.textStyles) report.textStyles = await createTextStyles(textRefs, file)
 

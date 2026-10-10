@@ -175,3 +175,79 @@ export async function createTextStyles(refs: TextRef[], file: RecastFile): Promi
   }
   return chosen.length
 }
+
+const textKey = (font: FontName, size: number, lineHeight: number | null) =>
+  `${font.family}|${font.style}|${Math.round(size * 100) / 100}|${lineHeight === null ? 'auto' : Math.round(lineHeight * 100) / 100}`
+
+/**
+ * Binds nodes to colour variables, paint styles and text styles that already
+ * exist in the file when their values match exactly. Matched refs are removed
+ * from the arrays so nothing is created twice. Returns how many nodes it bound.
+ */
+export async function applyLocalStyles(colors: ColorRef[], texts: TextRef[]): Promise<number> {
+  let bound = 0
+
+  const variableByColor = new Map<string, Variable>()
+  const collections = await figma.variables.getLocalVariableCollectionsAsync()
+  for (const variable of await figma.variables.getLocalVariablesAsync('COLOR')) {
+    const collection = collections.find((c) => c.id === variable.variableCollectionId)
+    const value = collection ? variable.valuesByMode[collection.defaultModeId] : undefined
+    if (value && typeof value === 'object' && 'r' in value) {
+      const rgba = value as RGBA
+      const key = colorKey({
+        r: rgba.r,
+        g: rgba.g,
+        b: rgba.b,
+        a: typeof rgba.a === 'number' ? rgba.a : 1,
+      })
+      if (!variableByColor.has(key)) variableByColor.set(key, variable)
+    }
+  }
+  const styleByColor = new Map<string, PaintStyle>()
+  for (const style of await figma.getLocalPaintStylesAsync()) {
+    const [paint] = style.paints
+    if (style.paints.length === 1 && paint?.type === 'SOLID') {
+      const key = colorKey({ ...paint.color, a: paint.opacity ?? 1 })
+      if (!styleByColor.has(key)) styleByColor.set(key, style)
+    }
+  }
+  const remainingColors: ColorRef[] = []
+  for (const ref of colors) {
+    const key = colorKey(ref.color)
+    const variable = variableByColor.get(key)
+    const style = styleByColor.get(key)
+    if (variable) {
+      ref.node.fills = [
+        figma.variables.setBoundVariableForPaint(solid(ref.color), 'color', variable),
+      ]
+      bound++
+    } else if (style) {
+      await ref.node.setFillStyleIdAsync(style.id)
+      bound++
+    } else {
+      remainingColors.push(ref)
+    }
+  }
+  colors.splice(0, colors.length, ...remainingColors)
+
+  const textByKey = new Map<string, TextStyle_>()
+  for (const style of await figma.getLocalTextStylesAsync()) {
+    const lh = style.lineHeight.unit === 'PIXELS' ? style.lineHeight.value : null
+    textByKey.set(textKey(style.fontName, style.fontSize, lh), style)
+  }
+  const remainingTexts: TextRef[] = []
+  for (const ref of texts) {
+    const style = textByKey.get(textKey(ref.font, ref.style.fontSize, ref.style.lineHeight))
+    if (style) {
+      await ref.node.setTextStyleIdAsync(style.id)
+      bound++
+    } else {
+      remainingTexts.push(ref)
+    }
+  }
+  texts.splice(0, texts.length, ...remainingTexts)
+  return bound
+}
+
+// Figma's TextStyle type clashes with the scene's; alias it locally.
+type TextStyle_ = globalThis.TextStyle

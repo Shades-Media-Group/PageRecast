@@ -19,6 +19,7 @@ const mainOptions = {
   target: 'es2017',
   format: 'iife',
   logLevel: 'info',
+  define: { __VERSION__: JSON.stringify(version) },
 }
 
 await vite({

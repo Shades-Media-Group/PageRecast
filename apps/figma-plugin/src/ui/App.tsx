@@ -504,7 +504,6 @@ function Review({
 
 function Done({ report }: { report: ImportReport }) {
   const rows: [string, number][] = [
-    ['Frames', report.frames],
     ['Text layers', report.texts],
     ['Images', report.images],
     ['Vectors', report.vectors],
@@ -517,10 +516,16 @@ function Done({ report }: { report: ImportReport }) {
   return (
     <>
       <Section>
-        <Message tone="success">
-          <strong>Imported in {(report.durationMs / 1000).toFixed(1)} s.</strong> It's selected on
-          the canvas.
-        </Message>
+        <div class="source">
+          <h1>
+            <span class="num">{report.frames}</span> {report.frames === 1 ? 'frame' : 'frames'} on
+            the canvas
+          </h1>
+          <p class="muted">
+            Selected and ready to edit. Built in{' '}
+            <span class="num">{(report.durationMs / 1000).toFixed(1)}</span> s.
+          </p>
+        </div>
       </Section>
       <Section title="Created">
         <dl class="stats">

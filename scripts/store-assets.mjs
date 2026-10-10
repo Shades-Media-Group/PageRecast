@@ -72,18 +72,20 @@ const panel = (src, s, x, y, w, onRed = true) =>
  * Laid out on a 1280 × 640 grid and scaled by height; the panels hug the right.
  */
 const hero = (theme, { width, height }) => {
-  const s = height / 640
+  // Laid out on a 1280 × 640 grid, scaled to fit and centred for other ratios.
+  const s = Math.min(height / 640, width / 1280)
+  const dy = (height - 640 * s) / 2
   const right = width - 64 * s
   return `${base(RED, PAPER)}<style>
-  .logo { left: ${72 * s}px; top: ${64 * s}px; height: ${38 * s}px; }
-  h1 { left: ${68 * s}px; top: ${204 * s}px; font-size: ${78 * s}px; }
-  p { left: ${72 * s}px; bottom: ${60 * s}px; font-size: ${24 * s}px; line-height: 1.3; }
+  .logo { left: ${72 * s}px; top: ${64 * s + dy}px; height: ${38 * s}px; }
+  h1 { left: ${68 * s}px; top: ${204 * s + dy}px; font-size: ${78 * s}px; }
+  p { left: ${72 * s}px; bottom: ${60 * s + dy}px; font-size: ${24 * s}px; line-height: 1.3; }
   </style>
   <div class="logo">${logoOnRed}</div>
   <h1>Any web page.<br>Real Figma<br>layers.</h1>
   <p>Free and open source.<br>Nothing leaves your computer.</p>
-  ${panel(shots.captured[theme], s, right - 634 * s, 72 * s, 300 * s)}
-  ${panel(shots.review[theme], s, right - 310 * s, 160 * s, 310 * s)}`
+  ${panel(shots.captured[theme], s, right - 634 * s, 72 * s + dy, 300 * s)}
+  ${panel(shots.review[theme], s, right - 310 * s, 160 * s + dy, 310 * s)}`
 }
 
 /** Chrome Web Store screenshots, 1280 × 800: a red column with the line, the product on paper. */
@@ -101,7 +103,7 @@ const jobs = [
   ['readme-banner-dark.png', brand, 1280, 640, 2, hero('dark', { width: 1280, height: 640 })],
   ['social-preview.png', brand, 1280, 640, 1, hero('light', { width: 1280, height: 640 })],
   ['chrome-promo-marquee.png', store, 1400, 560, 1, hero('light', { width: 1400, height: 560 })],
-  ['figma-cover.png', store, 1920, 960, 1, hero('light', { width: 1920, height: 960 })],
+  ['figma-cover.png', store, 1920, 1080, 1, hero('light', { width: 1920, height: 1080 })],
   [
     'chrome-promo-small.png',
     store,

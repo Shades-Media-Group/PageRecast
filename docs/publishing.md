@@ -91,7 +91,7 @@ Source code: https://github.com/Shades-Media-Group/PageRecast
 
 ### 1. Get the plugin's ID (once)
 
-The manifest ships with a development ID. Figma issues the permanent one:
+The manifest now carries the permanent Community ID `1690893819753299295`. For a fresh fork, Figma issues a new one:
 
 1. In Figma desktop, **Plugins → Development → New plugin…**, choose **Figma design**, name it **PageRecast**, and save it anywhere.
 2. Copy the `id` from the generated `manifest.json`.
@@ -103,15 +103,15 @@ The manifest ships with a development ID. Figma issues the permanent one:
 1. **Plugins → Development → Manage plugins in development**, then **Publish** next to PageRecast.
 2. Fill in:
 
-| Field                  | Value                                                   |
-| ---------------------- | ------------------------------------------------------- |
-| Name                   | PageRecast                                              |
-| Tagline                | Turn any web page into editable Figma layers. Free.     |
-| Icon (128 × 128)       | `assets/brand/png/app-icon-128.png`                     |
-| Cover art (1920 × 960) | `assets/store/figma-cover.png`                          |
-| Tags                   | import, website, html, web to figma, capture            |
-| Support contact        | https://github.com/Shades-Media-Group/PageRecast/issues |
-| Publisher              | Shades Media Group                                      |
+| Field                   | Value                                                   |
+| ----------------------- | ------------------------------------------------------- |
+| Name                    | PageRecast                                              |
+| Tagline                 | Turn any web page into editable Figma layers. Free.     |
+| Icon (128 × 128)        | `assets/brand/png/app-icon-128.png`                     |
+| Cover art (1920 × 1080) | `assets/store/figma-cover.png`                          |
+| Tags                    | import, website, html, web to figma, capture            |
+| Support contact         | https://github.com/Shades-Media-Group/PageRecast/issues |
+| Publisher               | Shades Media Group                                      |
 
 **Description**
 

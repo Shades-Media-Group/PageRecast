@@ -23,7 +23,9 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/Shades-Media-Group/PageRecast/releases/latest"><b>Install from the latest release</b></a>
+  <a href="https://chromewebstore.google.com/detail/iidlcnlnejbmdihmbfiojpikhgaggkel"><b>Add to Chrome</b></a> ·
+  <a href="https://www.figma.com/community/plugin/1690893819753299295"><b>Get the Figma plugin</b></a> ·
+  <a href="https://github.com/Shades-Media-Group/PageRecast/releases/latest"><b>Latest release</b></a>
 </p>
 
 ## What it does
@@ -57,11 +59,16 @@ The plugin also imports `.html` files and pasted HTML and CSS without the extens
 
 ## Privacy
 
-PageRecast has no server. The extension builds the capture in your browser and the plugin builds layers in Figma, so nothing about the page leaves your computer. The only network requests are the plugin downloading images the page already references, straight from the sites they belong to. There are no accounts, analytics or crash reports. Read the [privacy policy](PRIVACY.md).
+PageRecast has no server. The extension builds the capture in your browser and the plugin builds layers in Figma, so nothing about the page leaves your computer. The only network requests are the plugin downloading images the page already references, straight from the sites they belong to. There are no accounts, analytics or crash reports. Read the [privacy policy](https://pagerecast.shades.md/privacy/).
 
 ## Install
 
-The Chrome Web Store and Figma Community listings are on their way. Until then, install both parts from the [latest release](https://github.com/Shades-Media-Group/PageRecast/releases/latest):
+| Part             | Install from                                                                                  |
+| ---------------- | --------------------------------------------------------------------------------------------- |
+| Chrome extension | [Chrome Web Store](https://chromewebstore.google.com/detail/iidlcnlnejbmdihmbfiojpikhgaggkel) |
+| Figma plugin     | [Figma Community](https://www.figma.com/community/plugin/1690893819753299295)                 |
+
+Both listings are in review for their first release. Until they go live, or to run a specific version, install from the [latest release](https://github.com/Shades-Media-Group/PageRecast/releases/latest):
 
 1. **Chrome:** unzip `pagerecast-chrome-extension-*.zip`, open `chrome://extensions`, turn on **Developer mode**, choose **Load unpacked** and pick the folder. Works in Chrome, Edge, Brave, Arc and other Chromium browsers.
 2. **Figma:** unzip `pagerecast-figma-plugin-*.zip`, then in Figma desktop choose **Plugins → Development → Import plugin from manifest** and pick `manifest.json`.

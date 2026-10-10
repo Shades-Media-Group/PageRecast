@@ -1,32 +1,14 @@
 {
   "width": 1440,
-  "height": 1100,
-  "image": "page.jpg",
+  "height": 1400,
+  "viewHeight": 1000,
   "planes": [
-    { "name": "Page", "boxes": [[0, 0, 1440, 1100]] },
-    {
-      "name": "Sections",
-      "boxes": [
-        [0, 0, 1440, 1100],
-        [0, 0, 1440, 575],
-        [763, 728, 547, 342]
-      ]
-    },
-    { "name": "Images and vectors", "boxes": [] },
-    {
-      "name": "Text",
-      "boxes": [
-        [270, 140, 900, 175],
-        [400, 333, 640, 88],
-        [130, 726, 547, 175],
-        [130, 915, 547, 88],
-        [130, 1030, 157, 27],
-        [319, 1030, 163, 27],
-        [795, 761, 483, 276]
-      ]
-    }
+    { "name": "Page", "image": "plane-page.jpg" },
+    { "name": "Surfaces", "image": "plane-surfaces.png" },
+    { "name": "Images and vectors", "image": "plane-media.png" },
+    { "name": "Text", "image": "plane-text.png" }
   ],
-  "stats": { "layers": 138, "texts": 63, "images": 11 },
+  "stats": { "layers": 161, "texts": 67, "images": 9 },
   "widths": [
     { "file": "w-1440-light.jpg", "label": "1440 · Light", "width": 1440 },
     { "file": "w-1440-dark.jpg", "label": "1440 · Dark", "width": 1440 },
@@ -34,5 +16,28 @@
     { "file": "w-768-dark.jpg", "label": "768 · Dark", "width": 768 },
     { "file": "w-390-light.jpg", "label": "390 · Light", "width": 390 },
     { "file": "w-390-dark.jpg", "label": "390 · Dark", "width": 390 }
-  ]
+  ],
+  "anatomy": {
+    "image": "anatomy.png",
+    "width": 1180,
+    "height": 331,
+    "notes": [
+      {
+        "box": [32, 37, 64, 64],
+        "title": "Vector",
+        "detail": "5 shapes from the page's SVG, still editable"
+      },
+      { "box": [32, 129, 206, 39], "title": "Text", "detail": "Hanken Grotesk · 650 · 26 px" },
+      {
+        "box": [32, 254, 169, 44],
+        "title": "Auto Layout",
+        "detail": "Horizontal · gap 10 · padding 20 · fully rounded"
+      },
+      {
+        "box": [32, 176, 329, 48],
+        "title": "Colour variable",
+        "detail": "Light #3D3D40 · Dark #C3C3C9"
+      }
+    ]
+  }
 }

@@ -22,16 +22,25 @@ for (const a of document.querySelectorAll<HTMLAnchorElement>('[data-link]')) {
   a.href = links[a.dataset.link!] ?? '#'
   a.rel = 'noopener'
 }
-for (const el of document.querySelectorAll('[data-logo]')) el.innerHTML = logo
+// The wordmark follows the text colour, so the logo works in both themes.
+const themedLogo = logo.replace('fill="#0A0A0B" transform', 'fill="currentColor" transform')
+for (const el of document.querySelectorAll('[data-logo]')) el.innerHTML = themedLogo
 for (const el of document.querySelectorAll('[data-version]')) el.textContent = __VERSION__
 
-/** Produced by scripts/explode.mjs from the sample page and a capture of it. */
+/** Produced by scripts/explode.mjs from this site and a capture of it. */
 interface Demo {
   width: number
   height: number
+  viewHeight: number
   planes: { name: string; image: string }[]
   stats: { layers: number; texts: number; images: number }
   widths: { file: string; label: string; width: number }[]
+  anatomy: {
+    image: string
+    width: number
+    height: number
+    notes: { box: [number, number, number, number]; title: string; detail: string }[]
+  }
 }
 
 // Reveal chapters as they scroll into view.
@@ -104,10 +113,14 @@ function explode(data: Demo) {
     const t = reduced
       ? 1
       : Math.min(1, Math.max(0, (innerHeight * 0.35 - rect.top) / travel) * 1.25)
-    const scale = Math.min(0.6, (stage.clientWidth * 0.68) / data.width)
+    const scale = Math.min(
+      0.6,
+      (stage.clientWidth * 0.72) / data.width,
+      (stage.clientHeight * 0.95) / data.height,
+    )
     stack.style.transform = `translate(-50%, -50%) scale(${scale}) rotateX(${t * 52}deg) rotateZ(${t * -26}deg)`
     planes.forEach((plane, i) => {
-      plane.style.transform = `translateZ(${t * i * 220}px)`
+      plane.style.transform = `translateZ(${t * i * 170}px)`
     })
     section.style.setProperty('--t', t.toFixed(3))
   }
@@ -153,7 +166,7 @@ function viewer(data: Demo) {
     const full = Math.round(max * scale)
     const shown = Math.round(width * scale)
     frame.style.width = `${full}px`
-    frame.style.height = `${Math.round(data.height * scale * 0.82)}px`
+    frame.style.height = `${Math.round(data.viewHeight * scale * 0.82)}px`
     // The frame is always full width; clipping opens or closes it to the new width.
     frame.style.clipPath = `inset(0 ${(full - shown) / 2}px round 14px)`
     image.style.width = `${shown}px`
@@ -179,10 +192,59 @@ function viewer(data: Demo) {
   render()
 }
 
+/** A real section of this page, marked with the layers PageRecast builds from it. */
+function anatomy(data: Demo['anatomy']) {
+  const root = document.querySelector<HTMLElement>('[data-anatomy]')
+  const stage = root?.querySelector<HTMLElement>('.anatomy-stage')
+  const image = root?.querySelector<HTMLImageElement>('[data-anatomy-image]')
+  const list = root?.querySelector<HTMLElement>('[data-anatomy-notes]')
+  if (!root || !stage || !image || !list) return
+  image.src = `${base}demo/${data.image}`
+  image.width = data.width
+  image.height = data.height
+  const pairs = data.notes.map((note, i) => {
+    const box = document.createElement('span')
+    box.className = 'anatomy-box'
+    box.innerHTML = `<b>${i + 1}</b>`
+    stage.appendChild(box)
+    const item = document.createElement('li')
+    item.innerHTML = `<strong></strong><span></span>`
+    item.querySelector('strong')!.textContent = note.title
+    item.querySelector('span')!.textContent = note.detail
+    list.appendChild(item)
+    return { note, box, item }
+  })
+  const place = () => {
+    const scale = image.clientWidth / data.width
+    for (const { note, box } of pairs) {
+      const [x, y, w, h] = note.box
+      box.style.left = `${image.offsetLeft + x * scale}px`
+      box.style.top = `${image.offsetTop + y * scale}px`
+      box.style.width = `${w * scale}px`
+      box.style.height = `${h * scale}px`
+    }
+  }
+  for (const { box, item } of pairs) {
+    const on = (state: boolean) => {
+      root.classList.toggle('is-hovering', state)
+      box.classList.toggle('is-on', state)
+      item.classList.toggle('is-on', state)
+    }
+    for (const el of [box, item]) {
+      el.addEventListener('mouseenter', () => on(true))
+      el.addEventListener('mouseleave', () => on(false))
+    }
+  }
+  image.addEventListener('load', place)
+  addEventListener('resize', place)
+  place()
+}
+
 fetch(`${base}demo/explode.json`)
   .then((r) => r.json() as Promise<Demo>)
   .then((data) => {
     explode(data)
     viewer(data)
+    anatomy(data.anatomy)
   })
   .catch(() => document.querySelector<HTMLElement>('[data-explode]')?.setAttribute('hidden', ''))

@@ -50,22 +50,18 @@
           <a class="btn btn--secondary" data-link="figma">Get the Figma plugin</a>
         </p>
         <p class="cta-note">
-          Works on pages behind a login. <a href="/sample/">Try it on a sample page</a>
+          Free forever. Works behind a login. <a href="/sample/">Try it on the test page</a>
         </p>
       </section>
 
-      <section
-        class="explode"
-        data-explode
-        aria-label="The sample page separating into its Figma layers"
-      >
+      <section class="explode" data-explode aria-label="This page separating into its Figma layers">
         <div class="explode-sticky">
           <div class="explode-stage"></div>
           <div class="explode-stats">
             <div><b data-stat="layers">—</b><span>layers</span></div>
             <div><b data-stat="texts">—</b><span>text</span></div>
             <div><b data-stat="images">—</b><span>images</span></div>
-            <p>One capture of the <a href="/sample/">sample page</a> at 1440 px, imported as is.</p>
+            <p>This page, captured at 1440 px and imported as is.</p>
           </div>
         </div>
       </section>
@@ -102,47 +98,23 @@
         <div class="chapter-head" data-reveal>
           <h2>Real layers, not a picture.</h2>
           <p>
-            Text stays text, in its own fonts. Images stay images, icons become vectors, and flex
-            layouts become Auto Layout where the result lands exactly where the page put it.
+            Text stays text, in its own fonts. Icons become vectors, colours become variables, and
+            flex layouts become Auto Layout wherever the result lands exactly where the page put it.
+            Every font that had to be replaced is listed.
           </p>
         </div>
-        <div class="split" data-reveal>
-          <figure class="panel">
+        <figure class="anatomy" data-anatomy data-reveal>
+          <div class="anatomy-stage">
             <img
-              src="/shots/plugin-review-light.png"
-              alt="The PageRecast plugin reviewing a capture before import"
-              width="400"
-              height="640"
-              loading="lazy"
+              alt="The install section of this page, with four of its Figma layers marked"
+              data-anatomy-image
             />
-          </figure>
-          <dl class="specs">
-            <div>
-              <dt>Text</dt>
-              <dd>Every inline style, link and line break kept as one text layer</dd>
-            </div>
-            <div>
-              <dt>Fonts</dt>
-              <dd>Matched through each CSS font stack, with every replacement listed</dd>
-            </div>
-            <div>
-              <dt>Layout</dt>
-              <dd>Auto Layout that is checked against the page, child by child</dd>
-            </div>
-            <div>
-              <dt>Styles</dt>
-              <dd>Colour variables, text styles, or the styles already in your file</dd>
-            </div>
-            <div>
-              <dt>Visuals</dt>
-              <dd>Gradients, borders, radii, shadows, blur and SVG as editable vectors</dd>
-            </div>
-            <div>
-              <dt>Names</dt>
-              <dd>Layers named for what they are, or for their HTML</dd>
-            </div>
-          </dl>
-        </div>
+          </div>
+          <ol class="anatomy-notes" data-anatomy-notes></ol>
+          <figcaption>
+            Read from this page by PageRecast. These are the layers it builds.
+          </figcaption>
+        </figure>
       </section>
 
       <section class="chapter chapter--behind">
@@ -163,8 +135,8 @@
             loading="lazy"
           />
           <img
-            src="/shots/ext-ready-dark.png"
-            alt="The PageRecast capture settings in dark mode"
+            src="/shots/plugin-review-dark.png"
+            alt="The PageRecast Figma plugin reviewing the capture before import"
             width="380"
             height="860"
             loading="lazy"
@@ -191,7 +163,7 @@
             <a class="btn btn--dark" data-link="repo"
               >View on GitHub<span class="btn-arrow" aria-hidden="true"></span
             ></a>
-            <a class="btn btn--secondary" data-link="format">Read the format</a>
+            <a class="link" data-link="format">Read the format <span aria-hidden="true">›</span></a>
           </p>
         </div>
         <pre class="code" data-reveal aria-label="An excerpt of a .recast file"><code>{
@@ -212,21 +184,73 @@
         <h2>Two parts. Two minutes.</h2>
         <div class="install-row" data-reveal>
           <a class="install-item" data-link="chrome">
+            <span class="tile tile--chrome"
+              ><svg viewBox="0 0 48 48" aria-hidden="true">
+                <path
+                  fill="#ea4335"
+                  d="M24 13h19.05A22 22 0 0 0 4.95 13l9.52 16.5A11 11 0 0 1 24 13z"
+                />
+                <path
+                  fill="#fbbc04"
+                  d="M33.53 29.5 24 46a22 22 0 0 0 19.05-33H24a11 11 0 0 1 9.53 16.5z"
+                />
+                <path
+                  fill="#34a853"
+                  d="M14.47 29.5 4.95 13A22 22 0 0 0 24 46l9.53-16.5a11 11 0 0 1-19.06 0z"
+                />
+                <circle cx="24" cy="24" r="11" fill="#fff" />
+                <circle cx="24" cy="24" r="8.6" fill="#1a73e8" /></svg
+            ></span>
             <strong>Chrome extension</strong>
-            <span>Captures the page, at every width, in light and dark.</span>
-            <em class="btn btn--primary btn--small"
+            <span class="install-text">Captures the page, at every width, in light and dark.</span>
+            <span class="btn btn--primary btn--small"
               >Add to Chrome<span class="btn-arrow" aria-hidden="true"></span
-            ></em>
+            ></span>
           </a>
           <a class="install-item" data-link="figma">
+            <span class="tile tile--figma"
+              ><svg viewBox="0 0 38 57" aria-hidden="true">
+                <path fill="#1abcfe" d="M19 28.5a9.5 9.5 0 1 1 19 0 9.5 9.5 0 0 1-19 0z" />
+                <path fill="#0acf83" d="M0 47.5A9.5 9.5 0 0 1 9.5 38H19v9.5a9.5 9.5 0 1 1-19 0z" />
+                <path fill="#ff7262" d="M19 0v19h9.5a9.5 9.5 0 1 0 0-19H19z" />
+                <path
+                  fill="#f24e1e"
+                  d="M0 9.5A9.5 9.5 0 0 0 9.5 19H19V0H9.5A9.5 9.5 0 0 0 0 9.5z"
+                />
+                <path
+                  fill="#a259ff"
+                  d="M0 28.5A9.5 9.5 0 0 0 9.5 38H19V19H9.5A9.5 9.5 0 0 0 0 28.5z"
+                /></svg
+            ></span>
             <strong>Figma plugin</strong>
-            <span>Builds the layers, with Auto Layout, variables and styles.</span>
-            <em class="btn btn--dark btn--small"
+            <span class="install-text"
+              >Builds the layers, with Auto Layout, variables and styles.</span
+            >
+            <span class="btn btn--dark btn--small"
               >Get the plugin<span class="btn-arrow" aria-hidden="true"></span
-            ></em>
+            ></span>
+          </a>
+          <a class="install-item" data-link="docs">
+            <span class="tile tile--guide"
+              ><svg
+                viewBox="0 0 20 20"
+                aria-hidden="true"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M4 4.5A1.5 1.5 0 0 1 5.5 3H16v12H5.5A1.5 1.5 0 0 0 4 16.5z" />
+                <path d="M4 16.5A1.5 1.5 0 0 0 5.5 18H16M7.5 6.5h5" /></svg
+            ></span>
+            <strong>Guides</strong>
+            <span class="install-text"
+              >Install both, capture a page, paste it. Start in two minutes.</span
+            >
+            <span class="link">Read the guides <span aria-hidden="true">›</span></span>
           </a>
         </div>
-        <p class="install-guide">New here? <a data-link="docs">Read the two-minute guide</a></p>
       </section>
     </main>
 

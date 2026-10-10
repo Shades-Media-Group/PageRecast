@@ -20,7 +20,7 @@ Everything here is copy you can paste. Assets are in [`assets/store`](../assets/
 
 1. Open the [Developer Dashboard](https://chrome.google.com/webstore/devconsole) signed in with the Shades account.
 2. Accept the developer agreement and pay the one-time registration fee.
-3. In **Account**, set the publisher name to **Shades Media Group**, add and verify the contact email, and complete the trader declaration (Shades publishes as a business, so choose trader and enter the business address and contact).
+3. In **Account**, set the publisher name to **Shades Media Group**, add and verify the contact email (`support@shades.md`), and complete the trader declaration (Shades publishes as a business, so choose trader and enter the business address and contact).
 
 ### 2. Create the item
 
@@ -110,7 +110,7 @@ The manifest now carries the permanent Community ID `1690893819753299295`. For a
 | Icon (128 × 128)        | `assets/brand/png/app-icon-128.png`                     |
 | Cover art (1920 × 1080) | `assets/store/figma-cover.png`                          |
 | Tags                    | import, website, html, web to figma, capture            |
-| Support contact         | hello@shades.md                                         |
+| Support contact         | support@shades.md                                       |
 | Publisher               | Shades Media Group                                      |
 
 **Description**

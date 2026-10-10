@@ -1,0 +1,245 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Harbour Line · Crossings today</title>
+    <meta
+      name="description"
+      content="A fictional ferry operator's page, made as a sample for trying PageRecast."
+    />
+    <meta name="robots" content="noindex" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  </head>
+  <body>
+    <div class="sample-note">
+      A sample page for trying <a href="/">PageRecast</a>. Harbour Line is fictional.
+    </div>
+
+    <header class="top">
+      <a class="brand" href="#" aria-label="Harbour Line">
+        <svg viewBox="0 0 40 40" width="32" height="32" aria-hidden="true">
+          <rect width="40" height="40" rx="10" fill="var(--sea)" />
+          <path
+            d="M7 24c3.5 0 3.5-3 7-3s3.5 3 7 3 3.5-3 7-3 3.5 3 6 3"
+            fill="none"
+            stroke="var(--foam)"
+            stroke-width="2.6"
+            stroke-linecap="round"
+          />
+          <path
+            d="M7 30c3.5 0 3.5-3 7-3s3.5 3 7 3 3.5-3 7-3 3.5 3 6 3"
+            fill="none"
+            stroke="var(--teal)"
+            stroke-width="2.6"
+            stroke-linecap="round"
+          />
+          <path d="M14 18l6-9 6 9z" fill="var(--amber)" />
+        </svg>
+        <span>Harbour Line</span>
+      </a>
+      <nav aria-label="Main">
+        <a href="#" aria-current="page">Departures</a>
+        <a href="#">Routes</a>
+        <a href="#">Fares</a>
+        <a href="#">Freight</a>
+        <a href="#">Help</a>
+      </nav>
+      <a class="book" href="#book">Book a crossing</a>
+    </header>
+
+    <main>
+      <section class="today">
+        <div class="today-copy">
+          <p class="date">Saturday 11 October</p>
+          <h1>Crossings today</h1>
+          <ul class="weather" aria-label="Sea conditions">
+            <li><strong>14 kn</strong> wind from the northwest</li>
+            <li><strong>Moderate</strong> sea, 1.2 m swell</li>
+            <li><strong>12°</strong> and clear until evening</li>
+          </ul>
+        </div>
+        <figure class="map" aria-label="Route map">
+          <svg viewBox="0 0 520 300" role="img" aria-label="Three routes from Northpoint">
+            <path class="land" d="M0 0h190c-20 40 10 70-14 108s-60 30-62 82 46 70 26 110H0z" />
+            <path
+              class="land"
+              d="M360 40c40-18 96-10 116 26s-8 70 18 100-6 74-58 76-86-34-92-82 2-102 16-120z"
+            />
+            <path class="land" d="M250 236c18-14 52-10 60 8s-10 40-34 42-44-36-26-50z" />
+            <path class="route route--teal" d="M150 150C230 120 300 110 372 120" />
+            <path class="route route--amber" d="M150 150C200 200 230 240 262 252" />
+            <path class="route route--coral" d="M150 150C250 170 330 200 420 236" />
+            <g class="port">
+              <circle cx="150" cy="150" r="7" />
+              <text x="96" y="182">Northpoint</text>
+            </g>
+            <g class="port">
+              <circle cx="372" cy="120" r="6" />
+              <text x="384" y="112">Isle of Kell</text>
+            </g>
+            <g class="port">
+              <circle cx="262" cy="252" r="6" />
+              <text x="196" y="262">Saltby</text>
+            </g>
+            <g class="port">
+              <circle cx="420" cy="236" r="6" />
+              <text x="356" y="276">Fenwick</text>
+            </g>
+          </svg>
+        </figure>
+      </section>
+
+      <section class="board-wrap">
+        <div class="board">
+          <div class="board-head">
+            <h2>Departures from Northpoint</h2>
+            <p>Updated 09:12</p>
+          </div>
+          <table>
+            <thead>
+              <tr>
+                <th>Time</th>
+                <th>To</th>
+                <th>Vessel</th>
+                <th>Gate</th>
+                <th>Status</th>
+                <th>Seats</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="time">09:40</td>
+                <td><span class="line line--teal"></span>Isle of Kell</td>
+                <td>MV Skerry</td>
+                <td>2</td>
+                <td><span class="status status--boarding">Boarding</span></td>
+                <td>
+                  <span class="seats"><i style="width: 18%"></i></span
+                  ><span class="seats-n">31</span>
+                </td>
+              </tr>
+              <tr>
+                <td class="time">10:15</td>
+                <td><span class="line line--amber"></span>Saltby</td>
+                <td>MV Tern</td>
+                <td>4</td>
+                <td><span class="status status--ok">On time</span></td>
+                <td>
+                  <span class="seats"><i style="width: 62%"></i></span
+                  ><span class="seats-n">112</span>
+                </td>
+              </tr>
+              <tr>
+                <td class="time">11:00</td>
+                <td><span class="line line--coral"></span>Fenwick</td>
+                <td>MV Gannet</td>
+                <td>1</td>
+                <td><span class="status status--late">Delayed 15 min</span></td>
+                <td>
+                  <span class="seats"><i style="width: 44%"></i></span
+                  ><span class="seats-n">86</span>
+                </td>
+              </tr>
+              <tr>
+                <td class="time">12:30</td>
+                <td><span class="line line--teal"></span>Isle of Kell</td>
+                <td>MV Skerry</td>
+                <td>2</td>
+                <td><span class="status status--ok">On time</span></td>
+                <td>
+                  <span class="seats"><i style="width: 80%"></i></span
+                  ><span class="seats-n">140</span>
+                </td>
+              </tr>
+              <tr>
+                <td class="time">14:05</td>
+                <td><span class="line line--coral"></span>Fenwick</td>
+                <td>MV Puffin</td>
+                <td>3</td>
+                <td><span class="status status--off">Cancelled</span></td>
+                <td><span class="seats-n">—</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <form class="booking" id="book" onsubmit="return false">
+          <h2>Book a crossing</h2>
+          <label
+            >From<select>
+              <option>Northpoint</option>
+            </select></label
+          >
+          <label
+            >To<select>
+              <option>Isle of Kell</option>
+            </select></label
+          >
+          <div class="pair">
+            <label>Date<input type="text" value="Sat 11 Oct" /></label>
+            <label>Passengers<input type="text" value="2 adults" /></label>
+          </div>
+          <label class="check"><input type="checkbox" checked /> I'm bringing a car</label>
+          <button type="submit">Find crossings</button>
+          <p class="small">Free cancellation up to 24 hours before departure.</p>
+        </form>
+      </section>
+
+      <section class="fares">
+        <h2>Fares to Isle of Kell</h2>
+        <table>
+          <thead>
+            <tr>
+              <th></th>
+              <th>Off-peak</th>
+              <th>Peak</th>
+              <th>Return</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th>Foot passenger</th>
+              <td>€9</td>
+              <td>€12</td>
+              <td>€19</td>
+            </tr>
+            <tr>
+              <th>Car and driver</th>
+              <td>€38</td>
+              <td>€46</td>
+              <td>€79</td>
+            </tr>
+            <tr>
+              <th>Bicycle</th>
+              <td>€2</td>
+              <td>€2</td>
+              <td>€3</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <aside class="notice">
+        <strong>Winter timetable from 26 October.</strong>
+        <span>The 14:05 to Fenwick moves to 13:40, and Saltby sailings drop to four a day.</span>
+        <a href="#">See the new times</a>
+      </aside>
+    </main>
+
+    <footer class="foot">
+      <div>
+        <strong>Harbour Line</strong>
+        <p>Ferries between Northpoint and the islands since 1962.</p>
+      </div>
+      <nav aria-label="Footer">
+        <a href="#">Accessibility</a>
+        <a href="#">Lost property</a>
+        <a href="#">Careers</a>
+        <a href="#">Contact</a>
+      </nav>
+    </footer>
+
+    <script type="module" src="./sample.ts"></script>
+  </body>
+</html>

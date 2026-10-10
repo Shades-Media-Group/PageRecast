@@ -1,0 +1,131 @@
+// Generates every PageRecast logo file from one geometry definition.
+// Usage: node scripts/brand.mjs   (writes assets/brand/** and the app icons)
+import { mkdir, readFile, writeFile } from 'node:fs/promises'
+import { dirname, join } from 'node:path'
+import { fileURLToPath } from 'node:url'
+import { createRequire } from 'node:module'
+import opentype from 'opentype.js'
+import { chromium } from '@playwright/test'
+
+const root = join(dirname(fileURLToPath(import.meta.url)), '..')
+const require = createRequire(import.meta.url)
+
+const color = {
+  red: '#F9000A',
+  rose: '#FF8299',
+  ink: '#0A0A0B',
+  paper: '#FDFDFC',
+}
+
+// The mark: a page and a layer, overlapping. The overlap is the recast.
+// Drawn on a 96-unit grid; both shapes share one size and radius.
+const page = { x: 8, y: 26, w: 54, h: 60, r: 13 }
+const layer = { x: 34, y: 10, w: 54, h: 60, r: 13 }
+
+const rectPath = ({ x, y, w, h, r }) =>
+  `M${x + r} ${y}H${x + w - r}A${r} ${r} 0 0 1 ${x + w} ${y + r}V${y + h - r}A${r} ${r} 0 0 1 ${x + w - r} ${y + h}H${x + r}A${r} ${r} 0 0 1 ${x} ${y + h - r}V${y + r}A${r} ${r} 0 0 1 ${x + r} ${y}Z`
+
+// The intersection keeps two rounded corners (the page's top-right and the
+// layer's bottom-left); the other two are where straight edges cross.
+const overlapPath = (() => {
+  const left = layer.x
+  const top = page.y
+  const right = page.x + page.w
+  const bottom = layer.y + layer.h
+  const r = page.r
+  return `M${left} ${top}H${right - r}A${r} ${r} 0 0 1 ${right} ${top + r}V${bottom}H${left + r}A${r} ${r} 0 0 1 ${left} ${bottom - r}Z`
+})()
+
+function markShapes({ overlapFill = color.ink, mono } = {}) {
+  if (mono) {
+    // One colour, overlap knocked out.
+    return `<path fill="${mono}" fill-rule="evenodd" d="${rectPath(page)}${rectPath(layer)}"/>`
+  }
+  return [
+    `<path fill="${color.red}" d="${rectPath(page)}"/>`,
+    `<path fill="${color.rose}" d="${rectPath(layer)}"/>`,
+    `<path fill="${overlapFill}" d="${overlapPath}"/>`,
+  ].join('')
+}
+
+const svg = (viewBox, body, title = 'PageRecast') =>
+  `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${viewBox}" role="img" aria-label="${title}"><title>${title}</title>${body}</svg>\n`
+
+async function wordmarkPath() {
+  const buffer = await readFile(
+    require.resolve('@fontsource/space-grotesk/files/space-grotesk-latin-700-normal.woff'),
+  )
+  const font = opentype.parse(
+    buffer.buffer.slice(buffer.byteOffset, buffer.byteOffset + buffer.length),
+  )
+  const size = 100
+  const tracking = -0.035 * size
+  let x = 0
+  const parts = []
+  for (const char of 'PageRecast') {
+    const glyph = font.charToGlyph(char)
+    parts.push(glyph.getPath(x, 0, size).toPathData(2))
+    x += (glyph.advanceWidth / font.unitsPerEm) * size + tracking
+  }
+  const capHeight = (font.tables.os2.sCapHeight / font.unitsPerEm) * size
+  return { d: parts.join(''), width: x - tracking, capHeight }
+}
+
+async function main() {
+  const out = join(root, 'assets/brand')
+  await mkdir(join(out, 'png'), { recursive: true })
+
+  const files = {
+    'logomark.svg': svg('0 0 96 96', markShapes()),
+    'logomark-dark.svg': svg('0 0 96 96', markShapes({ overlapFill: color.paper })),
+    'logomark-mono-ink.svg': svg('0 0 96 96', markShapes({ mono: color.ink })),
+    'logomark-mono-paper.svg': svg('0 0 96 96', markShapes({ mono: color.paper })),
+  }
+
+  // Primary logo: mark + wordmark. Mark height = 1.9 × cap height, gap = 0.3 × mark.
+  const word = await wordmarkPath()
+  const markSize = word.capHeight * 1.9
+  const scale = markSize / 96
+  const gap = markSize * 0.3
+  const height = markSize
+  const baseline = height / 2 + word.capHeight / 2
+  const width = markSize + gap + word.width
+  const lockup = (overlapFill, textFill) =>
+    svg(
+      `0 0 ${width.toFixed(1)} ${height.toFixed(1)}`,
+      `<g transform="scale(${scale.toFixed(4)})">${markShapes({ overlapFill })}</g>` +
+        `<path fill="${textFill}" transform="translate(${(markSize + gap).toFixed(1)} ${baseline.toFixed(1)})" d="${word.d}"/>`,
+    )
+  files['logo.svg'] = lockup(color.ink, color.ink)
+  files['logo-dark.svg'] = lockup(color.paper, color.paper)
+
+  // App icon: the mark on a paper tile, for store listings and the Figma plugin.
+  files['app-icon.svg'] = svg(
+    '0 0 128 128',
+    `<rect width="128" height="128" rx="28" fill="${color.paper}"/><g transform="translate(16 16)">${markShapes()}</g>`,
+  )
+
+  for (const [name, content] of Object.entries(files)) await writeFile(join(out, name), content)
+
+  // Raster exports. Toolbar icons are the bare mark with Chrome's recommended padding.
+  const browser = await chromium.launch()
+  const pageCtx = await browser.newPage()
+  const render = async (markup, size, file) => {
+    await pageCtx.setViewportSize({ width: size, height: size })
+    await pageCtx.setContent(
+      `<style>html,body{margin:0;background:transparent}svg{display:block;width:${size}px;height:${size}px}</style>${markup}`,
+    )
+    await pageCtx.screenshot({ path: file, omitBackground: true })
+  }
+  const toolbarMark = svg('-8 -8 112 112', markShapes())
+  for (const size of [16, 32, 48, 128]) {
+    await render(toolbarMark, size, join(out, `png/icon-${size}.png`))
+  }
+  await render(files['app-icon.svg'], 128, join(out, 'png/app-icon-128.png'))
+  await render(files['app-icon.svg'], 512, join(out, 'png/app-icon-512.png'))
+  await browser.close()
+
+  console.log(`brand: wrote ${Object.keys(files).length} SVGs and 6 PNGs to assets/brand`)
+}
+
+await main()

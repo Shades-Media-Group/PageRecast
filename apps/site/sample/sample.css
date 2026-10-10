@@ -12,7 +12,7 @@
   --card: #ffffff;
   --sunk: #f1efe9;
   --line: #e3e1db;
-  --serif: 'Source Serif 4 Variable', Georgia, serif;
+  --display: 'Inter Variable', system-ui, sans-serif;
   --sans: 'Hanken Grotesk Variable', system-ui, sans-serif;
   --gutter: clamp(20px, 4vw, 56px);
   --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
@@ -40,7 +40,7 @@
   box-sizing: border-box;
   margin: 0;
 }
-/* The serif picks its optical size from the font size. */
+/* Inter picks its optical size from the font size. */
 h1,
 h2,
 .glyphs,
@@ -131,15 +131,15 @@ a {
   padding: clamp(56px, 9vw, 120px) var(--gutter) clamp(48px, 7vw, 96px);
 }
 .intro h1 {
-  font-family: var(--serif);
-  font-size: clamp(56px, 9.5vw, 148px);
-  font-weight: 600;
+  font-family: var(--display);
+  font-size: clamp(48px, 7.4vw, 112px);
+  font-weight: 700;
   line-height: 0.92;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.045em;
 }
 .intro h1 em {
   color: var(--signal);
-  font-weight: 500;
+  font-weight: 700;
 }
 .intro-side p {
   max-width: 440px;
@@ -179,11 +179,11 @@ a {
   border-top: 1px solid var(--line);
 }
 .spec-head h2 {
-  font-family: var(--serif);
+  font-family: var(--display);
   font-size: 44px;
-  font-weight: 600;
+  font-weight: 700;
   line-height: 1.05;
-  letter-spacing: -0.005em;
+  letter-spacing: -0.03em;
 }
 .spec-head p {
   max-width: 300px;
@@ -213,11 +213,11 @@ a {
   gap: 40px;
 }
 .glyphs {
-  font-family: var(--serif);
+  font-family: var(--display);
   font-size: clamp(120px, 16vw, 220px);
-  font-weight: 400;
+  font-weight: 600;
   line-height: 1;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.05em;
 }
 .type-hero dl {
   display: grid;
@@ -237,19 +237,19 @@ a {
   gap: 18px;
 }
 .t-display {
-  font-family: var(--serif);
+  font-family: var(--display);
   font-size: 64px;
   font-weight: 700;
   line-height: 1;
-  letter-spacing: -0.015em;
+  letter-spacing: -0.035em;
 }
 .t-title {
-  font-family: var(--serif);
+  font-family: var(--display);
   font-size: 40px;
   font-style: italic;
-  font-weight: 400;
+  font-weight: 500;
   line-height: 1.1;
-  letter-spacing: -0.005em;
+  letter-spacing: -0.025em;
 }
 .t-head {
   font-size: 24px;
@@ -477,11 +477,12 @@ a {
 /* Vectors and images */
 .media {
   display: grid;
-  grid-template-columns: 1.4fr 1fr;
+  grid-template-columns: 1fr 1fr;
   gap: 16px;
 }
 .media figure {
   display: grid;
+  align-content: start;
   gap: 10px;
 }
 .media figcaption {
@@ -497,8 +498,8 @@ a {
 .photo img {
   display: block;
   width: 100%;
-  height: 100%;
-  max-height: 360px;
+  height: auto;
+  aspect-ratio: 4 / 3;
   object-fit: cover;
   object-position: 50% 0;
   border-radius: 20px;

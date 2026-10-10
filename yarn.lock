@@ -561,15 +561,15 @@
   resolved "https://registry.yarnpkg.com/@fontsource-variable/hanken-grotesk/-/hanken-grotesk-5.3.0.tgz#9f4d3ac87244a44a578ce58c9ae8fab44df9357f"
   integrity sha512-DOd0FqL+3cH2dfNy0JtSq9tUfxBz5mLmHMjTU0DOr3E9Zo6wxuatCl53DIPNrSPgCsnuKyM739BTIG5glCLirw==
 
+"@fontsource-variable/inter@5":
+  version "5.3.0"
+  resolved "https://registry.yarnpkg.com/@fontsource-variable/inter/-/inter-5.3.0.tgz#351dd1e02dab63a6cf66d57ec36dcfd10c07f07b"
+  integrity sha512-OupL48va4JNofb97w6NYeF9S7W/kHNKM0Er8Dem5nqi4jeOLrVJDoE8tZEpnMJmtkvNbB1EIPPwHcdkF6b1oUA==
+
 "@fontsource-variable/schibsted-grotesk@^5.3.0":
   version "5.3.0"
   resolved "https://registry.yarnpkg.com/@fontsource-variable/schibsted-grotesk/-/schibsted-grotesk-5.3.0.tgz#0d2e4f8af8b7c95583f6377f57e0a1b922b8aa54"
   integrity sha512-ndS6H/KICWANchlHF3q4UdZD+xrZ3Ji0rUobIuXlgvDUzDfqZDsVuXPXZb636nJZMHE9zZ9Fmwgqazm8hMB50Q==
-
-"@fontsource-variable/source-serif-4@5":
-  version "5.3.0"
-  resolved "https://registry.yarnpkg.com/@fontsource-variable/source-serif-4/-/source-serif-4-5.3.0.tgz#3b4ac04d10d3ca0d59c55433295967cc86b9aea3"
-  integrity sha512-9vch9WqxjaaA+1o9Ur8pOgIGbCYLjRReOUel23A6lOpD1syptgjtkORevvNmldJ5kGXQL29onQUqI5Ltz0s3bQ==
 
 "@fontsource/space-grotesk@^5.3.0":
   version "5.3.0"

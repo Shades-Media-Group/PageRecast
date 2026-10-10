@@ -9,4 +9,4 @@ The icon set in `packages/icons` uses paths from Material Icons (Round) by Googl
 ## Fonts
 
 - [Hanken Grotesk](https://github.com/marcologous/hanken-grotesk), SIL Open Font License 1.1
-- [Source Serif 4](https://github.com/adobe-fonts/source-serif), SIL Open Font License 1.1, used on the website's test page
+- [Inter](https://github.com/rsms/inter), SIL Open Font License 1.1, used on the website's test page

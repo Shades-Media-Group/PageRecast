@@ -1,8 +1,8 @@
 // The test page: two typefaces, the PageRecast logo and icons, and the live
 // hex value of every colour token. Everything else is CSS.
 import '@fontsource-variable/hanken-grotesk/wght.css'
-import '@fontsource-variable/source-serif-4/opsz.css'
-import '@fontsource-variable/source-serif-4/opsz-italic.css'
+import '@fontsource-variable/inter/opsz.css'
+import '@fontsource-variable/inter/opsz-italic.css'
 import { renderIcon, type IconName } from '@pagerecast/icons'
 import logo from '../../../assets/brand/logo.svg?raw'
 import './sample.css'

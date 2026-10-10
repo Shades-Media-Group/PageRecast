@@ -654,14 +654,13 @@ code {
   align-content: start;
   gap: 20px;
 }
-.footer-brand h2 {
-  max-width: 420px;
-  font-size: clamp(26px, 2.6vw, 34px);
-  line-height: 1.1;
+.footer-logo svg {
+  display: block;
+  height: 26px;
+  width: auto;
 }
 .footer-brand p {
   max-width: 340px;
-  margin-top: -8px;
   color: var(--ink-2);
   font-size: 16px;
 }

@@ -310,22 +310,20 @@ export function App() {
       <main class="scroll">
         {current && (
           <section class="result" aria-live="polite">
-            <div class="result-top">
-              <FramesGraphic frames={framesFromLabels(current.views)} height={52} />
-              <div class="result-count">
-                <b class="num">{current.layers.toLocaleString()}</b>
-                <span>
-                  layers in {current.views.length} frame{current.views.length === 1 ? '' : 's'}
-                </span>
-              </div>
+            <FramesGraphic frames={framesFromLabels(current.views)} height={34} />
+            <div class="result-text">
+              <p class="truncate result-title">{current.title}</p>
+              <p class="result-count">
+                <span class="num">{current.views.length}</span>{' '}
+                {current.views.length === 1 ? 'frame' : 'frames'} ·{' '}
+                <span class="num">{current.layers.toLocaleString()}</span> layers
+              </p>
+              <p class="truncate muted">
+                {hostOf(current.url)} · <span class="num">{formatBytes(current.bytes)}</span>
+              </p>
             </div>
-            <p class="truncate result-title">{current.title}</p>
-            <p class="muted">
-              {hostOf(current.url)} · <span class="num">{formatBytes(current.bytes)}</span> ·{' '}
-              {ago(current.createdAt)}
-            </p>
             <p class="next">
-              Now paste it in Figma with <strong>PageRecast</strong>.
+              Copy it, then paste it into the <strong>PageRecast</strong> plugin in Figma.
             </p>
           </section>
         )}

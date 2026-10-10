@@ -1,18 +1,21 @@
-import { useEffect, useRef, useState } from 'preact/hooks'
-import type { Capture, RecastFile } from '@pagerecast/scene'
-import { SceneError } from '@pagerecast/scene'
+import { useEffect, useMemo, useRef, useState } from 'preact/hooks'
+import { SceneError, type Capture, type RecastFile } from '@pagerecast/scene'
 import {
   Button,
   CREDIT,
+  DOCS_URL,
   formatBytes,
   Icon,
   IconButton,
-  Logomark,
-  Notice,
+  Logo,
+  Message,
   Progress,
+  RecastDrawing,
   REPO_URL,
+  Section,
   Segmented,
-  Switch,
+  Tabs,
+  Toggle,
   type IconName,
 } from '@pagerecast/ui'
 import {
@@ -24,34 +27,39 @@ import {
 } from '../shared/messages'
 import { prepareImages, readFile, readText, renderHtml } from './load'
 
+declare const __VERSION__: string
+
 type Stage =
   | { kind: 'empty' }
-  | { kind: 'reading'; message: string }
+  | { kind: 'reading' }
   | { kind: 'ready'; file: RecastFile; selected: Set<string>; bytes: number }
-  | { kind: 'importing'; message: string; progress: number }
+  | { kind: 'importing'; label: string; progress: number }
   | { kind: 'done'; report: ImportReport }
   | { kind: 'error'; message: string }
 
 const send = (message: UiToMain) => parent.postMessage({ pluginMessage: message }, '*')
-const openUrl = (url: string) => send({ type: 'open-url', url })
-const EXTENSION_URL = `${REPO_URL}#install-the-chrome-extension`
-const DOCS_URL = `${REPO_URL}/blob/main/docs/guides/getting-started.md`
+const open = (url: string) => (event: Event) => {
+  event.preventDefault()
+  send({ type: 'open-url', url })
+}
+const EXTENSION_URL = `${REPO_URL}#install`
 
 const deviceIcon = (width: number): IconName =>
   width >= 1000 ? 'desktop' : width >= 600 ? 'tablet' : 'mobile'
 
-function errorMessage(error: unknown): string {
-  if (error instanceof SceneError) return error.message
-  return 'Something went wrong while reading that capture. Copy it again and paste it here.'
+function hostOf(url: string) {
+  try {
+    return new URL(url).host
+  } catch {
+    return 'HTML code'
+  }
 }
 
-function timeAgo(iso: string): string {
-  const minutes = Math.round((Date.now() - new Date(iso).getTime()) / 60000)
-  if (!Number.isFinite(minutes) || minutes < 1) return 'just now'
-  if (minutes < 60) return `${minutes} min ago`
-  const hours = Math.round(minutes / 60)
-  if (hours < 24) return `${hours} h ago`
-  return new Date(iso).toLocaleDateString()
+function screenshotUrl(file: RecastFile, capture?: Capture): string | null {
+  const asset = capture?.screenshot ? file.assets[capture.screenshot] : undefined
+  return asset?.kind === 'image' && asset.data
+    ? `data:${asset.mime || 'image/png'};base64,${asset.data}`
+    : null
 }
 
 export function App() {
@@ -61,19 +69,20 @@ export function App() {
   const [dragging, setDragging] = useState(false)
   const fileInput = useRef<HTMLInputElement>(null)
 
-  const load = async (read: () => Promise<RecastFile>, size: number) => {
-    setStage({ kind: 'reading', message: 'Reading the capture…' })
+  const load = async (read: () => Promise<RecastFile>, bytes: number) => {
+    setStage({ kind: 'reading' })
     try {
       const file = await read()
       setTab('capture')
-      setStage({
-        kind: 'ready',
-        file,
-        selected: new Set(file.captures.map((c) => c.id)),
-        bytes: size,
-      })
+      setStage({ kind: 'ready', file, selected: new Set(file.captures.map((c) => c.id)), bytes })
     } catch (error) {
-      setStage({ kind: 'error', message: errorMessage(error) })
+      setStage({
+        kind: 'error',
+        message:
+          error instanceof SceneError
+            ? error.message
+            : 'That capture could not be read. Copy it again from the extension.',
+      })
     }
   }
 
@@ -83,23 +92,24 @@ export function App() {
       if (!message) return
       if (message.type === 'ready') setOptions(message.options)
       if (message.type === 'progress') {
-        const label =
-          message.phase === 'fonts'
-            ? 'Loading fonts…'
-            : message.phase === 'styles'
-              ? 'Creating variables and styles…'
-              : `Building layers · ${message.done.toLocaleString()} of ${message.total.toLocaleString()}`
-        const progress =
-          message.phase === 'fonts'
-            ? 0.3
-            : message.phase === 'styles'
-              ? 0.95
-              : 0.3 + 0.65 * (message.done / Math.max(message.total, 1))
-        setStage({ kind: 'importing', message: label, progress })
+        const { phase, done, total } = message
+        setStage({
+          kind: 'importing',
+          label:
+            phase === 'fonts'
+              ? 'Loading fonts'
+              : phase === 'styles'
+                ? 'Creating variables and styles'
+                : `Building layers  ${done.toLocaleString()} / ${total.toLocaleString()}`,
+          progress:
+            phase === 'fonts'
+              ? 0.3
+              : phase === 'styles'
+                ? 0.96
+                : 0.3 + 0.65 * (done / Math.max(total, 1)),
+        })
       }
-      if (message.type === 'done') {
-        setStage({ kind: 'done', report: message.report })
-      }
+      if (message.type === 'done') setStage({ kind: 'done', report: message.report })
       if (message.type === 'error') setStage({ kind: 'error', message: message.message })
     }
     const onPaste = (event: ClipboardEvent) => {
@@ -113,7 +123,7 @@ export function App() {
     return () => document.removeEventListener('paste', onPaste)
   }, [])
 
-  const updateOptions = (patch: Partial<ImportOptions>) => {
+  const setOption = (patch: Partial<ImportOptions>) => {
     const next = { ...options, ...patch }
     setOptions(next)
     send({ type: 'options', options: next })
@@ -125,56 +135,44 @@ export function App() {
       ...stage.file,
       captures: stage.file.captures.filter((c) => stage.selected.has(c.id)),
     }
-    setStage({ kind: 'importing', message: 'Preparing images…', progress: 0.05 })
-    const { images, tiles, failed } = await prepareImages(file, (done, total) =>
+    setStage({ kind: 'importing', label: 'Preparing images', progress: 0.04 })
+    const { images, tiles } = await prepareImages(file, (done, total) =>
       setStage({
         kind: 'importing',
-        message: `Preparing images · ${done} of ${total}`,
-        progress: 0.05 + 0.2 * (done / Math.max(total, 1)),
+        label: `Preparing images  ${done} / ${total}`,
+        progress: 0.04 + 0.22 * (done / Math.max(total, 1)),
       }),
     )
-    if (failed.length) console.warn('PageRecast: images not loaded', failed)
     send({ type: 'import', file, images, tiles, options })
-  }
-
-  const onDrop = (event: DragEvent) => {
-    event.preventDefault()
-    setDragging(false)
-    const file = event.dataTransfer?.files[0]
-    if (file) void load(() => readFile(file), file.size)
   }
 
   return (
     <div
-      class={`app ${dragging ? 'is-dragging' : ''}`}
+      class="app"
       onDragOver={(e) => {
         e.preventDefault()
         setDragging(true)
       }}
-      onDragLeave={(e) => {
-        if (e.relatedTarget === null) setDragging(false)
+      onDragLeave={(e) => e.relatedTarget === null && setDragging(false)}
+      onDrop={(e) => {
+        e.preventDefault()
+        setDragging(false)
+        const file = e.dataTransfer?.files[0]
+        if (file) void load(() => readFile(file), file.size)
       }}
-      onDrop={onDrop}
     >
-      <header class="bar">
-        <div class="brand">
-          <Logomark size={20} />
-          <span>PageRecast</span>
-        </div>
-        <IconButton icon="docs" label="Documentation" onClick={() => openUrl(DOCS_URL)} />
+      <header class="pr-header">
+        <Logo height={15} />
+        <IconButton icon="docs" label="Guides" onClick={open(DOCS_URL)} />
       </header>
-
-      <div class="tabs">
-        <Segmented
-          label="Import source"
-          value={tab}
-          onChange={setTab}
-          options={[
-            { value: 'capture', label: 'Capture', icon: 'paste' },
-            { value: 'code', label: 'HTML code', icon: 'code' },
-          ]}
-        />
-      </div>
+      <Tabs
+        value={tab}
+        onChange={setTab}
+        options={[
+          { value: 'capture', label: 'Capture' },
+          { value: 'code', label: 'HTML and CSS' },
+        ]}
+      />
 
       <input
         ref={fileInput}
@@ -190,71 +188,73 @@ export function App() {
 
       {tab === 'code' ? (
         <CodeTab
-          onImport={(html, width) => load(() => renderHtml(html, width, 'HTML code'), html.length)}
+          onRender={(html, width) => load(() => renderHtml(html, width, 'HTML code'), html.length)}
         />
       ) : (
-        <main class="body">
-          {stage.kind === 'empty' && <Empty onChoose={() => fileInput.current?.click()} />}
-          {stage.kind === 'reading' && <Working message={stage.message} progress={0.1} />}
-          {stage.kind === 'importing' && (
-            <Working message={stage.message} progress={stage.progress} />
-          )}
-          {stage.kind === 'error' && (
-            <div class="stack">
-              <Notice tone="error">{stage.message}</Notice>
-              <Button icon="refresh" onClick={() => setStage({ kind: 'empty' })}>
-                Start over
+        <>
+          <main class="scroll">
+            {stage.kind === 'empty' && <Empty onChoose={() => fileInput.current?.click()} />}
+            {stage.kind === 'reading' && <Working label="Reading the capture" progress={0.1} />}
+            {stage.kind === 'importing' && (
+              <Working label={stage.label} progress={stage.progress} />
+            )}
+            {stage.kind === 'error' && (
+              <Section>
+                <Message tone="error">{stage.message}</Message>
+              </Section>
+            )}
+            {stage.kind === 'ready' && (
+              <Ready
+                stage={stage}
+                options={options}
+                onOption={setOption}
+                onToggle={(id) => {
+                  const selected = new Set(stage.selected)
+                  if (selected.has(id)) selected.delete(id)
+                  else selected.add(id)
+                  setStage({ ...stage, selected })
+                }}
+              />
+            )}
+            {stage.kind === 'done' && <Done report={stage.report} />}
+          </main>
+          <footer class="dock">
+            {stage.kind === 'ready' ? (
+              <>
+                <IconButton
+                  icon="close"
+                  label="Discard capture"
+                  onClick={() => setStage({ kind: 'empty' })}
+                />
+                <Button
+                  variant="primary"
+                  size="lg"
+                  block
+                  disabled={stage.selected.size === 0}
+                  onClick={startImport}
+                >
+                  Import {stage.selected.size > 1 ? `${stage.selected.size} frames` : 'into Figma'}
+                </Button>
+              </>
+            ) : stage.kind === 'done' || stage.kind === 'error' ? (
+              <Button size="lg" block onClick={() => setStage({ kind: 'empty' })}>
+                {stage.kind === 'done' ? 'Import another page' : 'Start over'}
               </Button>
-            </div>
-          )}
-          {stage.kind === 'ready' && (
-            <Ready
-              stage={stage}
-              options={options}
-              onOptions={updateOptions}
-              onToggle={(id) => {
-                const selected = new Set(stage.selected)
-                if (selected.has(id)) selected.delete(id)
-                else selected.add(id)
-                setStage({ ...stage, selected })
-              }}
-            />
-          )}
-          {stage.kind === 'done' && <Done report={stage.report} />}
-        </main>
-      )}
-
-      {tab === 'capture' && stage.kind === 'ready' && (
-        <footer class="actions">
-          <IconButton
-            icon="close"
-            label="Clear capture"
-            onClick={() => setStage({ kind: 'empty' })}
-          />
-          <Button
-            variant="primary"
-            size="lg"
-            block
-            icon="layers"
-            disabled={stage.selected.size === 0}
-            onClick={startImport}
-          >
-            Import into Figma
-          </Button>
-        </footer>
-      )}
-      {tab === 'capture' && stage.kind === 'done' && (
-        <footer class="actions">
-          <Button size="lg" block icon="paste" onClick={() => setStage({ kind: 'empty' })}>
-            Import another
-          </Button>
-        </footer>
+            ) : (
+              <p class="colophon">
+                <a href={CREDIT.url} onClick={open(CREDIT.url)}>
+                  {CREDIT.company}
+                </a>
+                <span class="num">v{__VERSION__}</span>
+              </p>
+            )}
+          </footer>
+        </>
       )}
 
       {dragging && (
-        <div class="drop-overlay" aria-hidden="true">
-          <Icon name="upload" size={24} />
-          <span>Drop to import</span>
+        <div class="drop" aria-hidden="true">
+          Drop a .recast or .html file
         </div>
       )}
     </div>
@@ -263,315 +263,239 @@ export function App() {
 
 function Empty({ onChoose }: { onChoose: () => void }) {
   return (
-    <div class="stack">
-      <section class="paste-target">
-        <div class="paste-icon">
-          <Icon name="paste" size={22} />
-        </div>
+    <>
+      <div class="stage">
+        <RecastDrawing />
+      </div>
+      <section class="intro">
         <h1>Paste a capture</h1>
         <p>
-          Copy a page with the PageRecast extension, then press <kbd>⌘V</kbd> here. You can also
-          drop a <code>.recast</code> or <code>.html</code> file.
+          Copy a page with the PageRecast extension, then press <span class="pr-keycap">⌘</span>
+          <span class="pr-keycap">V</span> anywhere in this window.
         </p>
-        <Button icon="file" onClick={onChoose}>
-          Choose file
-        </Button>
+        <div class="intro-actions">
+          <Button icon="file" onClick={onChoose}>
+            Open file
+          </Button>
+          <a class="link" href={EXTENSION_URL} onClick={open(EXTENSION_URL)}>
+            Get the Chrome extension
+            <Icon name="external" size={14} />
+          </a>
+        </div>
       </section>
-
-      <section>
-        <h2 class="pr-section-title">How to capture a page</h2>
-        <ol class="steps">
-          <li>
-            <Icon name="download" size={18} />
-            <span>
-              Install the{' '}
-              <a
-                href={EXTENSION_URL}
-                onClick={(e) => {
-                  e.preventDefault()
-                  openUrl(EXTENSION_URL)
-                }}
-              >
-                PageRecast Chrome extension
-              </a>
-              .
-            </span>
-          </li>
-          <li>
-            <Icon name="lock" size={18} />
-            <span>Open any page, including ones behind a login, staging or localhost.</span>
-          </li>
-          <li>
-            <Icon name="capture" size={18} />
-            <span>Choose viewports and click Capture, then Copy.</span>
-          </li>
-        </ol>
-      </section>
-
-      <p class="credit">
-        Free and open source. Built by {CREDIT.name} |{' '}
-        <a
-          href={CREDIT.url}
-          onClick={(e) => {
-            e.preventDefault()
-            openUrl(CREDIT.url)
-          }}
-        >
-          {CREDIT.company}
-        </a>
-      </p>
-    </div>
+      <Section title="Works with">
+        <ul class="facts">
+          <li>Pages behind a login, staging and localhost</li>
+          <li>Any width, light and dark, in one capture</li>
+          <li>.html files and pasted HTML and CSS</li>
+        </ul>
+      </Section>
+    </>
   )
 }
 
-function Working({ message, progress }: { message: string; progress: number }) {
+function Working({ label, progress }: { label: string; progress: number }) {
   return (
-    <div class="working" aria-live="polite">
-      <div class="working-mark">
-        <Logomark size={44} />
+    <>
+      <div class="stage stage--working">
+        <RecastDrawing />
       </div>
-      <p>{message}</p>
       <Progress value={progress} />
-    </div>
-  )
-}
-
-function CaptureRow({
-  capture,
-  checked,
-  onToggle,
-}: {
-  capture: Capture
-  checked: boolean
-  onToggle: () => void
-}) {
-  return (
-    <label class="capture-row">
-      <input type="checkbox" checked={checked} onChange={onToggle} />
-      <Icon name={deviceIcon(capture.viewport.width)} size={18} />
-      <span class="capture-label">{capture.label}</span>
-      <span class="data">
-        {Math.round(capture.width)} × {Math.round(capture.height)}
-      </span>
-    </label>
+      <section class="working" aria-live="polite">
+        <span class="pr-spinner" />
+        <span class="num">{label}</span>
+      </section>
+    </>
   )
 }
 
 function Ready({
   stage,
   options,
-  onOptions,
+  onOption,
   onToggle,
 }: {
   stage: Extract<Stage, { kind: 'ready' }>
   options: ImportOptions
-  onOptions: (patch: Partial<ImportOptions>) => void
+  onOption: (patch: Partial<ImportOptions>) => void
   onToggle: (id: string) => void
 }) {
   const { file } = stage
-  const host = (() => {
-    try {
-      return new URL(file.source.url).host
-    } catch {
-      return 'Local HTML'
-    }
-  })()
-  const themes = new Set(file.captures.map((c) => c.theme))
+  const first = file.captures.find((c) => stage.selected.has(c.id)) ?? file.captures[0]
+  const preview = useMemo(() => screenshotUrl(file, first), [file, first])
+  const bothThemes = new Set(file.captures.map((c) => c.theme)).size > 1
   return (
-    <div class="stack">
-      <section class="source">
-        <div class="source-title">{file.source.title || host}</div>
-        <div class="source-meta">
-          <span class="truncate">{host}</span>
-          <span>
-            {timeAgo(file.source.capturedAt)} · <span class="data">{formatBytes(stage.bytes)}</span>
-          </span>
+    <>
+      <div class="stage">
+        {preview ? (
+          <img class="preview" src={preview} alt={`Screenshot of ${file.source.title}`} />
+        ) : (
+          <RecastDrawing />
+        )}
+      </div>
+      <Section>
+        <div class="source">
+          <h1 class="truncate">{file.source.title || hostOf(file.source.url)}</h1>
+          <p class="muted">
+            {hostOf(file.source.url)} · <span class="num">{formatBytes(stage.bytes)}</span>
+          </p>
         </div>
-      </section>
-
-      <section>
-        <h2 class="pr-section-title">
-          Captures{' '}
-          <span>
-            {stage.selected.size} of {file.captures.length} selected
-          </span>
-        </h2>
-        <div class="list">
-          {file.captures.map((capture) => (
-            <CaptureRow
-              capture={capture}
+      </Section>
+      <Section title="Frames" aside={`${stage.selected.size} of ${file.captures.length}`}>
+        {file.captures.map((capture) => (
+          <label class="pr-row capture">
+            <input
+              class="pr-check"
+              type="checkbox"
               checked={stage.selected.has(capture.id)}
-              onToggle={() => onToggle(capture.id)}
+              onChange={() => onToggle(capture.id)}
             />
-          ))}
-        </div>
-      </section>
-
-      <section>
-        <h2 class="pr-section-title">Import options</h2>
-        <div class="list list--padded">
-          <Switch
-            icon="autolayout"
-            label="Auto Layout"
-            hint="Turns flex rows and columns into Auto Layout wherever the result matches the page."
-            checked={options.autoLayout}
-            onChange={(autoLayout) => onOptions({ autoLayout })}
-          />
-          <Switch
-            icon="variable"
-            label="Colour variables"
-            hint={
-              themes.size > 1
-                ? 'Repeated colours become variables with Light and Dark modes.'
-                : 'Repeated colours become variables. Capture light and dark to get both modes.'
-            }
-            checked={options.variables}
-            onChange={(variables) => onOptions({ variables })}
-          />
-          <Switch
-            icon="type"
-            label="Text styles"
-            hint="Repeated type becomes local text styles."
-            checked={options.textStyles}
-            onChange={(textStyles) => onOptions({ textStyles })}
-          />
-          <Switch
-            icon="screenshot"
-            label="Screenshot reference"
-            hint="A locked screenshot beside each frame, for side-by-side checks."
-            checked={options.screenshot}
-            onChange={(screenshot) => onOptions({ screenshot })}
-          />
-        </div>
-      </section>
-    </div>
+            <Icon name={deviceIcon(capture.viewport.width)} size={16} class="muted" />
+            <span class="truncate">{capture.label}</span>
+            <span class="num muted">
+              {Math.round(capture.width)} × {Math.round(capture.height)}
+            </span>
+          </label>
+        ))}
+      </Section>
+      <Section title="Options">
+        <Toggle
+          label="Auto Layout"
+          hint="Where it reproduces the page exactly"
+          checked={options.autoLayout}
+          onChange={(autoLayout) => onOption({ autoLayout })}
+        />
+        <Toggle
+          label="Colour variables"
+          hint={bothThemes ? 'With Light and Dark modes' : 'Capture both themes to get Dark mode'}
+          checked={options.variables}
+          onChange={(variables) => onOption({ variables })}
+        />
+        <Toggle
+          label="Text styles"
+          hint="For type used more than once"
+          checked={options.textStyles}
+          onChange={(textStyles) => onOption({ textStyles })}
+        />
+        <Toggle
+          label="Screenshot reference"
+          hint="Locked, beside each frame"
+          checked={options.screenshot}
+          onChange={(screenshot) => onOption({ screenshot })}
+        />
+      </Section>
+    </>
   )
 }
 
 function Done({ report }: { report: ImportReport }) {
-  const rows: [IconName, string, number][] = [
-    ['layers', 'Frames', report.frames],
-    ['font', 'Text layers', report.texts],
-    ['image', 'Images', report.images],
-    ['vector', 'Vectors', report.vectors],
-    ['autolayout', 'Auto Layout frames', report.autoLayouts],
-    ['variable', 'Colour variables', report.variables],
-    ['type', 'Text styles', report.textStyles],
+  const rows: [string, number][] = [
+    ['Frames', report.frames],
+    ['Text layers', report.texts],
+    ['Images', report.images],
+    ['Vectors', report.vectors],
+    ['Auto Layout frames', report.autoLayouts],
+    ['Colour variables', report.variables],
+    ['Text styles', report.textStyles],
   ]
-  if (report.rasters) rows.push(['screenshot', 'Snapshots (canvas, video, embeds)', report.rasters])
+  if (report.rasters) rows.push(['Snapshots of canvas, video and embeds', report.rasters])
   return (
-    <div class="stack">
-      <Notice tone="success">
-        <strong>Imported in {(report.durationMs / 1000).toFixed(1)} s.</strong> The result is
-        selected on the canvas.
-      </Notice>
-      <section>
-        <h2 class="pr-section-title">What was created</h2>
-        <dl class="list stats">
-          {rows.map(([icon, label, value]) => (
-            <div>
-              <dt>
-                <Icon name={icon} size={16} />
-                {label}
-              </dt>
-              <dd class="data">{value.toLocaleString()}</dd>
+    <>
+      <Section>
+        <Message tone="success">
+          <strong>Imported in {(report.durationMs / 1000).toFixed(1)} s.</strong> It's selected on
+          the canvas.
+        </Message>
+      </Section>
+      <Section title="Created">
+        <dl class="stats">
+          {rows.map(([label, value]) => (
+            <div class="pr-row">
+              <dt>{label}</dt>
+              <dd class="num">{value.toLocaleString()}</dd>
             </div>
           ))}
         </dl>
-      </section>
+      </Section>
       {report.substitutions.length > 0 && (
-        <section>
-          <h2 class="pr-section-title">
-            Fonts replaced <span>{report.substitutions.length}</span>
-          </h2>
-          <div class="list">
+        <Section title="Fonts replaced" aside="Install them for an exact match">
+          <dl class="stats">
             {report.substitutions.map((s) => (
-              <div class="sub-row">
-                <span class="truncate">{s.requested}</span>
-                <Icon name="arrowRight" size={14} />
-                <span class="truncate">{s.used}</span>
-                <span class="data">{s.count}×</span>
+              <div class="pr-row">
+                <dt class="truncate">
+                  {s.requested} <span class="muted">→ {s.used}</span>
+                </dt>
+                <dd class="num muted">{s.count}</dd>
               </div>
             ))}
-          </div>
-          <p class="hint">Install the missing fonts and import again for an exact match.</p>
-        </section>
+          </dl>
+        </Section>
       )}
       {report.warnings.length > 0 && (
-        <details class="warnings">
-          <summary>
-            <Icon name="warning" size={16} />
-            {report.warnings.length} note{report.warnings.length === 1 ? '' : 's'} from the import
-          </summary>
-          <ul>
-            {report.warnings.slice(0, 50).map((w) => (
+        <Section title="Notes" aside={report.warnings.length}>
+          <ul class="facts facts--notes">
+            {report.warnings.slice(0, 40).map((w) => (
               <li>{w}</li>
             ))}
           </ul>
-        </details>
+        </Section>
       )}
-    </div>
+    </>
   )
 }
 
 const WIDTHS = [
-  { value: '1440', label: 'Desktop', icon: 'desktop' as IconName },
-  { value: '768', label: 'Tablet', icon: 'tablet' as IconName },
-  { value: '390', label: 'Mobile', icon: 'mobile' as IconName },
+  { value: '1440', label: 'Desktop' },
+  { value: '768', label: 'Tablet' },
+  { value: '390', label: 'Mobile' },
 ]
 
-function CodeTab({ onImport }: { onImport: (html: string, width: number) => void }) {
+function CodeTab({ onRender }: { onRender: (html: string, width: number) => void }) {
   const [html, setHtml] = useState('')
   const [width, setWidth] = useState('1440')
   return (
     <>
-      <main class="body">
-        <div class="stack">
-          <section>
-            <h2 class="pr-section-title">
-              HTML and CSS <span>Rendered here, nothing is uploaded</span>
-            </h2>
-            <textarea
-              class="pr-textarea code-input"
-              spellcheck={false}
-              placeholder={
-                '<style>\n  .card { padding: 24px; border-radius: 16px; }\n</style>\n<div class="card">Hello</div>'
-              }
-              value={html}
-              onInput={(e) => setHtml(e.currentTarget.value)}
+      <main class="scroll">
+        <Section title="Markup" aside="Rendered in this window">
+          <textarea
+            class="pr-textarea code"
+            spellcheck={false}
+            placeholder={
+              '<style>\n  .card { padding: 24px; border-radius: 16px; }\n</style>\n<div class="card">Hello</div>'
+            }
+            value={html}
+            onInput={(e) => setHtml(e.currentTarget.value)}
+          />
+        </Section>
+        <Section title="Width">
+          <div class="width">
+            <Segmented label="Width preset" value={width} onChange={setWidth} options={WIDTHS} />
+            <input
+              class="pr-input"
+              type="number"
+              min={240}
+              max={3840}
+              aria-label="Width in pixels"
+              value={width}
+              onInput={(e) => setWidth(e.currentTarget.value)}
             />
-          </section>
-          <section>
-            <h2 class="pr-section-title">Width</h2>
-            <div class="width-row">
-              <Segmented label="Width preset" value={width} onChange={setWidth} options={WIDTHS} />
-              <input
-                class="pr-input data width-input"
-                type="number"
-                min={240}
-                max={3840}
-                aria-label="Custom width in pixels"
-                value={width}
-                onInput={(e) => setWidth(e.currentTarget.value)}
-              />
-            </div>
-          </section>
-          <Notice>
-            Scripts don't run here. For pages built with JavaScript, capture them with the
-            extension.
-          </Notice>
-        </div>
+          </div>
+        </Section>
+        <Section>
+          <Message>
+            Scripts don't run here. Capture pages that rely on JavaScript with the extension.
+          </Message>
+        </Section>
       </main>
-      <footer class="actions">
+      <footer class="dock">
         <Button
           variant="primary"
           size="lg"
           block
-          icon="code"
           disabled={!html.trim()}
-          onClick={() => onImport(html, Math.min(3840, Math.max(240, Number(width) || 1440)))}
+          onClick={() => onRender(html, Math.min(3840, Math.max(240, Number(width) || 1440)))}
         >
-          Render and review
+          Render
         </Button>
       </footer>
     </>

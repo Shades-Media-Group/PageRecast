@@ -235,6 +235,7 @@ export function walk(doc: Document, options: WalkOptions): WalkResult {
     blend?: BlendMode
     rotation?: number
     a11y?: Accessibility
+    html?: string
   }
 
   function boxOf(el: Element, cs: CSSStyleDeclaration): { box: Box; rotation: number } {
@@ -302,6 +303,17 @@ export function walk(doc: Document, options: WalkOptions): WalkResult {
         .trim()
     }
     return null
+  }
+
+  function htmlName(el: Element): string {
+    const id = el.id ? `#${el.id}` : ''
+    const cls = (typeof el.className === 'string' ? el.className : (el.getAttribute('class') ?? ''))
+      .split(/\s+/)
+      .filter(Boolean)
+      .slice(0, 2)
+      .map((c) => `.${c}`)
+      .join('')
+    return `${el.localName}${id}${cls}`
   }
 
   function nameFor(el: Element, a11y?: Accessibility): string {
@@ -779,6 +791,7 @@ export function walk(doc: Document, options: WalkOptions): WalkResult {
       ...(BLENDS.has(cs.mixBlendMode as BlendMode) ? { blend: cs.mixBlendMode as BlendMode } : {}),
       ...(rotation ? { rotation } : {}),
       ...(a11y ? { a11y } : {}),
+      html: htmlName(el),
     }
     const hidden = cs.visibility === 'hidden' || cs.visibility === 'collapse'
     const visible = intersects(box) && !hidden

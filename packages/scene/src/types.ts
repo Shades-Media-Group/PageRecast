@@ -128,6 +128,8 @@ interface BaseNode {
   /** Clockwise rotation in degrees around the node's centre. */
   rotation?: number
   a11y?: Accessibility
+  /** The element as written in HTML, e.g. `div#hero.card`, for HTML layer names. */
+  html?: string
 }
 
 export interface FlexLayout {

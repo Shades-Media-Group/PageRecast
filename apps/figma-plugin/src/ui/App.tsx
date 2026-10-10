@@ -10,7 +10,6 @@ import {
   Logo,
   Message,
   Progress,
-  RecastDrawing,
   REPO_URL,
   Section,
   Segmented,
@@ -242,9 +241,12 @@ export function App() {
               </Button>
             ) : (
               <p class="colophon">
-                <a href={CREDIT.url} onClick={open(CREDIT.url)}>
-                  {CREDIT.company}
-                </a>
+                <span>
+                  Free and open source. Built by{' '}
+                  <a href={CREDIT.url} onClick={open(CREDIT.url)}>
+                    {CREDIT.company}
+                  </a>
+                </span>
                 <span class="num">v{__VERSION__}</span>
               </p>
             )}
@@ -264,15 +266,13 @@ export function App() {
 function Empty({ onChoose }: { onChoose: () => void }) {
   return (
     <>
-      <div class="stage">
-        <RecastDrawing />
-      </div>
       <section class="intro">
+        <div class="keys" aria-hidden="true">
+          <span class="pr-keycap">⌘</span>
+          <span class="pr-keycap">V</span>
+        </div>
         <h1>Paste a capture</h1>
-        <p>
-          Copy a page with the PageRecast extension, then press <span class="pr-keycap">⌘</span>
-          <span class="pr-keycap">V</span> anywhere in this window.
-        </p>
+        <p>Copy a page with the PageRecast extension, then paste it anywhere in this window.</p>
         <div class="intro-actions">
           <Button icon="file" onClick={onChoose}>
             Open file
@@ -297,9 +297,6 @@ function Empty({ onChoose }: { onChoose: () => void }) {
 function Working({ label, progress }: { label: string; progress: number }) {
   return (
     <>
-      <div class="stage stage--working">
-        <RecastDrawing />
-      </div>
       <Progress value={progress} />
       <section class="working" aria-live="polite">
         <span class="pr-spinner" />
@@ -326,13 +323,11 @@ function Ready({
   const bothThemes = new Set(file.captures.map((c) => c.theme)).size > 1
   return (
     <>
-      <div class="stage">
-        {preview ? (
+      {preview && (
+        <div class="stage">
           <img class="preview" src={preview} alt={`Screenshot of ${file.source.title}`} />
-        ) : (
-          <RecastDrawing />
-        )}
-      </div>
+        </div>
+      )}
       <Section>
         <div class="source">
           <h1 class="truncate">{file.source.title || hostOf(file.source.url)}</h1>

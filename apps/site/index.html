@@ -137,8 +137,8 @@
           <img
             src="/shots/plugin-review-dark.png"
             alt="The PageRecast Figma plugin reviewing the capture before import"
-            width="380"
-            height="860"
+            width="400"
+            height="640"
             loading="lazy"
           />
         </figure>
@@ -255,14 +255,54 @@
     </main>
 
     <footer class="footer">
-      <span data-logo></span>
-      <p>Free and open source. Built by <a data-link="shades">Shades Media Group</a>.</p>
-      <p class="footer-links">
-        <a data-link="repo">GitHub</a>
-        <a data-link="docs">Guides</a>
-        <a data-link="privacy">Privacy</a>
-        <a data-link="changelog">Version <span data-version></span></a>
-      </p>
+      <div class="footer-top">
+        <div class="footer-brand">
+          <a class="footer-logo" href="#top" aria-label="PageRecast, back to top" data-logo></a>
+          <p>
+            Any web page, as editable Figma layers. Free, open source, and it never leaves your
+            computer.
+          </p>
+          <a class="btn btn--primary btn--small" data-link="chrome"
+            >Add to Chrome, free<span class="btn-arrow" aria-hidden="true"></span
+          ></a>
+        </div>
+        <nav class="footer-cols" aria-label="Footer">
+          <div>
+            <h3>Product</h3>
+            <ul>
+              <li><a data-link="chrome">Chrome extension</a></li>
+              <li><a data-link="figma">Figma plugin</a></li>
+              <li><a href="/sample/">Test page</a></li>
+              <li><a data-link="docs">Guides</a></li>
+            </ul>
+          </div>
+          <div>
+            <h3>Project</h3>
+            <ul>
+              <li><a data-link="repo">GitHub</a></li>
+              <li><a data-link="changelog">Changelog</a></li>
+              <li><a data-link="releases">Releases</a></li>
+              <li><a data-link="issues">Report an issue</a></li>
+            </ul>
+          </div>
+          <div>
+            <h3>Trust</h3>
+            <ul>
+              <li><a data-link="privacy">Privacy</a></li>
+              <li><a data-link="security">Security</a></li>
+              <li><a data-link="license">MIT licence</a></li>
+              <li><a data-link="format">The .recast format</a></li>
+            </ul>
+          </div>
+        </nav>
+      </div>
+      <div class="footer-base">
+        <p>Free and open source. Built by <a data-link="shades">Shades Media Group</a>.</p>
+        <p>
+          <a data-link="changelog">Version <span data-version></span></a> · © 2026
+        </p>
+      </div>
+      <div class="footer-mark" aria-hidden="true" data-logo></div>
     </footer>
 
     <script type="module" src="/src/main.ts"></script>

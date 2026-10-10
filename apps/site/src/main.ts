@@ -17,6 +17,10 @@ const links: Record<string, string> = {
   format: `${REPO}/blob/main/docs/scene-format.md`,
   privacy: `${REPO}/blob/main/PRIVACY.md`,
   changelog: `${REPO}/blob/main/CHANGELOG.md`,
+  releases: `${REPO}/releases`,
+  issues: `${REPO}/issues/new/choose`,
+  security: `${REPO}/blob/main/SECURITY.md`,
+  license: `${REPO}/blob/main/LICENSE`,
 }
 for (const a of document.querySelectorAll<HTMLAnchorElement>('[data-link]')) {
   a.href = links[a.dataset.link!] ?? '#'

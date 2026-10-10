@@ -272,3 +272,105 @@ export function formatBytes(bytes: number): string {
   if (bytes < 1024 * 1024) return `${Math.round(bytes / 1024)} KB`
   return `${(bytes / 1024 / 1024).toFixed(1)} MB`
 }
+
+export interface FrameSpec {
+  width: number
+  theme: 'light' | 'dark'
+}
+
+/** Reads "Desktop · 1440 · Dark" style labels back into widths and themes. */
+export function framesFromLabels(labels: string[]): FrameSpec[] {
+  return labels.map((label) => ({
+    width: Number(/(\d{3,4})/.exec(label)?.[1] ?? 1440),
+    theme: /dark/i.test(label) ? 'dark' : 'light',
+  }))
+}
+
+/**
+ * A capture drawn with the logo's rule: each frame is a tile sized to its
+ * width, light frames in rose, dark frames in red, and where a light and a
+ * dark frame of the same width overlap, the overlap turns ink.
+ */
+export function FramesGraphic({ frames, height = 72 }: { frames: FrameSpec[]; height?: number }) {
+  const widths = [...new Set(frames.map((f) => f.width))].sort((a, b) => b - a)
+  const unit = height * 1.35
+  const offset = Math.round(height * 0.34)
+  const radius = Math.round(height * 0.12)
+  let x = 0
+  const groups = widths.map((width) => {
+    const w = Math.max(height * 0.42, Math.round((width / 1440) * unit))
+    const light = frames.some((f) => f.width === width && f.theme === 'light')
+    const dark = frames.some((f) => f.width === width && f.theme === 'dark')
+    const group = { width, x, w, light, dark }
+    x += w + (light && dark ? offset : 0) + Math.round(height * 0.22)
+    return group
+  })
+  const total = Math.max(1, x - Math.round(height * 0.22))
+  const h = height + offset
+  return (
+    <svg
+      class="pr-frames"
+      width={total}
+      height={h + 18}
+      viewBox={`0 0 ${total} ${h + 18}`}
+      role="img"
+      aria-label={`${frames.length} frames`}
+    >
+      {groups.map((g, i) => {
+        const page = { x: g.x, y: offset, w: g.w, h: height }
+        const layer = { x: g.x + offset, y: 0, w: g.w, h: height }
+        const id = `pr-frame-clip-${i}`
+        return (
+          <g>
+            {g.light && (
+              <rect
+                x={page.x}
+                y={page.y}
+                width={page.w}
+                height={page.h}
+                rx={radius}
+                fill="var(--rose)"
+              />
+            )}
+            {g.dark && (
+              <rect
+                x={g.light ? layer.x : page.x}
+                y={g.light ? layer.y : page.y}
+                width={layer.w}
+                height={layer.h}
+                rx={radius}
+                fill="var(--mark-red)"
+              />
+            )}
+            {g.light && g.dark && (
+              <>
+                <clipPath id={id}>
+                  <rect x={page.x} y={page.y} width={page.w} height={page.h} rx={radius} />
+                </clipPath>
+                <rect
+                  clip-path={`url(#${id})`}
+                  x={layer.x}
+                  y={layer.y}
+                  width={layer.w}
+                  height={layer.h}
+                  rx={radius}
+                  fill="var(--ink)"
+                />
+              </>
+            )}
+            <text
+              x={g.x}
+              y={h + 14}
+              fill="var(--ink-3)"
+              font-size="11"
+              font-family="var(--font)"
+              style="font-variant-numeric: tabular-nums"
+            >
+              {g.width}
+            </text>
+          </g>
+        )
+      })}
+    </svg>
+  )
+}

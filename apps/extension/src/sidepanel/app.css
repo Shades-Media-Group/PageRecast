@@ -161,3 +161,38 @@ body,
   color: var(--ink);
   text-align: right;
 }
+
+/* Capture result: the frames drawn with the logo's rule, and the count. */
+.result {
+  padding: 20px var(--pad) 16px;
+  border-bottom: 1px solid var(--line);
+  animation: pr-enter 320ms var(--ease) both;
+}
+.result-top {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 14px;
+}
+.result-count {
+  display: grid;
+  justify-items: end;
+  text-align: right;
+}
+.result-count b {
+  font-size: 32px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.03em;
+}
+.result-count span {
+  margin-top: 4px;
+  color: var(--ink-3);
+  font-size: 11px;
+}
+.pr-frames {
+  flex: none;
+  max-width: 60%;
+  height: auto;
+}

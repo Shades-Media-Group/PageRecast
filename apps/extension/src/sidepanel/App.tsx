@@ -21,6 +21,8 @@ import {
   Section,
   Segmented,
   Toggle,
+  FramesGraphic,
+  framesFromLabels,
   type IconName,
 } from '@pagerecast/ui'
 import { CaptureError, captureTab, openTab, type CaptureProgress } from '../capture'
@@ -306,39 +308,44 @@ export function App() {
       </header>
 
       <main class="scroll">
-        {current?.thumbnail && (
-          <div class="stage">
-            <img class="preview" src={current.thumbnail} alt={`Capture of ${current.title}`} />
-          </div>
-        )}
-
         {current && (
-          <Section title="Captured" aside={ago(current.createdAt)}>
+          <section class="result" aria-live="polite">
+            <div class="result-top">
+              <FramesGraphic frames={framesFromLabels(current.views)} height={52} />
+              <div class="result-count">
+                <b class="num">{current.layers.toLocaleString()}</b>
+                <span>
+                  layers in {current.views.length} frame{current.views.length === 1 ? '' : 's'}
+                </span>
+              </div>
+            </div>
             <p class="truncate result-title">{current.title}</p>
             <p class="muted">
-              {current.views.length === 1 ? current.views[0] : `${current.views.length} frames`} ·{' '}
-              <span class="num">
-                {current.layers.toLocaleString()} layers · {formatBytes(current.bytes)}
-              </span>
+              {hostOf(current.url)} · <span class="num">{formatBytes(current.bytes)}</span> ·{' '}
+              {ago(current.createdAt)}
             </p>
             <p class="next">
-              In Figma, run <strong>PageRecast</strong> and paste.
+              Now paste it in Figma with <strong>PageRecast</strong>.
             </p>
-          </Section>
+          </section>
         )}
 
-        <Section title="Page">
-          <div class="pr-row target" aria-live="polite">
-            {tab?.favicon ? (
-              <img src={tab.favicon} alt="" width={16} height={16} />
-            ) : (
-              <Icon name="page" size={16} class="muted" />
-            )}
-            <div class="grow">
-              <p class="truncate target-title">{tab?.title ?? 'No page selected'}</p>
-              <p class="truncate muted">{tab ? hostOf(tab.url) : 'Open a website to capture it'}</p>
+        <Section title={current ? 'Capture another' : 'Page'}>
+          {(!current || current.url !== tab?.url) && (
+            <div class="pr-row target" aria-live="polite">
+              {tab?.favicon ? (
+                <img src={tab.favicon} alt="" width={16} height={16} />
+              ) : (
+                <Icon name="page" size={16} class="muted" />
+              )}
+              <div class="grow">
+                <p class="truncate target-title">{tab?.title ?? 'No page selected'}</p>
+                <p class="truncate muted">
+                  {tab ? hostOf(tab.url) : 'Open a website to capture it'}
+                </p>
+              </div>
             </div>
-          </div>
+          )}
           {tab && !tab.capturable && (
             <p class="hint">Chrome doesn't let extensions read its own pages or the Web Store.</p>
           )}
@@ -547,7 +554,7 @@ export function App() {
           <a href={CREDIT.url} target="_blank" rel="noreferrer">
             {CREDIT.company}
           </a>
-          . Captures stay on this device. <span class="num">v{__VERSION__}</span>
+          . <span class="num">v{__VERSION__}</span>
         </p>
       </main>
 

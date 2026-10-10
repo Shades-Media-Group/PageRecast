@@ -1,0 +1,9 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "lib": ["ES2022"],
+    "types": ["@figma/plugin-typings"]
+  },
+  "include": ["src/main", "src/shared", "../../packages/scene/src"],
+  "exclude": ["**/*.test.ts"]
+}

@@ -1,0 +1,60 @@
+{
+  "name": "pagerecast",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Free, open-source website-to-Figma importer: a Chrome extension and a Figma plugin.",
+  "license": "MIT",
+  "author": "Shades Media Group (https://shades.md)",
+  "homepage": "https://github.com/Shades-Media-Group/PageRecast#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Shades-Media-Group/PageRecast.git"
+  },
+  "bugs": "https://github.com/Shades-Media-Group/PageRecast/issues",
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "dev:extension": "yarn --cwd apps/extension dev",
+    "dev:plugin": "yarn --cwd apps/figma-plugin dev",
+    "typecheck": "tsc -p tsconfig.json && tsc -p apps/figma-plugin/tsconfig.main.json",
+    "lint": "eslint . --cache",
+    "test": "vitest run",
+    "test:e2e": "playwright test",
+    "build": "yarn --cwd apps/extension build && yarn --cwd apps/figma-plugin build",
+    "package": "node scripts/package.mjs",
+    "verify": "yarn typecheck && yarn lint && yarn test && yarn build",
+    "format": "prettier --write ."
+  },
+  "packageManager": "yarn@1.22.22",
+  "devDependencies": {
+    "@babel/core": "^8.0.7",
+    "@eslint/js": "^10.0.1",
+    "@figma/plugin-typings": "^1.141.0",
+    "@playwright/test": "^1.64.0",
+    "@preact/preset-vite": "^2.10.6",
+    "@types/chrome": "^0.3.5",
+    "@types/node": "^26.6.5",
+    "esbuild": "^0.28.2",
+    "eslint": "^10.12.0",
+    "globals": "^17.13.0",
+    "opentype.js": "^2.0.0",
+    "prettier": "^3.9.10",
+    "typescript": "~6.0.3",
+    "typescript-eslint": "^8.71.1",
+    "vite": "^8.3.4",
+    "vite-plugin-singlefile": "^2.3.3",
+    "vitest": "^5.0.3"
+  },
+  "dependencies": {
+    "@fontsource-variable/hanken-grotesk": "^5.3.0",
+    "@fontsource/space-grotesk": "^5.3.0",
+    "@fontsource/space-mono": "^5.3.0",
+    "preact": "^10"
+  },
+  "type": "module"
+}

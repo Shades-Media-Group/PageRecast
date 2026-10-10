@@ -1,0 +1,16 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "types": ["chrome", "node", "vite/client"]
+  },
+  "include": [
+    "packages",
+    "apps/extension",
+    "apps/figma-plugin/src/ui",
+    "e2e",
+    "scripts",
+    "*.config.ts"
+  ],
+  "exclude": ["**/dist", "**/node_modules"]
+}

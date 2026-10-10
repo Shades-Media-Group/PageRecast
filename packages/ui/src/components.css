@@ -450,3 +450,49 @@ select.pr-input {
 .text-button:hover {
   text-decoration-color: currentColor;
 }
+
+/* Motion: screens settle in, they never perform. */
+@keyframes pr-enter {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+@keyframes pr-fade {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes pr-pop {
+  40% {
+    transform: scale(1.18);
+  }
+}
+.pr-section,
+.pr-message {
+  animation: pr-enter 260ms var(--ease) both;
+}
+.pr-section:nth-child(2) {
+  animation-delay: 30ms;
+}
+.pr-section:nth-child(3) {
+  animation-delay: 60ms;
+}
+.pr-section:nth-child(4) {
+  animation-delay: 90ms;
+}
+.pr-section:nth-child(n + 5) {
+  animation-delay: 120ms;
+}
+.stage img {
+  animation: pr-fade 400ms var(--ease) both;
+}
+.pr-button .pr-icon {
+  transition: transform var(--fast) var(--ease);
+}
+.pr-button[data-done] .pr-icon {
+  animation: pr-pop 320ms var(--ease);
+}
+.pr-button--primary:active {
+  transform: scale(0.985);
+}

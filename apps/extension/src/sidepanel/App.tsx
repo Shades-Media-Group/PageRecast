@@ -579,6 +579,7 @@ export function App() {
               size="lg"
               block
               icon={copied === current.id ? 'check' : 'copy'}
+              data-done={copied === current.id ? '' : undefined}
               onClick={() => copy(current)}
             >
               {copied === current.id ? 'Copied' : 'Copy for Figma'}

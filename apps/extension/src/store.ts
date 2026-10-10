@@ -8,7 +8,10 @@ export interface Settings {
   hideOverlays: boolean
   preload: boolean
   screenshot: boolean
+  language: string
   seenDebuggerNote: boolean
+  /** Settings stay folded into a summary once the user has captured. */
+  editing: boolean
 }
 
 export const PRESET_WIDTHS = [
@@ -26,8 +29,32 @@ export const DEFAULT_SETTINGS: Settings = {
   hideOverlays: true,
   preload: true,
   screenshot: true,
+  language: '',
   seenDebuggerNote: false,
+  editing: true,
 }
+
+/** Languages offered for capture; the page's own language is the default. */
+export const LANGUAGES = [
+  { value: '', label: 'Page default' },
+  { value: 'en-US', label: 'English (US)' },
+  { value: 'en-GB', label: 'English (UK)' },
+  { value: 'ro-RO', label: 'Română' },
+  { value: 'ru-RU', label: 'Русский' },
+  { value: 'uk-UA', label: 'Українська' },
+  { value: 'de-DE', label: 'Deutsch' },
+  { value: 'fr-FR', label: 'Français' },
+  { value: 'es-ES', label: 'Español' },
+  { value: 'it-IT', label: 'Italiano' },
+  { value: 'pt-BR', label: 'Português (Brasil)' },
+  { value: 'pl-PL', label: 'Polski' },
+  { value: 'nl-NL', label: 'Nederlands' },
+  { value: 'tr-TR', label: 'Türkçe' },
+  { value: 'ja-JP', label: '日本語' },
+  { value: 'ko-KR', label: '한국어' },
+  { value: 'zh-CN', label: '中文（简体）' },
+  { value: 'ar', label: 'العربية' },
+] as const
 
 export async function loadSettings(): Promise<Settings> {
   const { settings } = await chrome.storage.local.get('settings')

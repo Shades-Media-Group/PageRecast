@@ -17,6 +17,8 @@ export interface CaptureSettings {
   hideOverlays: boolean
   preload: boolean
   screenshot: boolean
+  /** BCP 47 tag such as `de-DE`; empty keeps the browser's language. */
+  language: string
 }
 
 export type CaptureProgress = { label: string; step: number; steps: number }
@@ -53,6 +55,42 @@ async function evaluate<T>(target: Target, expression: string, awaitPromise = fa
 }
 
 const wait = (ms: number) => new Promise((r) => setTimeout(r, ms))
+
+/** Reloads the tab and resolves when it has loaded (or after 20 s). */
+function reload(target: Target): Promise<void> {
+  return new Promise((resolve) => {
+    const timer = setTimeout(done, 20_000)
+    function done() {
+      clearTimeout(timer)
+      chrome.debugger.onEvent.removeListener(onEvent)
+      resolve()
+    }
+    function onEvent(source: chrome.debugger.Debuggee, method: string) {
+      if (source.tabId === target.tabId && method === 'Page.loadEventFired')
+        void wait(300).then(done)
+    }
+    chrome.debugger.onEvent.addListener(onEvent)
+    void command(target, 'Page.reload', { ignoreCache: false })
+  })
+}
+
+/** Opens a URL in a new tab, waits for it to load, and returns the tab id. */
+export async function openTab(url: string): Promise<number> {
+  const tab = await chrome.tabs.create({ url, active: true })
+  await new Promise<void>((resolve) => {
+    const timer = setTimeout(done, 30_000)
+    function done() {
+      clearTimeout(timer)
+      chrome.tabs.onUpdated.removeListener(onUpdated)
+      resolve()
+    }
+    function onUpdated(id: number, change: { status?: string }) {
+      if (id === tab.id && change.status === 'complete') done()
+    }
+    chrome.tabs.onUpdated.addListener(onUpdated)
+  })
+  return tab.id!
+}
 
 function sniffMime(bytes: Uint8Array, url: string): string {
   const head = new TextDecoder().decode(bytes.subarray(0, 256)).trimStart()
@@ -181,6 +219,18 @@ export async function captureTab(
       'Page.getFrameTree',
     )
     await evaluate(target, __CAPTURE_BUNDLE__)
+    const userAgent = await evaluate<string>(target, 'navigator.userAgent')
+    if (settings.language) {
+      // Sites pick their language from the request, so the page is reloaded once.
+      onProgress({ label: `Switching the page to ${settings.language}`, step: 0, steps: 1 })
+      await command(target, 'Emulation.setLocaleOverride', { locale: settings.language })
+      await command(target, 'Emulation.setUserAgentOverride', {
+        userAgent,
+        acceptLanguage: settings.language,
+      })
+      await reload(target)
+      await evaluate(target, __CAPTURE_BUNDLE__)
+    }
     const meta = await evaluate<{ url: string; title: string; width: number; height: number }>(
       target,
       '({ url: location.href, title: document.title, width: innerWidth, height: innerHeight })',
@@ -219,7 +269,8 @@ export async function captureTab(
         mobile,
       })
       await command(target, 'Emulation.setUserAgentOverride', {
-        userAgent: mobile ? MOBILE_UA : '',
+        userAgent: mobile ? MOBILE_UA : userAgent,
+        ...(settings.language ? { acceptLanguage: settings.language } : {}),
       })
       await command(target, 'Emulation.setEmulatedMedia', {
         features: [{ name: 'prefers-color-scheme', value: theme }],

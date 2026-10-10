@@ -6,7 +6,7 @@ All notable changes to PageRecast are recorded here. The format follows
 
 ## [Unreleased]
 
-## [1.0.0] - 2026-10-10
+## [1.0.0] - 2026-10-11
 
 The first public release: a Chrome extension that captures pages and a Figma
 plugin that rebuilds them as editable layers. Free, open source and local.

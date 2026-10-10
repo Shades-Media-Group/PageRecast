@@ -1,0 +1,521 @@
+import { useCallback, useEffect, useState } from 'preact/hooks'
+import {
+  decode,
+  encodeClipboard,
+  encodeFile,
+  FILE_EXTENSION,
+  toBase64,
+  type RecastFile,
+  type SceneNode,
+} from '@pagerecast/scene'
+import {
+  Button,
+  CREDIT,
+  DOCS_URL,
+  formatBytes,
+  Icon,
+  IconButton,
+  Logo,
+  Message,
+  Section,
+  Segmented,
+  Toggle,
+  type IconName,
+} from '@pagerecast/ui'
+import { CaptureError, captureTab, type CaptureProgress } from '../capture'
+import {
+  addHistory,
+  DEFAULT_SETTINGS,
+  listHistory,
+  loadSettings,
+  PRESET_WIDTHS,
+  removeHistory,
+  saveSettings,
+  type HistoryEntry,
+  type Settings,
+} from '../store'
+
+declare const __VERSION__: string
+
+interface Tab {
+  id: number
+  title: string
+  url: string
+  favicon?: string
+  capturable: boolean
+}
+
+type Status =
+  | { kind: 'idle' }
+  | { kind: 'capturing'; progress: CaptureProgress }
+  | { kind: 'error'; message: string }
+
+const countLayers = (node: SceneNode): number =>
+  1 + (node.type === 'frame' ? node.children.reduce((n, c) => n + countLayers(c), 0) : 0)
+
+const isCapturable = (url = '') =>
+  /^(https?|file):/.test(url) &&
+  !/^https:\/\/(chrome\.google\.com\/webstore|chromewebstore\.google\.com)/.test(url)
+
+function hostOf(url: string) {
+  try {
+    const u = new URL(url)
+    return u.protocol === 'file:' ? 'Local file' : u.host
+  } catch {
+    return url
+  }
+}
+
+function ago(ms: number) {
+  const minutes = Math.round((Date.now() - ms) / 60000)
+  if (minutes < 1) return 'Just now'
+  if (minutes < 60) return `${minutes} min ago`
+  const hours = Math.round(minutes / 60)
+  return hours < 24 ? `${hours} h ago` : new Date(ms).toLocaleDateString()
+}
+
+function fileName(title: string) {
+  const slug =
+    title
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-|-$/g, '')
+      .slice(0, 48) || 'capture'
+  return `${slug}${FILE_EXTENSION}`
+}
+
+/** The top of the first screenshot, small, for the stage and the history list. */
+async function thumbnail(file: RecastFile): Promise<string | undefined> {
+  const id = file.captures[0]?.screenshot
+  const asset = id ? file.assets[id] : undefined
+  if (!asset || asset.kind !== 'image' || !asset.data) return undefined
+  const bitmap = await createImageBitmap(
+    await (await fetch(`data:${asset.mime};base64,${asset.data}`)).blob(),
+  )
+  const width = 720
+  const scale = width / bitmap.width
+  const height = Math.min(Math.round(bitmap.height * scale), 420)
+  const canvas = new OffscreenCanvas(width, height)
+  canvas
+    .getContext('2d')!
+    .drawImage(bitmap, 0, 0, bitmap.width, height / scale, 0, 0, width, height)
+  bitmap.close()
+  const blob = await canvas.convertToBlob({ type: 'image/jpeg', quality: 0.78 })
+  return `data:image/jpeg;base64,${toBase64(new Uint8Array(await blob.arrayBuffer()))}`
+}
+
+export function App() {
+  const [settings, setSettings] = useState<Settings>(DEFAULT_SETTINGS)
+  const [tab, setTab] = useState<Tab | null>(null)
+  const [status, setStatus] = useState<Status>({ kind: 'idle' })
+  const [history, setHistory] = useState<HistoryEntry[]>([])
+  const [latest, setLatest] = useState<string | null>(null)
+  const [copied, setCopied] = useState<string | null>(null)
+  const [customWidth, setCustomWidth] = useState('')
+
+  const refreshTab = useCallback(async () => {
+    const [active] = await chrome.tabs.query({ active: true, lastFocusedWindow: true })
+    if (!active?.id) return setTab(null)
+    setTab({
+      id: active.id,
+      title: active.title || 'Untitled page',
+      url: active.url ?? '',
+      favicon: active.favIconUrl,
+      capturable: isCapturable(active.url),
+    })
+  }, [])
+
+  useEffect(() => {
+    void loadSettings().then(setSettings)
+    void listHistory().then(setHistory)
+    void refreshTab()
+    const onChange = () => void refreshTab()
+    chrome.tabs.onActivated.addListener(onChange)
+    chrome.tabs.onUpdated.addListener(onChange)
+    chrome.windows.onFocusChanged.addListener(onChange)
+    return () => {
+      chrome.tabs.onActivated.removeListener(onChange)
+      chrome.tabs.onUpdated.removeListener(onChange)
+      chrome.windows.onFocusChanged.removeListener(onChange)
+    }
+  }, [refreshTab])
+
+  const update = (patch: Partial<Settings>) => {
+    const next = { ...settings, ...patch }
+    setSettings(next)
+    setLatest(null)
+    void saveSettings(next)
+  }
+
+  const toggleWidth = (width: number) => {
+    const widths = settings.widths.includes(width)
+      ? settings.widths.filter((w) => w !== width)
+      : [...settings.widths, width].sort((a, b) => b - a)
+    update({ widths })
+  }
+
+  const addCustomWidth = () => {
+    const width = Math.round(Number(customWidth))
+    if (!width || width < 240 || width > 3840) return
+    setCustomWidth('')
+    const known =
+      settings.customWidths.includes(width) || PRESET_WIDTHS.some((p) => p.width === width)
+    update({
+      customWidths: known ? settings.customWidths : [...settings.customWidths, width],
+      widths: settings.widths.includes(width)
+        ? settings.widths
+        : [...settings.widths, width].sort((a, b) => b - a),
+    })
+  }
+
+  const removeCustomWidth = (width: number) =>
+    update({
+      customWidths: settings.customWidths.filter((w) => w !== width),
+      widths: settings.widths.filter((w) => w !== width),
+    })
+
+  const themes =
+    settings.theme === 'both' ? (['light', 'dark'] as const) : ([settings.theme] as const)
+  const views = settings.widths.length * themes.length
+  const busy = status.kind === 'capturing'
+
+  const capture = async () => {
+    if (!tab?.capturable || views === 0 || busy) return
+    if (!settings.seenDebuggerNote) void saveSettings({ ...settings, seenDebuggerNote: true })
+    setStatus({ kind: 'capturing', progress: { label: 'Starting', step: 0, steps: views } })
+    try {
+      const file = await captureTab(
+        tab.id,
+        {
+          scope: settings.scope,
+          widths: settings.widths,
+          themes: [...themes],
+          hideOverlays: settings.hideOverlays,
+          preload: settings.preload,
+          screenshot: settings.screenshot,
+        },
+        (progress) => setStatus({ kind: 'capturing', progress }),
+      )
+      const data = await encodeFile(file)
+      const entry: HistoryEntry = {
+        id: crypto.randomUUID(),
+        title: file.source.title || hostOf(file.source.url),
+        url: file.source.url,
+        createdAt: Date.now(),
+        views: file.captures.map((c) => c.label),
+        layers: file.captures.reduce((n, c) => n + countLayers(c.root), 0),
+        bytes: data.byteLength,
+        thumbnail: await thumbnail(file),
+        data,
+      }
+      await addHistory(entry)
+      setHistory(await listHistory())
+      setSettings((s) => ({ ...s, seenDebuggerNote: true }))
+      setLatest(entry.id)
+      setStatus({ kind: 'idle' })
+    } catch (error) {
+      console.error(error)
+      if (error instanceof CaptureError && error.message === 'Capture cancelled.')
+        return setStatus({ kind: 'idle' })
+      setStatus({
+        kind: 'error',
+        message:
+          error instanceof CaptureError
+            ? error.message
+            : 'The capture stopped unexpectedly. Reload the page and try again.',
+      })
+    }
+  }
+
+  const copy = async (entry: HistoryEntry) => {
+    await navigator.clipboard.writeText(await encodeClipboard(await decode(entry.data)))
+    setCopied(entry.id)
+    setTimeout(() => setCopied((id) => (id === entry.id ? null : id)), 2400)
+  }
+
+  const download = (entry: HistoryEntry) => {
+    const url = URL.createObjectURL(
+      new Blob([entry.data as BlobPart], { type: 'application/gzip' }),
+    )
+    const link = document.createElement('a')
+    link.href = url
+    link.download = fileName(entry.title)
+    link.click()
+    setTimeout(() => URL.revokeObjectURL(url), 1000)
+  }
+
+  const remove = async (entry: HistoryEntry) => {
+    await removeHistory(entry.id)
+    if (latest === entry.id) setLatest(null)
+    setHistory(await listHistory())
+  }
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') void capture()
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  })
+
+  const current = history.find((h) => h.id === latest)
+
+  return (
+    <div class="panel">
+      <header class="pr-header">
+        <Logo height={15} />
+        <IconButton
+          icon="docs"
+          label="Guides"
+          onClick={() => chrome.tabs.create({ url: DOCS_URL })}
+        />
+      </header>
+
+      <main class="scroll">
+        {current?.thumbnail && (
+          <div class="stage">
+            <img class="preview" src={current.thumbnail} alt={`Capture of ${current.title}`} />
+          </div>
+        )}
+
+        <Section title="Page">
+          <div class="pr-row target" aria-live="polite">
+            {tab?.favicon ? (
+              <img src={tab.favicon} alt="" width={16} height={16} />
+            ) : (
+              <Icon name="page" size={16} class="muted" />
+            )}
+            <div class="grow">
+              <p class="truncate target-title">{tab?.title ?? 'No page selected'}</p>
+              <p class="truncate muted">{tab ? hostOf(tab.url) : 'Open a website to capture it'}</p>
+            </div>
+          </div>
+        </Section>
+
+        {tab && !tab.capturable && (
+          <Section>
+            <Message tone="warning">
+              Chrome doesn't let extensions read its own pages or the Web Store. Open a website to
+              capture it.
+            </Message>
+          </Section>
+        )}
+
+        {current && (
+          <Section title="Captured" aside={ago(current.createdAt)}>
+            <p class="truncate result-title">{current.title}</p>
+            <p class="muted">
+              {current.views.length === 1 ? current.views[0] : `${current.views.length} frames`} ·{' '}
+              <span class="num">
+                {current.layers.toLocaleString()} layers · {formatBytes(current.bytes)}
+              </span>
+            </p>
+            <p class="next">
+              Paste it in Figma with <strong>Plugins → PageRecast</strong>.
+            </p>
+          </Section>
+        )}
+
+        <Section title="Area">
+          <Segmented
+            label="Capture area"
+            value={settings.scope}
+            onChange={(scope) => update({ scope })}
+            options={[
+              { value: 'page', label: 'Full page' },
+              { value: 'viewport', label: 'Visible' },
+              { value: 'element', label: 'Element' },
+            ]}
+          />
+          {settings.scope === 'element' && (
+            <p class="hint">After you press Capture, click the part of the page you want.</p>
+          )}
+        </Section>
+
+        <Section title="Widths" aside={`${settings.widths.length} selected`}>
+          {[
+            ...PRESET_WIDTHS,
+            ...settings.customWidths.map((width) => ({
+              width,
+              label: 'Custom',
+              icon: 'width' as const,
+            })),
+          ].map((p) => (
+            <label class="pr-row width-row">
+              <input
+                class="pr-check"
+                type="checkbox"
+                checked={settings.widths.includes(p.width)}
+                onChange={() => toggleWidth(p.width)}
+              />
+              <Icon name={p.icon as IconName} size={16} class="muted" />
+              <span class="grow">{p.label}</span>
+              <span class="num muted">{p.width}</span>
+              {p.label === 'Custom' && (
+                <IconButton
+                  icon="close"
+                  label={`Remove ${p.width}`}
+                  onClick={() => removeCustomWidth(p.width)}
+                />
+              )}
+            </label>
+          ))}
+          <form
+            class="pr-row add-width"
+            onSubmit={(e) => {
+              e.preventDefault()
+              addCustomWidth()
+            }}
+          >
+            <input
+              class="pr-input"
+              type="number"
+              min={240}
+              max={3840}
+              placeholder="Add a width, e.g. 1024"
+              aria-label="Custom width in pixels"
+              value={customWidth}
+              onInput={(e) => setCustomWidth(e.currentTarget.value)}
+            />
+            <Button type="submit" disabled={!customWidth}>
+              Add
+            </Button>
+          </form>
+        </Section>
+
+        <Section title="Theme">
+          <Segmented
+            label="Colour scheme"
+            value={settings.theme}
+            onChange={(theme) => update({ theme })}
+            options={[
+              { value: 'light', label: 'Light', icon: 'sun' },
+              { value: 'dark', label: 'Dark', icon: 'moon' },
+              { value: 'both', label: 'Both', icon: 'contrast' },
+            ]}
+          />
+        </Section>
+
+        <Section title="Before capturing">
+          <Toggle
+            label="Hide cookie banners"
+            hint="And unlock scrolling they block"
+            checked={settings.hideOverlays}
+            onChange={(hideOverlays) => update({ hideOverlays })}
+          />
+          <Toggle
+            label="Load lazy content"
+            hint="Scrolls the page once first"
+            checked={settings.preload}
+            onChange={(preload) => update({ preload })}
+          />
+          <Toggle
+            label="Screenshot reference"
+            hint="To compare against in Figma"
+            checked={settings.screenshot}
+            onChange={(screenshot) => update({ screenshot })}
+          />
+        </Section>
+
+        {history.filter((h) => h.id !== latest).length > 0 && (
+          <Section title="Recent" aside="On this device">
+            <ul class="history">
+              {history
+                .filter((h) => h.id !== latest)
+                .map((entry) => (
+                  <li class="pr-row">
+                    {entry.thumbnail ? (
+                      <img src={entry.thumbnail} alt="" />
+                    ) : (
+                      <span class="thumb" />
+                    )}
+                    <div class="grow history-text">
+                      <p class="truncate">{entry.title}</p>
+                      <p class="muted">
+                        {entry.views.length} frame{entry.views.length === 1 ? '' : 's'} ·{' '}
+                        {ago(entry.createdAt)}
+                      </p>
+                    </div>
+                    <IconButton
+                      icon={copied === entry.id ? 'check' : 'copy'}
+                      label="Copy for Figma"
+                      onClick={() => copy(entry)}
+                    />
+                    <IconButton
+                      icon="download"
+                      label="Download .recast file"
+                      onClick={() => download(entry)}
+                    />
+                    <IconButton icon="trash" label="Delete" onClick={() => remove(entry)} />
+                  </li>
+                ))}
+            </ul>
+          </Section>
+        )}
+
+        <p class="colophon">
+          <span>
+            Free and open source. Built by{' '}
+            <a href={CREDIT.url} target="_blank" rel="noreferrer">
+              {CREDIT.company}
+            </a>
+          </span>
+          <span class="num">v{__VERSION__}</span>
+        </p>
+      </main>
+
+      <footer class="dock">
+        {status.kind === 'error' && (
+          <Message tone="error" onDismiss={() => setStatus({ kind: 'idle' })}>
+            {status.message}
+          </Message>
+        )}
+        {!settings.seenDebuggerNote && status.kind === 'idle' && (
+          <Message>
+            While capturing, Chrome shows{' '}
+            <strong>“PageRecast started debugging this browser”</strong>. That's how it reads the
+            page at other widths. It closes when the capture ends.
+          </Message>
+        )}
+        {busy ? (
+          <div class="progress-line" aria-live="polite">
+            <span class="pr-spinner" />
+            <span class="truncate">{status.progress.label}</span>
+            <span class="num muted">
+              {Math.min(status.progress.step + 1, status.progress.steps)} / {status.progress.steps}
+            </span>
+          </div>
+        ) : current ? (
+          <div class="dock-row">
+            <Button
+              variant="primary"
+              size="lg"
+              block
+              icon={copied === current.id ? 'check' : 'copy'}
+              onClick={() => copy(current)}
+            >
+              {copied === current.id ? 'Copied' : 'Copy for Figma'}
+            </Button>
+            <IconButton
+              icon="download"
+              label="Download .recast file"
+              onClick={() => download(current)}
+            />
+            <IconButton icon="refresh" label="Capture again" onClick={capture} />
+          </div>
+        ) : (
+          <Button
+            variant="primary"
+            size="lg"
+            block
+            disabled={!tab?.capturable || views === 0}
+            onClick={capture}
+          >
+            {views > 1 ? `Capture ${views} frames` : 'Capture'}
+            <kbd>⌘↵</kbd>
+          </Button>
+        )}
+      </footer>
+    </div>
+  )
+}

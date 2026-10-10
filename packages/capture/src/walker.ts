@@ -165,7 +165,12 @@ export function walk(doc: Document, options: WalkOptions): WalkResult {
   const scrollX = win.scrollX
   const scrollY = win.scrollY
   const docEl = doc.documentElement
-  const pageWidth = Math.max(docEl.scrollWidth, doc.body?.scrollWidth ?? 0, win.innerWidth)
+  // A capture is as wide as the layout viewport it was taken at. Phones zoom out
+  // to fit content that overflows sideways (innerWidth grows); the frame keeps
+  // the designed width and clips the overflow. Without overflow, innerWidth also
+  // counts the scrollbar, which the full-width frame should include.
+  const overflows = docEl.scrollWidth > docEl.clientWidth + 1
+  const pageWidth = overflows ? docEl.clientWidth : win.innerWidth
   const pageHeight = Math.max(docEl.scrollHeight, doc.body?.scrollHeight ?? 0, win.innerHeight)
 
   let origin = { x: 0, y: 0, width: pageWidth, height: pageHeight }

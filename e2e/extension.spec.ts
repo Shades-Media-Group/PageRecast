@@ -95,7 +95,7 @@ test('captures a page at two widths from the side panel', async () => {
     expect(capture.root.children.length).toBeGreaterThan(0)
     expect(capture.screenshot && file.assets[capture.screenshot]).toMatchObject({ kind: 'image' })
   }
-  // Mobile layout really changed: the page is narrower than desktop.
-  expect(file.captures[1]!.width).toBeLessThan(file.captures[0]!.width)
+  // Each frame is exactly the width it was captured at, even when content overflows.
+  expect(file.captures.map((c) => c.width)).toEqual([1440, 390])
   expect(file.generator).toMatchObject({ name: 'PageRecast', surface: 'extension' })
 })

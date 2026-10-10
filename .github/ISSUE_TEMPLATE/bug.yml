@@ -1,0 +1,29 @@
+name: Bug report
+description: Something doesn't work.
+title: '[Bug] '
+labels: [bug]
+body:
+  - type: dropdown
+    id: surface
+    attributes:
+      label: Where
+      options: [Chrome extension, Figma plugin, Both]
+    validations:
+      required: true
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: What you did, what you expected, and what happened instead.
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: PageRecast version
+      placeholder: 1.0.0
+  - type: input
+    id: environment
+    attributes:
+      label: Browser and Figma
+      placeholder: Chrome 152 on macOS, Figma desktop 125

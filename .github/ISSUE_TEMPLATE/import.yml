@@ -1,0 +1,35 @@
+name: A page didn't import well
+description: Something looks different in Figma than on the website.
+title: '[Import] '
+labels: [import-quality]
+body:
+  - type: input
+    id: url
+    attributes:
+      label: Page
+      description: The URL if it's public. For private pages, describe what kind of page it is.
+    validations:
+      required: true
+  - type: textarea
+    id: difference
+    attributes:
+      label: What looks different
+      description: Add a screenshot of the website next to the Figma result if you can.
+    validations:
+      required: true
+  - type: input
+    id: settings
+    attributes:
+      label: Capture settings
+      placeholder: Full page · 1440 and 390 · Light
+  - type: input
+    id: version
+    attributes:
+      label: PageRecast version
+      description: Shown at the bottom of the extension and in the plugin's settings.
+      placeholder: 1.0.0
+  - type: textarea
+    id: file
+    attributes:
+      label: Capture file
+      description: Attach the .recast file (zip it first). It helps more than anything else.

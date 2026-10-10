@@ -1,7 +1,7 @@
 /*
- * PageRecast design tokens. Shades Media Group's ink, paper and true red,
- * tuned for dense tool panels. Light is the default; dark follows the system
- * (Chrome) or Figma's theme (the `figma-dark` class Figma puts on <html>).
+ * PageRecast design tokens: Shades Media Group's ink, paper and red, set for
+ * dense inspector panels. Light is the default. Dark follows the system in
+ * Chrome and Figma's theme in the plugin (Figma adds `figma-dark` to <html>).
  */
 
 @font-face {
@@ -12,113 +12,79 @@
   src: url('@fontsource-variable/hanken-grotesk/files/hanken-grotesk-latin-wght-normal.woff2')
     format('woff2-variations');
 }
-@font-face {
-  font-family: 'Space Grotesk';
-  font-style: normal;
-  font-weight: 700;
-  font-display: swap;
-  src: url('@fontsource/space-grotesk/files/space-grotesk-latin-700-normal.woff2') format('woff2');
-}
-@font-face {
-  font-family: 'Space Mono';
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-  src: url('@fontsource/space-mono/files/space-mono-latin-400-normal.woff2') format('woff2');
-}
 
 :root {
   color-scheme: light;
-  --font-ui: 'Hanken Grotesk', system-ui, -apple-system, 'Segoe UI', sans-serif;
-  --font-brand: 'Space Grotesk', var(--font-ui);
-  --font-data: 'Space Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+  --font: 'Hanken Grotesk', system-ui, -apple-system, 'Segoe UI', sans-serif;
 
-  /* Paper side */
   --bg: #fdfdfc;
-  --surface: #f4f4f2;
-  --surface-2: #ececea;
+  --stage: #f3f3f1;
+  --hover: #f0f0ee;
   --raised: #ffffff;
-  --line: #e4e4e1;
-  --line-strong: #cfcfcb;
+  --line: #e7e7e4;
+  --line-strong: #d4d4d0;
   --ink: #0a0a0b;
-  --ink-2: #38383a;
+  --ink-2: #3d3d40;
   --ink-3: #6e6d6b;
   --on-accent: #ffffff;
 
-  /* Brand */
-  --red: #e0000a; /* action fill: 5.0:1 with white text */
+  --red: #e0000a; /* fills behind white text: 5.0:1 */
   --red-hover: #c20008;
   --red-press: #ab000d;
   --red-text: #d60009;
-  --red-wash: #fff0f1;
-  --rose: #ff8299;
   --mark-red: #f9000a;
+  --rose: #ff8299;
 
-  /* Status */
   --success: #00805a;
-  --success-wash: #e3f6ee;
-  --warning: #a66a00;
-  --warning-wash: #fdf0dc;
+  --warning: #9a6200;
   --error: #c4282d;
-  --error-wash: #fdebeb;
 
-  --focus: 0 0 0 2px var(--bg), 0 0 0 4px rgba(224, 0, 10, 0.45);
-  --shadow-pop: 0 1px 2px rgba(10, 10, 11, 0.06), 0 8px 24px -6px rgba(10, 10, 11, 0.16);
+  --focus: 0 0 0 1px var(--bg), 0 0 0 3px rgba(224, 0, 10, 0.5);
+  --lift: 0 1px 2px rgba(10, 10, 11, 0.06), 0 6px 16px -6px rgba(10, 10, 11, 0.18);
 
-  --r-sm: 6px;
-  --r-md: 8px;
-  --r-lg: 12px;
-
+  --row: 32px;
+  --pad: 16px;
+  --radius: 6px;
   --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
-  --t-fast: 140ms;
-  --t-med: 220ms;
+  --fast: 120ms;
 }
 
 @media (prefers-color-scheme: dark) {
   :root:not(.figma-light) {
     color-scheme: dark;
-    --bg: #0a0a0b;
-    --surface: #141416;
-    --surface-2: #1c1c1f;
-    --raised: #1a1a1d;
-    --line: #26262e;
-    --line-strong: #3a3a44;
-    --ink: #fdfdfc;
-    --ink-2: #c4c4cc;
-    --ink-3: #9a9aa2;
+    --bg: #0e0e10;
+    --stage: #08080a;
+    --hover: #18181b;
+    --raised: #1b1b1f;
+    --line: #232329;
+    --line-strong: #34343c;
+    --ink: #f5f5f3;
+    --ink-2: #c3c3c9;
+    --ink-3: #8f8f98;
     --red-text: #ff5a61;
-    --red-wash: #2a0d0f;
     --success: #3ccf97;
-    --success-wash: #0d241b;
-    --warning: #ffb547;
-    --warning-wash: #2a1f0b;
+    --warning: #f5b04a;
     --error: #ff6b70;
-    --error-wash: #2a1012;
-    --shadow-pop: 0 1px 2px rgba(0, 0, 0, 0.4), 0 10px 28px -8px rgba(0, 0, 0, 0.7);
+    --lift: 0 1px 2px rgba(0, 0, 0, 0.5), 0 8px 20px -8px rgba(0, 0, 0, 0.8);
   }
 }
 
-/* Figma tells the plugin its theme explicitly. */
 :root.figma-dark {
   color-scheme: dark;
-  --bg: #0a0a0b;
-  --surface: #141416;
-  --surface-2: #1c1c1f;
-  --raised: #1a1a1d;
-  --line: #26262e;
-  --line-strong: #3a3a44;
-  --ink: #fdfdfc;
-  --ink-2: #c4c4cc;
-  --ink-3: #9a9aa2;
+  --bg: #0e0e10;
+  --stage: #08080a;
+  --hover: #18181b;
+  --raised: #1b1b1f;
+  --line: #232329;
+  --line-strong: #34343c;
+  --ink: #f5f5f3;
+  --ink-2: #c3c3c9;
+  --ink-3: #8f8f98;
   --red-text: #ff5a61;
-  --red-wash: #2a0d0f;
   --success: #3ccf97;
-  --success-wash: #0d241b;
-  --warning: #ffb547;
-  --warning-wash: #2a1f0b;
+  --warning: #f5b04a;
   --error: #ff6b70;
-  --error-wash: #2a1012;
-  --shadow-pop: 0 1px 2px rgba(0, 0, 0, 0.4), 0 10px 28px -8px rgba(0, 0, 0, 0.7);
+  --lift: 0 1px 2px rgba(0, 0, 0, 0.5), 0 8px 20px -8px rgba(0, 0, 0, 0.8);
 }
 
 *,
@@ -132,14 +98,20 @@ body {
   margin: 0;
   background: var(--bg);
   color: var(--ink);
-  font: 400 13px/1.45 var(--font-ui);
+  font: 400 12px/1.4 var(--font);
+  font-feature-settings: 'tnum' 0;
   -webkit-font-smoothing: antialiased;
-  text-rendering: optimizeLegibility;
+}
+
+h1,
+h2,
+h3,
+p {
+  margin: 0;
 }
 
 ::selection {
   background: rgba(224, 0, 10, 0.18);
-  color: inherit;
 }
 
 * {
@@ -150,27 +122,32 @@ body {
 :focus-visible {
   outline: none;
   box-shadow: var(--focus);
+  border-radius: var(--radius);
 }
 
 a {
   color: inherit;
+  text-decoration-color: var(--line-strong);
   text-underline-offset: 3px;
-  text-decoration-thickness: 1px;
+}
+a:hover {
+  text-decoration-color: currentColor;
 }
 
-.data {
-  font-family: var(--font-data);
-  font-size: 11px;
-  letter-spacing: 0;
+/* Numbers that get compared line to line. */
+.num {
   font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum' 1;
 }
 
-.visually-hidden {
-  position: absolute;
-  width: 1px;
-  height: 1px;
+.muted {
+  color: var(--ink-3);
+}
+
+.truncate {
+  min-width: 0;
   overflow: hidden;
-  clip: rect(0 0 0 0);
+  text-overflow: ellipsis;
   white-space: nowrap;
 }
 

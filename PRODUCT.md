@@ -78,7 +78,7 @@ The plugin can also import `.html` files and pasted HTML/CSS code with no extens
 ## Brand Commitments
 
 - **Name:** PageRecast. Tagline "Capture the web. Recast the design." Descriptor "From any website to editable layers."
-- **Credit line:** "Built by Cristian Brinza | Shades Media Group", with Shades Media Group linking to https://shades.md. It appears in both apps, the README and the store listings.
+- **Credit:** inside the product (both apps, store listings) the credit is "Shades Media Group", linking to https://shades.md. The README and GitHub credit "Built by Cristian Brinza | Shades Media Group".
 - **Shades brand:** heavily rely on the Shades brand system. Source: `~/Documents/GitHub/shades.md/client/src/pages/Page_design_v2/Shades Brand System.dc.html`.
   - Ink and Paper neutrals, True Red `#F9000A` used sparingly ("red is a spice, not the meal").
   - The Spectrum gradient, at most once per layout.

@@ -353,7 +353,8 @@
 .pr-progress > div {
   height: 100%;
   background: var(--red);
-  transition: width 240ms var(--ease);
+  transform-origin: left center;
+  transition: transform 240ms var(--ease);
 }
 
 .pr-spinner {

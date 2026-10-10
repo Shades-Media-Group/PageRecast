@@ -262,7 +262,7 @@ export function Progress({ value }: { value: number }) {
       aria-valuemax={100}
       aria-valuenow={Math.round(value * 100)}
     >
-      <div style={{ width: `${Math.max(2, Math.min(100, value * 100))}%` }} />
+      <div style={{ transform: `scaleX(${Math.max(0.02, Math.min(1, value))})` }} />
     </div>
   )
 }

@@ -277,6 +277,10 @@ export async function captureTab(
       })
       await wait(350)
 
+      await evaluate(
+        target,
+        'window.__pagerecast.thaw?.(); window.__pagerecast.thaw = window.__pagerecast.freeze(document)',
+      )
       if (settings.preload) {
         report('loading lazy content')
         await evaluate(target, 'window.__pagerecast.preload(document)', true)
@@ -319,7 +323,7 @@ export async function captureTab(
       }
       await evaluate(
         target,
-        'window.__pagerecast.restore?.(); window.__pagerecast.restore = undefined',
+        'window.__pagerecast.restore?.(); window.__pagerecast.restore = undefined; window.__pagerecast.thaw?.(); window.__pagerecast.thaw = undefined',
       )
 
       parts.push({
@@ -345,7 +349,7 @@ export async function captureTab(
     try {
       await evaluate(
         target,
-        "document.querySelector('[data-pagerecast-target]')?.removeAttribute('data-pagerecast-target'); window.__pagerecast?.restore?.()",
+        "document.querySelector('[data-pagerecast-target]')?.removeAttribute('data-pagerecast-target'); window.__pagerecast?.restore?.(); window.__pagerecast?.thaw?.()",
       )
     } catch {
       // The tab may have navigated away.

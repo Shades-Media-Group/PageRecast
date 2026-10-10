@@ -98,4 +98,6 @@ test('captures a page at two widths from the side panel', async () => {
   // Each frame is exactly the width it was captured at, even when content overflows.
   expect(file.captures.map((c) => c.width)).toEqual([1440, 390])
   expect(file.generator).toMatchObject({ name: 'PageRecast', surface: 'extension' })
+  // Content that fades in on scroll is captured in its final, visible state.
+  expect(JSON.stringify(file.captures[0]!.root)).toContain('Revealed on scroll')
 })

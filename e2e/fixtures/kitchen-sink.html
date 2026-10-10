@@ -59,6 +59,17 @@
       .icon {
         color: rgb(0, 128, 255);
       }
+      .reveal {
+        opacity: 0;
+        transform: translateY(24px);
+        transition:
+          opacity 900ms ease,
+          transform 900ms ease;
+      }
+      .reveal.shown {
+        opacity: 1;
+        transform: none;
+      }
     </style>
   </head>
   <body>
@@ -89,6 +100,15 @@
       <div class="rotated"></div>
       <div class="hidden">Never captured</div>
       <div style="width: 600px; height: 8px; background: rgb(0, 0, 0)" aria-hidden="true"></div>
+      <div style="height: 1400px" aria-hidden="true"></div>
+      <p class="reveal">Revealed on scroll</p>
     </main>
+    <script>
+      // Content that fades in when scrolled into view, as many sites do.
+      const io = new IntersectionObserver((entries) => {
+        for (const e of entries) if (e.isIntersecting) e.target.classList.add('shown')
+      })
+      document.querySelectorAll('.reveal').forEach((el) => io.observe(el))
+    </script>
   </body>
 </html>

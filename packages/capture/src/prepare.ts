@@ -43,6 +43,23 @@ const VOID = new Set([
   'textarea',
 ])
 
+const FREEZE_CSS =
+  '*,*::before,*::after{animation-duration:0s!important;animation-delay:0s!important;animation-iteration-count:1!important;' +
+  'transition-duration:0s!important;transition-delay:0s!important;scroll-behavior:auto!important;caret-color:transparent!important}'
+
+/**
+ * Makes every animation and transition finish instantly. Applied before the
+ * page is scrolled, so content that fades in on scroll lands in its final
+ * state instead of being caught half-transparent. Returns the undo.
+ */
+export function freeze(doc: Document): () => void {
+  const style = doc.createElement('style')
+  style.setAttribute('data-pagerecast-freeze', '')
+  style.textContent = FREEZE_CSS
+  doc.head.appendChild(style)
+  return () => style.remove()
+}
+
 /**
  * Gets the live page ready for a faithful capture and returns a function that
  * puts everything back.
@@ -56,9 +73,7 @@ export function prepare(doc: Document, options: PrepareOptions): () => void {
     '[data-pr-hide-before]::before{content:none!important}[data-pr-hide-after]::after{content:none!important}'
   if (options.freezeAnimations) {
     // Jump every animation and transition to its end state: reveal effects show their final frame.
-    css +=
-      '*,*::before,*::after{animation-duration:0s!important;animation-delay:0s!important;animation-iteration-count:1!important;' +
-      'transition-duration:0s!important;transition-delay:0s!important;scroll-behavior:auto!important;caret-color:transparent!important}'
+    css += FREEZE_CSS
   }
   style.textContent = css
   doc.head.appendChild(style)

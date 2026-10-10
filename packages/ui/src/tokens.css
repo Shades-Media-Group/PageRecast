@@ -1,0 +1,184 @@
+/*
+ * PageRecast design tokens. Shades Media Group's ink, paper and true red,
+ * tuned for dense tool panels. Light is the default; dark follows the system
+ * (Chrome) or Figma's theme (the `figma-dark` class Figma puts on <html>).
+ */
+
+@font-face {
+  font-family: 'Hanken Grotesk';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url('@fontsource-variable/hanken-grotesk/files/hanken-grotesk-latin-wght-normal.woff2')
+    format('woff2-variations');
+}
+@font-face {
+  font-family: 'Space Grotesk';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('@fontsource/space-grotesk/files/space-grotesk-latin-700-normal.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Space Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('@fontsource/space-mono/files/space-mono-latin-400-normal.woff2') format('woff2');
+}
+
+:root {
+  color-scheme: light;
+  --font-ui: 'Hanken Grotesk', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-brand: 'Space Grotesk', var(--font-ui);
+  --font-data: 'Space Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+
+  /* Paper side */
+  --bg: #fdfdfc;
+  --surface: #f4f4f2;
+  --surface-2: #ececea;
+  --raised: #ffffff;
+  --line: #e4e4e1;
+  --line-strong: #cfcfcb;
+  --ink: #0a0a0b;
+  --ink-2: #38383a;
+  --ink-3: #6e6d6b;
+  --on-accent: #ffffff;
+
+  /* Brand */
+  --red: #e0000a; /* action fill: 5.0:1 with white text */
+  --red-hover: #c20008;
+  --red-press: #ab000d;
+  --red-text: #d60009;
+  --red-wash: #fff0f1;
+  --rose: #ff8299;
+  --mark-red: #f9000a;
+
+  /* Status */
+  --success: #00805a;
+  --success-wash: #e3f6ee;
+  --warning: #a66a00;
+  --warning-wash: #fdf0dc;
+  --error: #c4282d;
+  --error-wash: #fdebeb;
+
+  --focus: 0 0 0 2px var(--bg), 0 0 0 4px rgba(224, 0, 10, 0.45);
+  --shadow-pop: 0 1px 2px rgba(10, 10, 11, 0.06), 0 8px 24px -6px rgba(10, 10, 11, 0.16);
+
+  --r-sm: 6px;
+  --r-md: 8px;
+  --r-lg: 12px;
+
+  --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --t-fast: 140ms;
+  --t-med: 220ms;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not(.figma-light) {
+    color-scheme: dark;
+    --bg: #0a0a0b;
+    --surface: #141416;
+    --surface-2: #1c1c1f;
+    --raised: #1a1a1d;
+    --line: #26262e;
+    --line-strong: #3a3a44;
+    --ink: #fdfdfc;
+    --ink-2: #c4c4cc;
+    --ink-3: #9a9aa2;
+    --red-text: #ff5a61;
+    --red-wash: #2a0d0f;
+    --success: #3ccf97;
+    --success-wash: #0d241b;
+    --warning: #ffb547;
+    --warning-wash: #2a1f0b;
+    --error: #ff6b70;
+    --error-wash: #2a1012;
+    --shadow-pop: 0 1px 2px rgba(0, 0, 0, 0.4), 0 10px 28px -8px rgba(0, 0, 0, 0.7);
+  }
+}
+
+/* Figma tells the plugin its theme explicitly. */
+:root.figma-dark {
+  color-scheme: dark;
+  --bg: #0a0a0b;
+  --surface: #141416;
+  --surface-2: #1c1c1f;
+  --raised: #1a1a1d;
+  --line: #26262e;
+  --line-strong: #3a3a44;
+  --ink: #fdfdfc;
+  --ink-2: #c4c4cc;
+  --ink-3: #9a9aa2;
+  --red-text: #ff5a61;
+  --red-wash: #2a0d0f;
+  --success: #3ccf97;
+  --success-wash: #0d241b;
+  --warning: #ffb547;
+  --warning-wash: #2a1f0b;
+  --error: #ff6b70;
+  --error-wash: #2a1012;
+  --shadow-pop: 0 1px 2px rgba(0, 0, 0, 0.4), 0 10px 28px -8px rgba(0, 0, 0, 0.7);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font: 400 13px/1.45 var(--font-ui);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: rgba(224, 0, 10, 0.18);
+  color: inherit;
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--line-strong) transparent;
+}
+
+:focus-visible {
+  outline: none;
+  box-shadow: var(--focus);
+}
+
+a {
+  color: inherit;
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1px;
+}
+
+.data {
+  font-family: var(--font-data);
+  font-size: 11px;
+  letter-spacing: 0;
+  font-variant-numeric: tabular-nums;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0ms !important;
+    animation-duration: 0ms !important;
+  }
+}

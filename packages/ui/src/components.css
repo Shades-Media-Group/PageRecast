@@ -1,0 +1,330 @@
+/* Shared PageRecast controls. Class names are prefixed `pr-` to stay out of page styles. */
+
+.pr-icon {
+  flex: none;
+  display: block;
+}
+
+/* Buttons */
+.pr-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 32px;
+  padding: 0 12px;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-md);
+  background: var(--raised);
+  color: var(--ink);
+  font: 600 13px/1 var(--font-ui);
+  cursor: pointer;
+  white-space: nowrap;
+  transition:
+    background var(--t-fast) var(--ease),
+    border-color var(--t-fast) var(--ease),
+    transform var(--t-fast) var(--ease);
+}
+.pr-button:hover {
+  background: var(--surface);
+}
+.pr-button:active {
+  transform: scale(0.98);
+}
+.pr-button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+}
+.pr-button--primary {
+  border-color: transparent;
+  background: var(--red);
+  color: var(--on-accent);
+}
+.pr-button--primary:hover {
+  background: var(--red-hover);
+}
+.pr-button--primary:active {
+  background: var(--red-press);
+}
+.pr-button--ghost {
+  border-color: transparent;
+  background: transparent;
+  color: var(--ink-2);
+}
+.pr-button--ghost:hover {
+  background: var(--surface);
+  color: var(--ink);
+}
+.pr-button--lg {
+  height: 40px;
+  font-size: 14px;
+  padding: 0 16px;
+}
+.pr-button--block {
+  width: 100%;
+}
+.pr-button kbd {
+  font: 400 11px/1 var(--font-data);
+  opacity: 0.72;
+}
+
+.pr-icon-button {
+  display: inline-grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--r-sm);
+  background: transparent;
+  color: var(--ink-3);
+  cursor: pointer;
+  transition:
+    background var(--t-fast) var(--ease),
+    color var(--t-fast) var(--ease);
+}
+.pr-icon-button:hover {
+  background: var(--surface-2);
+  color: var(--ink);
+}
+
+/* Segmented control */
+.pr-segmented {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  gap: 2px;
+  padding: 2px;
+  border-radius: var(--r-md);
+  background: var(--surface);
+  border: 1px solid var(--line);
+}
+.pr-segmented button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 28px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--ink-3);
+  font: 500 12px/1 var(--font-ui);
+  cursor: pointer;
+  transition:
+    background var(--t-fast) var(--ease),
+    color var(--t-fast) var(--ease),
+    box-shadow var(--t-fast) var(--ease);
+}
+.pr-segmented button:hover {
+  color: var(--ink);
+}
+.pr-segmented button[aria-pressed='true'] {
+  background: var(--raised);
+  color: var(--ink);
+  box-shadow:
+    0 0 0 1px var(--line),
+    0 1px 2px rgba(10, 10, 11, 0.08);
+}
+
+/* Switch row */
+.pr-switch {
+  display: grid;
+  grid-template-columns: 20px 1fr auto;
+  align-items: start;
+  gap: 10px;
+  padding: 8px 0;
+  cursor: pointer;
+}
+.pr-switch + .pr-switch {
+  border-top: 1px solid var(--line);
+}
+.pr-switch__icon {
+  color: var(--ink-3);
+  margin-top: 1px;
+}
+.pr-switch__label {
+  display: block;
+  font-weight: 600;
+  color: var(--ink);
+}
+.pr-switch__hint {
+  display: block;
+  color: var(--ink-3);
+  font-size: 12px;
+  line-height: 1.4;
+  margin-top: 2px;
+}
+.pr-switch input {
+  appearance: none;
+  position: relative;
+  width: 30px;
+  height: 18px;
+  margin: 1px 0 0;
+  border-radius: 999px;
+  background: var(--line-strong);
+  cursor: pointer;
+  transition: background var(--t-fast) var(--ease);
+}
+.pr-switch input::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 1px 2px rgba(10, 10, 11, 0.25);
+  transition: transform var(--t-fast) var(--ease);
+}
+.pr-switch input:checked {
+  background: var(--ink);
+}
+.pr-switch input:checked::after {
+  transform: translateX(12px);
+}
+:root.figma-dark .pr-switch input:checked::after,
+.pr-switch input:checked::after {
+  background: var(--bg);
+}
+
+/* Chips (multi-select) */
+.pr-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 30px;
+  padding: 0 10px 0 8px;
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+  background: var(--raised);
+  color: var(--ink-2);
+  font: 500 12px/1 var(--font-ui);
+  cursor: pointer;
+  transition:
+    border-color var(--t-fast) var(--ease),
+    background var(--t-fast) var(--ease),
+    color var(--t-fast) var(--ease);
+}
+.pr-chip:hover {
+  border-color: var(--line-strong);
+  color: var(--ink);
+}
+.pr-chip[aria-pressed='true'] {
+  border-color: var(--ink);
+  color: var(--ink);
+  box-shadow: inset 0 0 0 0.5px var(--ink);
+}
+.pr-chip .data {
+  color: var(--ink-3);
+}
+.pr-chip[aria-pressed='true'] .data {
+  color: var(--ink-2);
+}
+
+/* Inputs */
+.pr-input {
+  height: 30px;
+  padding: 0 10px;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-md);
+  background: var(--raised);
+  color: var(--ink);
+  font: 400 12px/1 var(--font-ui);
+}
+.pr-input::placeholder {
+  color: var(--ink-3);
+}
+.pr-input:focus-visible {
+  border-color: var(--ink-2);
+}
+.pr-textarea {
+  width: 100%;
+  min-height: 160px;
+  padding: 10px 12px;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-md);
+  background: var(--raised);
+  color: var(--ink);
+  font: 400 12px/1.5 var(--font-data);
+  resize: vertical;
+}
+
+/* Notices */
+.pr-notice {
+  display: grid;
+  grid-template-columns: 20px 1fr auto;
+  gap: 8px;
+  align-items: start;
+  padding: 10px 12px;
+  border-radius: var(--r-md);
+  background: var(--surface);
+  color: var(--ink-2);
+  font-size: 12px;
+  line-height: 1.45;
+}
+.pr-notice strong {
+  color: var(--ink);
+}
+.pr-notice--warning {
+  background: var(--warning-wash);
+}
+.pr-notice--warning .pr-icon {
+  color: var(--warning);
+}
+.pr-notice--error {
+  background: var(--error-wash);
+}
+.pr-notice--error .pr-icon {
+  color: var(--error);
+}
+.pr-notice--success {
+  background: var(--success-wash);
+}
+.pr-notice--success .pr-icon {
+  color: var(--success);
+}
+
+/* Section heading inside panels: sentence case, no eyebrow. */
+.pr-section-title {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin: 0 0 8px;
+  font: 600 12px/1.2 var(--font-ui);
+  color: var(--ink);
+}
+.pr-section-title span {
+  font-weight: 400;
+  color: var(--ink-3);
+}
+
+/* Progress */
+.pr-progress {
+  height: 4px;
+  border-radius: 999px;
+  background: var(--surface-2);
+  overflow: hidden;
+}
+.pr-progress > div {
+  height: 100%;
+  border-radius: inherit;
+  background: var(--red);
+  transition: width var(--t-med) var(--ease);
+}
+
+.pr-spinner {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  animation: pr-spin 0.7s linear infinite;
+}
+@keyframes pr-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

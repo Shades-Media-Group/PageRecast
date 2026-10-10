@@ -12,7 +12,7 @@
   --card: #ffffff;
   --sunk: #f1efe9;
   --line: #e3e1db;
-  --serif: 'Fraunces Variable', Georgia, serif;
+  --serif: 'Source Serif 4 Variable', Georgia, serif;
   --sans: 'Hanken Grotesk Variable', system-ui, sans-serif;
   --gutter: clamp(20px, 4vw, 56px);
   --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
@@ -40,16 +40,13 @@
   box-sizing: border-box;
   margin: 0;
 }
-/* Fraunces picks its optical size from the font size; the soft and wonky axes stay off. */
+/* The serif picks its optical size from the font size. */
 h1,
 h2,
 .glyphs,
 .t-display,
 .t-title {
   font-optical-sizing: auto;
-  font-variation-settings:
-    'SOFT' 0,
-    'WONK' 0;
 }
 body {
   background: var(--paper);

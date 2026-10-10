@@ -556,11 +556,6 @@
   resolved "https://registry.yarnpkg.com/@figma/plugin-typings/-/plugin-typings-1.141.0.tgz#d04a03369fb81c235431ab988638667a57a11187"
   integrity sha512-i+6AsBmiwGNpH4I6sgIvj5RX1dMWExzS7h33HGrU++//wPKotlIzJuGhG15woCQY1V1ctG/k5uW9HgfkTyTaWg==
 
-"@fontsource-variable/fraunces@5":
-  version "5.3.0"
-  resolved "https://registry.yarnpkg.com/@fontsource-variable/fraunces/-/fraunces-5.3.0.tgz#6c8a69a0dcac753643a04e068ed2ad5689e99229"
-  integrity sha512-9BYGySn4AHEJdgp9Z28tQ3X+laJMEOITXkQarZXeloWQZDq5oOvXJ3kDA8c7MGIfpogIaZfjrQBqmda8POOCKA==
-
 "@fontsource-variable/hanken-grotesk@^5.3.0":
   version "5.3.0"
   resolved "https://registry.yarnpkg.com/@fontsource-variable/hanken-grotesk/-/hanken-grotesk-5.3.0.tgz#9f4d3ac87244a44a578ce58c9ae8fab44df9357f"
@@ -570,6 +565,11 @@
   version "5.3.0"
   resolved "https://registry.yarnpkg.com/@fontsource-variable/schibsted-grotesk/-/schibsted-grotesk-5.3.0.tgz#0d2e4f8af8b7c95583f6377f57e0a1b922b8aa54"
   integrity sha512-ndS6H/KICWANchlHF3q4UdZD+xrZ3Ji0rUobIuXlgvDUzDfqZDsVuXPXZb636nJZMHE9zZ9Fmwgqazm8hMB50Q==
+
+"@fontsource-variable/source-serif-4@5":
+  version "5.3.0"
+  resolved "https://registry.yarnpkg.com/@fontsource-variable/source-serif-4/-/source-serif-4-5.3.0.tgz#3b4ac04d10d3ca0d59c55433295967cc86b9aea3"
+  integrity sha512-9vch9WqxjaaA+1o9Ur8pOgIGbCYLjRReOUel23A6lOpD1syptgjtkORevvNmldJ5kGXQL29onQUqI5Ltz0s3bQ==
 
 "@fontsource/space-grotesk@^5.3.0":
   version "5.3.0"

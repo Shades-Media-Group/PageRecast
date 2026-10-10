@@ -48,19 +48,31 @@ test.afterAll(async () => {
 
 test('captures a page at two widths from the side panel', async () => {
   const panel = await context.newPage()
+  await panel.setViewportSize({ width: 380, height: 820 })
   await panel.goto(`chrome-extension://${extensionId}/sidepanel/index.html`)
+  // Set PR_SHOTS to a folder to keep screenshots of the panel for design review.
+  const shot = async (name: string) => {
+    if (!process.env.PR_SHOTS) return
+    for (const scheme of ['light', 'dark'] as const) {
+      await panel.emulateMedia({ colorScheme: scheme })
+      await panel.screenshot({ path: `${process.env.PR_SHOTS}/extension-${name}-${scheme}.png` })
+    }
+    await panel.emulateMedia({ colorScheme: 'light' })
+  }
   // Put the page under test in its own focused window, as a real user would have it.
   await panel.evaluate((url) => chrome.windows.create({ url, focused: true }), `${origin}/`)
   await expect(panel.locator('.target p.muted')).toHaveText('127.0.0.1:' + new URL(origin).port, {
     timeout: 10_000,
   })
 
+  await shot('start')
   // Desktop and Mobile.
   await panel.getByRole('checkbox').nth(3).check()
   await panel.getByRole('button', { name: /Capture 2 frames/ }).click()
   await expect(panel.getByRole('button', { name: 'Copy for Figma' })).toBeVisible({
     timeout: 30_000,
   })
+  await shot('captured')
 
   const file = (await panel.evaluate(async () => {
     const db = await new Promise<IDBDatabase>((resolve) => {

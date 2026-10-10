@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>PageRecast: any web page, as editable Figma layers</title>
+    <meta
+      name="description"
+      content="A free, open-source Chrome extension and Figma plugin. Capture any web page, even behind a login, at every width and in light and dark, and paste it into Figma as editable layers."
+    />
+    <meta property="og:title" content="PageRecast: any web page, as editable Figma layers" />
+    <meta
+      property="og:description"
+      content="Free and open source. Capture pages behind a login, at every width, in light and dark. Nothing leaves your computer."
+    />
+    <meta
+      property="og:image"
+      content="https://raw.githubusercontent.com/Shades-Media-Group/main/assets/brand/social-preview.png"
+    />
+    <meta property="og:url" content="https://pagerecast.shades.md/" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="canonical" href="https://pagerecast.shades.md/" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <meta name="theme-color" content="#fdfdfc" />
+  </head>
+  <body>
+    <header class="nav">
+      <a class="nav-logo" href="#top" aria-label="PageRecast" data-logo></a>
+      <nav aria-label="Main">
+        <a href="#widths">Widths</a>
+        <a href="#layers">Layers</a>
+        <a href="#privacy">Privacy</a>
+        <a data-link="docs">Guides</a>
+        <a data-link="repo">GitHub</a>
+      </nav>
+      <a class="nav-cta" href="#install">Install free</a>
+    </header>
+
+    <main id="top">
+      <section class="hero">
+        <h1>Recast any web page.</h1>
+        <p class="hero-lead">
+          Capture what your browser shows. Paste it into Figma as layers you can edit, every one of
+          them.
+        </p>
+        <p class="hero-links">
+          <a data-link="chrome">Add to Chrome <span aria-hidden="true">›</span></a>
+          <a data-link="figma">Get the Figma plugin <span aria-hidden="true">›</span></a>
+        </p>
+        <figure
+          class="explode"
+          data-explode
+          aria-label="A captured web page separating into its Figma layers"
+        >
+          <div class="explode-stage"></div>
+          <figcaption class="explode-stats">
+            <div><b data-stat="layers">—</b><span>layers</span></div>
+            <div><b data-stat="texts">—</b><span>text layers</span></div>
+            <div><b data-stat="images">—</b><span>images and vectors</span></div>
+            <p>From one capture of this page at 1440 px, imported without a single edit.</p>
+          </figcaption>
+        </figure>
+      </section>
+
+      <section class="chapter chapter--ink" id="widths">
+        <div class="chapter-head" data-reveal>
+          <h2>Every width.<br />Both themes.<br />One capture.</h2>
+          <p>
+            Pick desktop, tablet, mobile or any width between 240 and 3840, in light, dark or both.
+            Each one arrives in Figma as its own frame, and both themes become colour variables with
+            a Light and a Dark mode.
+          </p>
+        </div>
+        <div class="widths" data-widths></div>
+      </section>
+
+      <section class="chapter" id="layers">
+        <div class="chapter-head" data-reveal>
+          <h2>Real layers, not a picture.</h2>
+          <p>
+            Text stays text, in its own fonts. Images stay images, icons become vectors, and flex
+            layouts become Auto Layout where the result lands exactly where the page put it.
+          </p>
+        </div>
+        <div class="split" data-reveal>
+          <figure class="panel">
+            <img
+              src="/shots/plugin-review-light.png"
+              alt="The PageRecast plugin reviewing a capture before import"
+              width="400"
+              height="640"
+              loading="lazy"
+            />
+          </figure>
+          <dl class="specs">
+            <div>
+              <dt>Text</dt>
+              <dd>Every inline style, link and line break kept as one text layer</dd>
+            </div>
+            <div>
+              <dt>Fonts</dt>
+              <dd>Matched through each CSS font stack, with every replacement listed</dd>
+            </div>
+            <div>
+              <dt>Layout</dt>
+              <dd>Auto Layout that is checked against the page, child by child</dd>
+            </div>
+            <div>
+              <dt>Styles</dt>
+              <dd>Colour variables, text styles, or the styles already in your file</dd>
+            </div>
+            <div>
+              <dt>Visuals</dt>
+              <dd>Gradients, borders, radii, shadows, blur and SVG as editable vectors</dd>
+            </div>
+            <div>
+              <dt>Names</dt>
+              <dd>Layers named for what they are, or for their HTML</dd>
+            </div>
+          </dl>
+        </div>
+      </section>
+
+      <section class="chapter chapter--behind">
+        <div class="chapter-head chapter-head--wide" data-reveal>
+          <h2>Behind a login. On staging. On localhost.</h2>
+          <p>
+            The extension captures exactly what your browser shows, so the pages you actually work
+            on are the ones you can bring into Figma: dashboards, previews, a menu left open, a form
+            half filled.
+          </p>
+        </div>
+        <figure class="panel panel--wide" data-reveal>
+          <img
+            src="/shots/ext-captured-light.png"
+            alt="The PageRecast side panel after capturing a page"
+            width="380"
+            height="860"
+            loading="lazy"
+          />
+          <img
+            src="/shots/ext-ready-dark.png"
+            alt="The PageRecast capture settings in dark mode"
+            width="380"
+            height="860"
+            loading="lazy"
+          />
+        </figure>
+      </section>
+
+      <section class="chapter chapter--red" id="privacy">
+        <h2 data-reveal>Nothing leaves your computer.</h2>
+        <p>
+          There is no PageRecast server. Captures are built in your browser and kept on your device
+          until you paste them into Figma. No account, no analytics, no limits, and no price.
+        </p>
+      </section>
+
+      <section class="chapter chapter--open">
+        <div class="chapter-head" data-reveal>
+          <h2>Open source. Open format.</h2>
+          <p>
+            PageRecast is MIT licensed, and captures are <code>.recast</code> files: gzipped JSON
+            with a documented schema you can read, write and build on.
+          </p>
+          <p class="hero-links hero-links--left">
+            <a data-link="repo">View on GitHub <span aria-hidden="true">›</span></a>
+            <a data-link="format">Read the format <span aria-hidden="true">›</span></a>
+          </p>
+        </div>
+        <pre class="code" data-reveal aria-label="An excerpt of a .recast file"><code>{
+  <span class="k">"format"</span>: <span class="s">"pagerecast/scene"</span>,
+  <span class="k">"version"</span>: <span class="n">1</span>,
+  <span class="k">"captures"</span>: [{
+    <span class="k">"label"</span>: <span class="s">"Mobile · 390 · Dark"</span>,
+    <span class="k">"root"</span>: {
+      <span class="k">"type"</span>: <span class="s">"frame"</span>,
+      <span class="k">"layout"</span>: { <span class="k">"direction"</span>: <span class="s">"column"</span>, <span class="k">"gap"</span>: [<span class="n">24</span>, <span class="n">24</span>] },
+      <span class="k">"children"</span>: [ … ]
+    }
+  }]
+}</code></pre>
+      </section>
+
+      <section class="install" id="install">
+        <h2>Two parts. Two minutes.</h2>
+        <div class="install-row" data-reveal>
+          <a class="install-item" data-link="chrome">
+            <span>Chrome extension</span>
+            <strong>Captures the page</strong>
+            <em>Add to Chrome ›</em>
+          </a>
+          <a class="install-item" data-link="figma">
+            <span>Figma plugin</span>
+            <strong>Builds the layers</strong>
+            <em>Get the plugin ›</em>
+          </a>
+          <a class="install-item" data-link="docs">
+            <span>Guides</span>
+            <strong>Start in two minutes</strong>
+            <em>Read the guides ›</em>
+          </a>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <span data-logo></span>
+      <p>Free and open source. Built by <a data-link="shades">Shades Media Group</a>.</p>
+      <p class="footer-links">
+        <a data-link="repo">GitHub</a>
+        <a data-link="docs">Guides</a>
+        <a data-link="privacy">Privacy</a>
+        <a data-link="changelog">Version <span data-version></span></a>
+      </p>
+    </footer>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

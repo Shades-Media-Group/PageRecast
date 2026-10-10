@@ -10,7 +10,9 @@
     "apps/figma-plugin/src/ui",
     "e2e",
     "scripts",
-    "*.config.ts"
+    "*.config.ts",
+    "apps/site/src",
+    "apps/site/vite.config.ts"
   ],
   "exclude": ["**/dist", "**/node_modules"]
 }

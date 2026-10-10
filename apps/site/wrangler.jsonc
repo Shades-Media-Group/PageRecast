@@ -1,0 +1,13 @@
+{
+  "$schema": "../../node_modules/wrangler/config-schema.json",
+  // The website: static files served by a Worker at pagerecast.shades.md.
+  "name": "pagerecast-site",
+  "compatibility_date": "2026-10-01",
+  "assets": {
+    "directory": "./dist",
+    "not_found_handling": "single-page-application",
+    "html_handling": "auto-trailing-slash",
+  },
+  "routes": [{ "pattern": "pagerecast.shades.md", "custom_domain": true }],
+  "observability": { "enabled": false },
+}

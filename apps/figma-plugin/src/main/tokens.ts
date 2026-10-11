@@ -52,6 +52,7 @@ export function createVariables(
   refs: ColorRef[],
   file: RecastFile,
   roots: Map<Capture, FrameNode>,
+  warn: (message: string) => void = () => {},
 ): number {
   if (refs.length === 0) return 0
   const light = refs.filter((r) => r.capture.theme === 'light')
@@ -102,9 +103,25 @@ export function createVariables(
     lightMode,
     paired ? 'Light' : primary[0]!.capture.theme === 'dark' ? 'Dark' : 'Light',
   )
-  const darkMode = paired ? collection.addMode('Dark') : null
+  // Plans without modes (Figma's free plan allows one per collection) get the
+  // dark values in a second collection instead, bound by the dark frames.
+  let darkMode: string | null = null
+  let darkCollection: VariableCollection | null = null
+  if (paired) {
+    try {
+      darkMode = collection.addMode('Dark')
+    } catch {
+      darkCollection = figma.variables.createVariableCollection(`${hostOf(file)} · Dark`)
+      darkMode = darkCollection.modes[0]!.modeId
+      darkCollection.renameMode(darkMode, 'Dark')
+      warn(
+        'This Figma plan allows one mode per collection, so the dark colours are in a second collection.',
+      )
+    }
+  }
 
   const variables = new Map<string, Variable>()
+  const darkVariables = new Map<string, Variable>()
   const roleCount = { text: 0, surface: 0 }
   for (const [k, use] of chosen) {
     const role = use.text > use.count / 2 ? 'text' : 'surface'
@@ -118,7 +135,13 @@ export function createVariables(
     variable.setValueForMode(lightMode, { r, g, b, a })
     if (darkMode) {
       const d = counterparts.get(k) ?? use.color
-      variable.setValueForMode(darkMode, { r: d.r, g: d.g, b: d.b, a: d.a })
+      if (darkCollection) {
+        const twin = figma.variables.createVariable(variable.name, darkCollection, 'COLOR')
+        twin.setValueForMode(darkMode, { r: d.r, g: d.g, b: d.b, a: d.a })
+        darkVariables.set(k, twin)
+      } else {
+        variable.setValueForMode(darkMode, { r: d.r, g: d.g, b: d.b, a: d.a })
+      }
     }
     variable.description = `From ${hex(use.color)}, used ${use.count}×`
     variables.set(k, variable)
@@ -137,14 +160,17 @@ export function createVariables(
     const byDark = new Map<string, Variable>()
     for (const [k, variable] of variables) {
       const d = counterparts.get(k)
-      if (d && !byDark.has(colorKey(d))) byDark.set(colorKey(d), variable)
+      if (d && !byDark.has(colorKey(d))) byDark.set(colorKey(d), darkVariables.get(k) ?? variable)
     }
     for (const ref of dark) {
       const variable = byDark.get(colorKey(ref.color))
       if (variable) bind(ref, variable)
     }
-    for (const [capture, root] of roots) {
-      if (capture.theme === 'dark') root.setExplicitVariableModeForCollection(collection, darkMode)
+    if (!darkCollection) {
+      for (const [capture, root] of roots) {
+        if (capture.theme === 'dark')
+          root.setExplicitVariableModeForCollection(collection, darkMode)
+      }
     }
   }
   return variables.size

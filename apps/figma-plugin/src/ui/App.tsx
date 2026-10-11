@@ -29,6 +29,7 @@ import {
   type UiToMain,
 } from '../shared/messages'
 import { pageOf, pageTitle } from '../shared/pages'
+import { fontUsage, rememberChoices, type FontChoices, type MissingFont } from '../shared/fonts'
 import { prepareImages, readFile, readText, renderHtml } from './load'
 
 type Tab = 'paste' | 'file' | 'code'
@@ -45,6 +46,10 @@ type Stage =
       existing: Set<string>
       /** Replace those frames rather than adding new ones. */
       update: boolean
+      /** Fonts Figma lacks and every family it has; absent until the plugin answers. */
+      fonts?: { missing: MissingFont[]; families: string[] }
+      /** The family picked for each missing font. */
+      fontChoices: FontChoices
     }
   | { kind: 'importing'; label: string; progress: number }
   | { kind: 'done'; report: ImportReport; askRating: boolean }
@@ -100,12 +105,12 @@ export function App() {
     file: RecastFile,
     selected: Set<string>,
     options: ImportOptions,
+    fonts: FontChoices,
     update = true,
   ) => {
-    const domain = domainOf(file)
     saveSettings({
       ...settingsRef.current,
-      domains: { ...settingsRef.current.domains, [domain]: options },
+      domains: { ...settingsRef.current.domains, [domainOf(file)]: options },
     })
     const chosen: RecastFile = {
       ...file,
@@ -119,7 +124,7 @@ export function App() {
         progress: 0.04 + 0.22 * (done / Math.max(total, 1)),
       }),
     )
-    send({ type: 'import', file: chosen, images, tiles, options, update })
+    send({ type: 'import', file: chosen, images, tiles, options, fonts, update })
   }
 
   const load = async (read: () => Promise<RecastFile>, bytes: number) => {
@@ -129,11 +134,22 @@ export function App() {
       const file = await read()
       const selected = new Set(file.captures.map((c) => c.id))
       const options = optionsFor(settingsRef.current, domainOf(file))
+      // Without the review, fonts take the replacements remembered from earlier imports.
       if (!settingsRef.current.review && !modifier.current)
-        return void runImport(file, selected, options)
-      setStage({ kind: 'ready', file, selected, bytes, options, existing: new Set(), update: true })
+        return void runImport(file, selected, options, settingsRef.current.fonts)
+      setStage({
+        kind: 'ready',
+        file,
+        selected,
+        bytes,
+        options,
+        existing: new Set(),
+        update: true,
+        fontChoices: {},
+      })
       const keys = file.captures.flatMap((c) => importKey(file.source.url, c) ?? [])
       if (keys.length) send({ type: 'find-imported', keys })
+      send({ type: 'check-fonts', uses: fontUsage(file) })
     } catch (error) {
       setStage({
         kind: 'error',
@@ -182,6 +198,21 @@ export function App() {
       if (message.type === 'imported') {
         const keys = message.keys
         setStage((s) => (s.kind === 'ready' ? { ...s, existing: new Set(keys) } : s))
+      }
+      if (message.type === 'fonts') {
+        const { missing, families } = message
+        const known = new Map(families.map((f) => [f.toLowerCase(), f]))
+        const saved = settingsRef.current.fonts
+        // Start from the family remembered for each font, if Figma still has it.
+        const fontChoices = Object.fromEntries(
+          missing.map((m) => [
+            m.requested,
+            known.get(saved[m.requested]?.toLowerCase() ?? '') ?? m.replacement,
+          ]),
+        )
+        setStage((s) =>
+          s.kind === 'ready' ? { ...s, fonts: { missing, families }, fontChoices } : s,
+        )
       }
       if (message.type === 'error') setStage({ kind: 'error', message: message.message })
     }
@@ -309,7 +340,24 @@ export function App() {
                 size="lg"
                 block
                 disabled={stage.selected.size === 0}
-                onClick={() => runImport(stage.file, stage.selected, stage.options, stage.update)}
+                onClick={() => {
+                  if (stage.fonts)
+                    saveSettings({
+                      ...settingsRef.current,
+                      fonts: rememberChoices(
+                        settingsRef.current.fonts,
+                        stage.fonts.missing,
+                        stage.fontChoices,
+                      ),
+                    })
+                  void runImport(
+                    stage.file,
+                    stage.selected,
+                    stage.options,
+                    stage.fontChoices,
+                    stage.update,
+                  )
+                }}
               >
                 {importLabel(stage)}
               </Button>
@@ -681,12 +729,110 @@ function Review({
           </p>
         </Section>
       )}
+      {stage.fonts && stage.fonts.missing.length > 0 && (
+        <FontReplacements
+          missing={stage.fonts.missing}
+          families={stage.fonts.families}
+          choices={stage.fontChoices}
+          onChange={(requested, family) =>
+            onChange({ fontChoices: { ...stage.fontChoices, [requested]: family } })
+          }
+        />
+      )}
       <OptionToggles
         options={stage.options}
         onChange={(patch) => onChange({ options: { ...stage.options, ...patch } })}
       />
       <p class="credit">These options are remembered for {domain}.</p>
     </>
+  )
+}
+
+/**
+ * Fonts the capture uses that Figma lacks, each with the family to use
+ * instead: the automatic pick, or any family Figma has, searched by typing.
+ */
+function FontReplacements({
+  missing,
+  families,
+  choices,
+  onChange,
+}: {
+  missing: MissingFont[]
+  families: string[]
+  choices: FontChoices
+  onChange: (requested: string, family: string) => void
+}) {
+  const known = useMemo(() => new Map(families.map((f) => [f.toLowerCase(), f])), [families])
+  return (
+    <Section title="Fonts" aside={<span class="num">{missing.length} not in Figma</span>}>
+      <datalist id="font-families">
+        {families.map((family) => (
+          <option value={family} />
+        ))}
+      </datalist>
+      {missing.map((font) => (
+        <div class="font-row">
+          <div class="font-row__name">
+            <span class="truncate">{font.requested}</span>
+            <span class="truncate muted">
+              {font.styles.join(', ')} ·{' '}
+              <span class="num">
+                {font.count.toLocaleString()} {font.count === 1 ? 'use' : 'uses'}
+              </span>
+            </span>
+          </div>
+          <FamilyInput
+            label={`Replace ${font.requested} with`}
+            value={choices[font.requested] ?? font.replacement}
+            fallback={font.replacement}
+            known={known}
+            onChange={(family) => onChange(font.requested, family)}
+          />
+        </div>
+      ))}
+      <p class="hint">Your picks are remembered for the next import.</p>
+    </Section>
+  )
+}
+
+/** A family name field that suggests installed families and only accepts one of them. */
+function FamilyInput({
+  label,
+  value,
+  fallback,
+  known,
+  onChange,
+}: {
+  label: string
+  value: string
+  fallback: string
+  known: Map<string, string>
+  onChange: (family: string) => void
+}) {
+  const [draft, setDraft] = useState(value)
+  useEffect(() => setDraft(value), [value])
+  const commit = () => {
+    // Empty goes back to the automatic pick; an unknown name is undone.
+    const family = draft.trim() ? known.get(draft.trim().toLowerCase()) : fallback
+    if (family) onChange(family)
+    setDraft(family ?? value)
+  }
+  return (
+    <input
+      class="pr-input"
+      list="font-families"
+      aria-label={label}
+      spellcheck={false}
+      value={draft}
+      onFocus={(e) => e.currentTarget.select()}
+      onInput={(e) => setDraft(e.currentTarget.value)}
+      onChange={commit}
+      onBlur={commit}
+      onKeyDown={(e) => {
+        if (e.key === 'Escape') setDraft(value)
+      }}
+    />
   )
 }
 
@@ -839,6 +985,10 @@ function SettingsView({
           onChange={(review) => onChange({ ...settings, review })}
         />
       </Section>
+      <RememberedFonts
+        fonts={settings.fonts}
+        onChange={(fonts) => onChange({ ...settings, fonts })}
+      />
       <Section title="About">
         <dl class="pr-props">
           <div class="pr-prop">
@@ -861,6 +1011,55 @@ function SettingsView({
       </Section>
       <Credit />
     </main>
+  )
+}
+
+/** Font replacements picked during earlier reviews, each one forgettable. */
+function RememberedFonts({
+  fonts,
+  onChange,
+}: {
+  fonts: FontChoices
+  onChange: (fonts: FontChoices) => void
+}) {
+  const entries = Object.entries(fonts).sort(([a], [b]) => a.localeCompare(b))
+  const forget = (requested: string) => {
+    const rest = { ...fonts }
+    delete rest[requested]
+    onChange(rest)
+  }
+  return (
+    <Section
+      title="Fonts"
+      aside={
+        entries.length > 1 ? (
+          <button type="button" class="text-button" onClick={() => onChange({})}>
+            Forget all
+          </button>
+        ) : undefined
+      }
+    >
+      {entries.length === 0 ? (
+        <p class="hint">
+          Replacements you pick for missing fonts while reviewing an import are kept here.
+        </p>
+      ) : (
+        <dl class="font-memory">
+          {entries.map(([requested, family]) => (
+            <div>
+              <dt class="truncate">
+                {requested} <span class="muted">as {family}</span>
+              </dt>
+              <IconButton
+                icon="trash"
+                label={`Forget the replacement for ${requested}`}
+                onClick={() => forget(requested)}
+              />
+            </div>
+          ))}
+        </dl>
+      )}
+    </Section>
   )
 }
 

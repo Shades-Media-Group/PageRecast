@@ -17,6 +17,7 @@ import {
   type MainToUi,
 } from '../shared/messages'
 import { FontResolver } from './fonts'
+import type { FontChoices } from '../shared/fonts'
 import { rotatedTransform } from './geometry'
 import { pageGroups } from '../shared/pages'
 import {
@@ -98,6 +99,7 @@ export async function importFile(
   imageBytes: ImageBytes,
   tiles: ImageTiles,
   options: ImportOptions,
+  fontChoices: FontChoices,
   update: boolean,
   progress: Progress,
 ): Promise<ImportReport> {
@@ -144,7 +146,7 @@ export async function importFile(
 
   // Fonts: resolve every style used, then load them all in parallel.
   progress({ type: 'progress', phase: 'fonts', done: 0, total: 1 })
-  const fonts = new FontResolver()
+  const fonts = new FontResolver(fontChoices)
   await fonts.init()
   const wanted = new Map<string, FontName>()
   for (const capture of file.captures) {

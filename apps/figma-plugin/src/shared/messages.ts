@@ -1,4 +1,5 @@
 import type { Capture, RecastFile } from '@pagerecast/scene'
+import type { FontChoices, FontUse, MissingFont } from './fonts'
 
 export interface ImportOptions {
   /** Convert flex containers to Auto Layout where the result matches the page. */
@@ -43,6 +44,8 @@ export interface Settings {
   imports: number
   /** The one-time rating request has been shown. */
   askedForRating: boolean
+  /** Replacements picked for fonts Figma lacks, remembered for the next import. */
+  fonts: FontChoices
 }
 
 export const DEFAULT_SETTINGS: Settings = {
@@ -51,6 +54,7 @@ export const DEFAULT_SETTINGS: Settings = {
   review: true,
   imports: 0,
   askedForRating: false,
+  fonts: {},
 }
 
 /** Imports after which the plugin asks, once, for a rating. */
@@ -120,6 +124,8 @@ export type UiToMain =
       images: ImageBytes
       tiles: ImageTiles
       options: ImportOptions
+      /** Replacement families for fonts Figma lacks, by requested family. */
+      fonts: FontChoices
       /** Replace frames imported earlier from the same capture instead of adding new ones. */
       update: boolean
     }
@@ -127,10 +133,13 @@ export type UiToMain =
   /** Asks which of these import keys already have a frame on the current page. */
   | { type: 'find-imported'; keys: string[] }
   | { type: 'open-url'; url: string }
+  /** Asks which of these fonts Figma lacks, and for every family it has. */
+  | { type: 'check-fonts'; uses: FontUse[] }
 
 export type MainToUi =
   | { type: 'ready'; settings: Settings; version: string }
   | { type: 'progress'; phase: 'fonts' | 'layers' | 'styles'; done: number; total: number }
   | { type: 'imported'; keys: string[] }
+  | { type: 'fonts'; missing: MissingFont[]; families: string[] }
   | { type: 'done'; report: ImportReport }
   | { type: 'error'; message: string }

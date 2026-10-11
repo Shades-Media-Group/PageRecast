@@ -1,5 +1,6 @@
 import { DEFAULT_SETTINGS, type MainToUi, type Settings, type UiToMain } from '../shared/messages'
 import { importFile } from './build'
+import { FontResolver } from './fonts'
 import { updatableKeys } from './update'
 
 declare const __VERSION__: string
@@ -15,6 +16,7 @@ async function start() {
     ...DEFAULT_SETTINGS,
     ...saved,
     defaults: { ...DEFAULT_SETTINGS.defaults, ...saved?.defaults },
+    fonts: { ...saved?.fonts },
   }
   send({ type: 'ready', settings, version: __VERSION__ })
 }
@@ -27,6 +29,12 @@ figma.ui.onmessage = async (message: UiToMain) => {
     case 'find-imported':
       send({ type: 'imported', keys: updatableKeys(message.keys) })
       break
+    case 'check-fonts': {
+      const fonts = new FontResolver()
+      await fonts.init()
+      send({ type: 'fonts', missing: fonts.missing(message.uses), families: fonts.familyNames() })
+      break
+    }
     case 'open-url':
       figma.openExternal(message.url)
       break
@@ -37,6 +45,7 @@ figma.ui.onmessage = async (message: UiToMain) => {
           message.images,
           message.tiles,
           message.options,
+          message.fonts,
           message.update,
           send,
         )

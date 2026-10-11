@@ -70,13 +70,19 @@ export function toPaints(
 // Figma's Paint type name clashes with the scene's; alias it locally.
 type Paint_ = globalThis.Paint
 
-export function toEffects(shadows: Shadow[] = [], blur = 0, backdropBlur = 0): Effect[] {
+/** `spread` only renders on frames that clip their content and have a visible fill. */
+export function toEffects(
+  shadows: Shadow[] = [],
+  blur = 0,
+  backdropBlur = 0,
+  spreads = true,
+): Effect[] {
   const effects: Effect[] = shadows.map((s) => ({
     type: s.inset ? 'INNER_SHADOW' : 'DROP_SHADOW',
     color: rgba(s.color),
     offset: { x: s.x, y: s.y },
     radius: s.blur,
-    spread: s.spread,
+    spread: spreads ? s.spread : 0,
     visible: true,
     blendMode: 'NORMAL',
   }))

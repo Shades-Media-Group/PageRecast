@@ -22,7 +22,13 @@ Use Node 22 (`.nvmrc`).
 
 ## Design rules (the panels must read as hand-built, never templated)
 
-The panels follow the grammar of Figma's own inspector: full-bleed sections with hairline dividers, 32 px rows, 11–13 px Hanken Grotesk, text tabs, one red primary action per view.
+The panels follow the grammar of Figma's own inspector with small pill controls:
+
+- Full-bleed sections with hairline dividers, 32 px rows, text tabs. Keep each screen's structure; lift it, don't rebuild it.
+- Type: 11 px labels and meta, 12 px body, titles and controls, 20 px only for a screen's one figure (the frames on the canvas). Weights 400 and 600.
+- Pills: a segmented control is a pill track with a raised pill; several choices at once are pill chips, selected in ink (`Chips`). Radii: 999 pills, 8 inputs and code, 12 the stage, previews and drop zones.
+- One red primary action per view, a pill with a soft red shadow (plain on dark, never a glow).
+- The credit, version and source links close Settings only. Settings end with Reset all preferences (off at the defaults, two clicks). Saved settings are migrated, never dropped.
 
 Never ship any of these. Each one is a known AI-generated tell:
 

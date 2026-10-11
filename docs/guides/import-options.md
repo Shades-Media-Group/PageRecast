@@ -26,3 +26,7 @@ Each site remembers the options you last imported it with, unless you turned off
 ## Importing without the review screen
 
 Turn off **Review before importing** in Settings and a paste imports straight away with the site's options. Hold `⌘` (or `Ctrl`) while pasting to see the review screen anyway.
+
+## Starting over
+
+Every choice is saved on your computer and used next time, in the plugin and in the extension. **Reset all preferences**, near the end of the plugin's settings and the extension's capture settings, puts everything back to the defaults, including what each site remembers. It stays off until something differs from the defaults, and asks for a second click before it resets.

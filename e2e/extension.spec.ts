@@ -154,3 +154,17 @@ test('captures from the right-click menu and copies several captures as one file
       expect(file.assets[id!]).toBeDefined()
   }
 })
+
+test('captures a list of URLs and picks them for one copy', async () => {
+  const panel = await openPanel()
+  await panel
+    .getByRole('textbox', { name: 'URLs to capture' })
+    .fill(`${origin}/states.html, ${origin}/`)
+  await expect(panel.getByText('2 pages, captured one after another')).toBeVisible()
+  await panel.getByRole('button', { name: 'Capture 2 URLs' }).click()
+  // Both land in Recent, ticked for the combined copy.
+  await expect(panel.getByRole('button', { name: 'Copy 2 for Figma' })).toBeEnabled({
+    timeout: 90_000,
+  })
+  await expect(panel.locator('.history .pr-check:checked')).toHaveCount(2)
+})

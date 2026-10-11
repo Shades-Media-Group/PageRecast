@@ -41,3 +41,5 @@ You can also press **Download** to save a `.recast` file and drop it into the pl
 ### Several pages at once
 
 To bring several captures into Figma with one paste, press **Select** above **Recent**, tick the captures you want and press **Copy N for Figma**. They are combined into one capture, and the plugin imports every frame together, each named after its page. The download button beside it saves the combined `.recast` file.
+
+To capture pages you don't have open, paste their URLs into the field under **Page**, separated by spaces, commas or new lines, and press the arrow. PageRecast opens and captures each one in turn with your settings, then ticks them all, ready for **Copy N for Figma**.

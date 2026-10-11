@@ -373,6 +373,7 @@ export function App() {
       setLatest(entry.id)
       setUrl('')
       setStatus({ kind: 'idle' })
+      return entry.id
     } catch (error) {
       console.error(error)
       if (error instanceof CaptureError && error.message === 'Capture cancelled.')
@@ -386,6 +387,24 @@ export function App() {
       })
     } finally {
       if (openedTab !== null) void chrome.tabs.remove(openedTab).catch(() => undefined)
+    }
+  }
+
+  /**
+   * Several URLs at once: each is captured in turn into Recent, then they are
+   * picked for one combined copy. A URL that fails stops the rest.
+   */
+  const captureUrls = async (urls: string[]) => {
+    if (urls.length === 1) return void capture({ url: urls[0] })
+    const ids: string[] = []
+    for (const url of urls) {
+      const id = await capture({ url })
+      if (!id) break
+      ids.push(id)
+    }
+    if (ids.length > 1) {
+      setSelecting(true)
+      setPicked(new Set(ids))
     }
   }
 
@@ -440,7 +459,15 @@ export function App() {
 
   const current = history.find((h) => h.id === latest)
   const older = history.filter((h) => h.id !== latest)
-  const targetUrl = normaliseUrl(url)
+  // Several URLs can be pasted at once, separated by spaces, commas or lines.
+  const targetUrls = [
+    ...new Set(
+      url
+        .split(/[\s,]+/)
+        .map(normaliseUrl)
+        .filter((u): u is string => u !== null),
+    ),
+  ]
   const feedbackUrl = `${REPO_URL}/issues/new?template=feedback.yml&surface=${canEmulate ? 'Chrome' : 'Firefox'}%20extension&version=${__VERSION__}`
 
   return (
@@ -497,26 +524,35 @@ export function App() {
             class="pr-field url"
             onSubmit={(e) => {
               e.preventDefault()
-              if (targetUrl) void capture({ url: targetUrl })
+              if (targetUrls.length) void captureUrls(targetUrls)
             }}
           >
             <Icon name="globe" size={16} />
             <input
               class="pr-input"
-              type="url"
+              type="text"
               inputMode="url"
+              spellcheck={false}
               placeholder="Capture another URL"
-              aria-label="URL to capture"
+              aria-label="URLs to capture"
               value={url}
               onInput={(e) => setUrl(e.currentTarget.value)}
             />
             <IconButton
               type="submit"
               icon="arrowRight"
-              label="Capture this URL"
-              disabled={!targetUrl || busy}
+              label={
+                targetUrls.length > 1 ? `Capture ${targetUrls.length} URLs` : 'Capture this URL'
+              }
+              disabled={!targetUrls.length || busy}
             />
           </form>
+          {targetUrls.length > 1 && (
+            <p class="hint">
+              <span class="num">{targetUrls.length}</span> pages, captured one after another and
+              combined for one paste.
+            </p>
+          )}
         </Section>
 
         {settings.editing ? (

@@ -1,0 +1,39 @@
+{
+  "name": "pagerecast",
+  "version": "1.0.0",
+  "description": "Capture any web page as a .recast file for Figma, and extract its design tokens, from the command line. Free, open source and local-only.",
+  "license": "MIT",
+  "author": "Shades Media Group (https://shades.md)",
+  "homepage": "https://github.com/Shades-Media-Group/PageRecast/blob/main/docs/guides/cli.md",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Shades-Media-Group/PageRecast.git",
+    "directory": "packages/cli"
+  },
+  "bugs": "https://github.com/Shades-Media-Group/PageRecast/issues",
+  "type": "module",
+  "bin": {
+    "pagerecast": "dist/pagerecast.mjs"
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "build": "node build.mjs",
+    "prepack": "node build.mjs"
+  },
+  "dependencies": {
+    "playwright-core": "1.64.0"
+  },
+  "keywords": [
+    "figma",
+    "design-tokens",
+    "cli",
+    "capture",
+    "website-to-figma"
+  ]
+}

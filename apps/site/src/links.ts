@@ -17,4 +17,5 @@ export const LINKS: Record<string, string> = {
   issues: `${REPO}/issues/new/choose`,
   security: `${REPO}/blob/main/SECURITY.md`,
   license: `${REPO}/blob/main/LICENSE`,
+  preferred: 'https://www.google.com/preferences/source?q=pagerecast.shades.md',
 }

@@ -1,5 +1,9 @@
 {
   "language": "Language",
+  "preferred": {
+    "button": "Add to preferred sources<span class='visually-hidden'> on Google</span>",
+    "mention": "Find PageRecast more often in Google Search: <a data-link='preferred' target='_blank'>add it as a preferred source</a>."
+  },
   "nav": {
     "label": "Main",
     "home": "Home",

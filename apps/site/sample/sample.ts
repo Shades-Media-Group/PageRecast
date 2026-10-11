@@ -5,6 +5,7 @@ import '@fontsource-variable/inter/opsz.css'
 import '@fontsource-variable/inter/opsz-italic.css'
 import { renderIcon, type IconName } from '@pagerecast/icons'
 import logo from '../../../assets/brand/logo.svg?raw'
+import '../src/common.css'
 import './sample.css'
 
 // The wordmark follows the text colour, so the logo works in both themes.

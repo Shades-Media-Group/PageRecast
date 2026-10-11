@@ -1,4 +1,5 @@
 import '@fontsource-variable/hanken-grotesk/wght.css'
+import './common.css'
 import './site.css'
 import logo from '../../../assets/brand/logo.svg?raw'
 import { fill, lang, strings } from './strings'

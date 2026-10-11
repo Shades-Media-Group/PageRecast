@@ -91,14 +91,6 @@ code {
     monospace;
 }
 
-.visually-hidden {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-  clip: rect(0 0 0 0);
-}
-
 /* Navigation: thin, translucent, out of the way. */
 .nav {
   position: sticky;
@@ -693,6 +685,17 @@ code {
 .install-item .link {
   margin-top: 22px;
 }
+.install-note,
+.gallery-note {
+  margin-top: 32px;
+  color: var(--ink-3);
+  font-size: 15px;
+}
+.install-note a,
+.gallery-note a {
+  color: var(--ink);
+  font-weight: 500;
+}
 .install-item .link {
   display: inline-flex;
   align-items: center;
@@ -754,6 +757,25 @@ code {
 }
 .footer-cols a:hover {
   color: var(--red);
+}
+/* Languages on the left, Google's preferred-source button on the right. */
+.footer-extra {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px 32px;
+  max-width: var(--measure);
+  margin: clamp(48px, 6vw, 72px) auto 0;
+}
+.footer-extra + .footer-base {
+  margin-top: 24px;
+}
+.footer--slim {
+  padding-block: 32px;
+}
+.footer--slim .footer-extra {
+  margin-top: 0;
 }
 .footer-base {
   display: flex;

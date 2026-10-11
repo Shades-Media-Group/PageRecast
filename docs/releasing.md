@@ -26,13 +26,14 @@ git push --follow-tags
 
 `yarn release` bumps every `package.json`, writes the changelog entry from the commits since the last tag, commits `chore(release): vX.Y.Z` and tags it. Read `CHANGELOG.md` before pushing; edit and amend if a line needs better wording.
 
-Pushing the tag runs the **Release** workflow. It verifies, builds `pagerecast-chrome-extension-X.Y.Z.zip` and `pagerecast-figma-plugin-X.Y.Z.zip`, and publishes a GitHub Release with the changelog entry as notes.
+Pushing the tag runs the **Release** workflow. It verifies, builds `pagerecast-chrome-extension-X.Y.Z.zip`, `pagerecast-firefox-extension-X.Y.Z.zip` and `pagerecast-figma-plugin-X.Y.Z.zip`, and publishes a GitHub Release with the changelog entry as notes.
 
 ## Shipping to the stores
 
 After the GitHub Release exists, upload the same zips:
 
 1. **Chrome Web Store:** Developer Dashboard → PageRecast → Package → **Upload new package**, then **Submit for review**. Users update automatically after approval.
-2. **Figma Community:** Figma desktop → Plugins → Development → PageRecast → **Publish new version**, with the changelog entry as the release notes.
+2. **addons.mozilla.org:** Developer Hub → PageRecast → **Upload New Version**, upload the Firefox zip, then upload the source code archive for the same tag (see [publishing.md](publishing.md#source-code)).
+3. **Figma Community:** Figma desktop → Plugins → Development → PageRecast → **Publish new version**, with the changelog entry as the release notes.
 
 See [publishing.md](publishing.md) for the first-time setup.

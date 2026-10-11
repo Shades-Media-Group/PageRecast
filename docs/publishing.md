@@ -1,4 +1,4 @@
-# Publishing to the Chrome Web Store and the Figma Community
+# Publishing to the Chrome Web Store, Firefox Add-ons and the Figma Community
 
 The first-time setup for maintainers, using the Shades Media Group accounts. Later updates follow [releasing.md](releasing.md).
 
@@ -9,6 +9,7 @@ Everything here is copy you can paste. Assets are in [`assets/store`](../assets/
 ## Before you start
 
 - A Google account for Shades Media Group with **2-Step Verification** on (the Web Store requires it to publish).
+- A Mozilla account for Shades Media Group with **two-step authentication** on (addons.mozilla.org requires it to submit).
 - A Figma account for Shades Media Group with **two-factor authentication** on (the Community requires it to publish), and the **Figma desktop app**.
 - The release zips from the latest [GitHub Release](https://github.com/Shades-Media-Group/PageRecast/releases), or `yarn build && yarn package`.
 
@@ -81,9 +82,71 @@ Source code: https://github.com/Shades-Media-Group/PageRecast
 | `unlimitedStorage` | Keeps the user's recent captures, which include page screenshots, on their device.                                                                                                                                                 |
 | Remote code        | No, I am not using remote code.                                                                                                                                                                                                    |
 | Data usage         | Tick nothing. Certify that data is not sold, not used for unrelated purposes and not used for creditworthiness.                                                                                                                    |
-| Privacy policy     | https://pagerecast.shades.md/privacy/                                                                                                                                                                                                |
+| Privacy policy     | https://pagerecast.shades.md/privacy/                                                                                                                                                                                              |
 
 4. **Distribution:** Public, all regions. Then **Submit for review**. Extensions that use `debugger` get a manual review, which usually takes a few days.
+
+---
+
+## Firefox Add-ons (addons.mozilla.org)
+
+### 1. Set up the developer account (once)
+
+1. Sign in to the [Add-on Developer Hub](https://addons.mozilla.org/developers/) with a Mozilla account for Shades Media Group, with **two-step authentication** on (required to submit).
+2. In **Edit My Profile**, set the display name to **Shades Media Group** and the homepage to https://shades.md.
+3. Accept the developer agreement when the first upload asks for it. There is no fee.
+
+### 2. Submit the add-on
+
+1. **Submit a New Add-on**, choose **On this site** (listed), and upload `pagerecast-firefox-extension-X.Y.Z.zip`.
+2. Platforms: tick **Firefox** only. Leave **Firefox for Android** unticked: it has no sidebar.
+3. When asked whether the add-on uses minified or generated code, answer **Yes** and upload the source archive (see [Source code](#source-code)).
+4. **Listing**
+
+| Field          | Value                                                                                                          |
+| -------------- | -------------------------------------------------------------------------------------------------------------- |
+| Name           | PageRecast (taken from the manifest)                                                                           |
+| Add-on URL     | `pagerecast`                                                                                                   |
+| Summary        | Capture any web page, even behind a login, and paste it into Figma as editable layers. Free and open source.   |
+| Categories     | Web Development                                                                                                |
+| Support email  | support@shades.md                                                                                              |
+| Support site   | https://github.com/Shades-Media-Group/PageRecast/issues                                                        |
+| Homepage       | https://github.com/Shades-Media-Group/PageRecast                                                               |
+| License        | MIT License                                                                                                    |
+| Privacy policy | Yes: paste the text of [PRIVACY.md](../PRIVACY.md), or link https://pagerecast.shades.md/privacy/              |
+| Icon           | `assets/brand/png/icon-128.png`                                                                                |
+| Screenshots    | `assets/store/chrome-screenshot-1.png` … `-3.png` (the panel is the same; retake them in Firefox when you can) |
+
+**Description**: the Chrome Web Store description above, with the **HOW IT WORKS** block replaced by this one, because Firefox captures the theme and language the page shows:
+
+```
+HOW IT WORKS
+1. Open a page and click PageRecast. It opens in the sidebar.
+2. Choose the widths: desktop, tablet, mobile or any width.
+3. Capture, then paste into the PageRecast plugin in Figma.
+```
+
+and the **Several widths and both colour schemes in one go** line replaced by `• Several widths in one go`.
+
+5. **Notes to reviewer**
+
+```
+Build from source: Node 22 and Yarn 1. Run "yarn install --frozen-lockfile" and then "yarn build:firefox". The add-on is written to apps/extension/dist-firefox. The bundles are minified by esbuild and Vite; nothing is obfuscated and no code is loaded remotely.
+
+<all_urls> is used only while the user captures a page: scripting.executeScript runs the capture engine (capture.js) in that tab, tabs.captureTab takes its screenshot, and images the page shows are read so the capture works offline. Nothing is sent anywhere; there is no server and no analytics. The window is resized (or the page zoomed) to each width the user picks, then restored.
+```
+
+6. **Submit Version.** Listed add-ons are signed straight away and reviewed by a person afterwards.
+
+### Source code
+
+Mozilla needs the source for every version, because the bundles are minified. Make it from the release tag:
+
+```bash
+git archive --format zip -o pagerecast-source-X.Y.Z.zip vX.Y.Z
+```
+
+Upload it in the version's **Source code** field, and paste the build steps from the reviewer notes above.
 
 ---
 
@@ -103,15 +166,15 @@ The manifest now carries the permanent Community ID `1690893819753299295`. For a
 1. **Plugins → Development → Manage plugins in development**, then **Publish** next to PageRecast.
 2. Fill in:
 
-| Field                   | Value                                                   |
-| ----------------------- | ------------------------------------------------------- |
-| Name                    | PageRecast                                              |
-| Tagline                 | Turn any web page into editable Figma layers. Free.     |
-| Icon (128 × 128)        | `assets/brand/png/app-icon-128.png`                     |
-| Cover art (1920 × 1080) | `assets/store/figma-cover.png`                          |
-| Tags                    | import, website, html, web to figma, capture            |
-| Support contact         | support@shades.md                                       |
-| Publisher               | Shades Media Group                                      |
+| Field                   | Value                                               |
+| ----------------------- | --------------------------------------------------- |
+| Name                    | PageRecast                                          |
+| Tagline                 | Turn any web page into editable Figma layers. Free. |
+| Icon (128 × 128)        | `assets/brand/png/app-icon-128.png`                 |
+| Cover art (1920 × 1080) | `assets/store/figma-cover.png`                      |
+| Tags                    | import, website, html, web to figma, capture        |
+| Support contact         | support@shades.md                                   |
+| Publisher               | Shades Media Group                                  |
 
 **Description**
 
@@ -145,7 +208,7 @@ https://github.com/Shades-Media-Group/PageRecast
 
 ---
 
-## After both are live
+## After all three are live
 
-1. Put the store links in [README.md](../README.md) (the install badges) and in `EXTENSION_URL` in `apps/figma-plugin/src/ui/App.tsx`.
+1. Put the store links in [README.md](../README.md) (the install badges, including one for Firefox Add-ons), in [guides/firefox.md](guides/firefox.md), and in `EXTENSION_URL` in `apps/figma-plugin/src/ui/App.tsx`.
 2. Commit as `docs: link the store listings` and push.

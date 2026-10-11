@@ -6,8 +6,9 @@
 4. [Import options](import-options.md): Auto Layout, variables, styles, naming and per-site settings.
 5. [Fonts](fonts.md): how fonts are matched and what to do when one is replaced.
 6. [HTML files and code](html-and-code.md): import without the extension.
-7. [Troubleshooting](troubleshooting.md)
-8. [The command line](cli.md): capture pages and extract design tokens without opening Chrome.
+7. [Firefox](firefox.md): what differs from Chrome.
+8. [Troubleshooting](troubleshooting.md)
+9. [The command line](cli.md): capture pages and extract design tokens without opening Chrome.
 
 ## Command line
 

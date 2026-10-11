@@ -7,7 +7,7 @@ body:
     id: surface
     attributes:
       label: Where
-      options: [Chrome extension, Figma plugin, Both, Documentation]
+      options: [Chrome extension, Firefox extension, Figma plugin, Both, Documentation]
     validations:
       required: true
   - type: textarea

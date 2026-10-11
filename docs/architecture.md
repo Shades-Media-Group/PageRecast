@@ -28,6 +28,12 @@ Chrome tab ──► extension side panel
 
 Emulating a width, a phone, a colour scheme or a language needs the browser's own emulation. Attaching through `chrome.debugger` also lets the engine run without host permissions and read images from the page cache, which is what makes pages behind a login import correctly. Chrome shows a notice while it is attached; the extension detaches as soon as a capture ends.
 
+## Firefox
+
+Firefox has no `chrome.debugger`, so `apps/extension/src/capture.ts` runs every capture through a small driver: the Chrome driver speaks the DevTools Protocol, and the Firefox driver (`firefox.ts`) uses `scripting.executeScript` in the page's main world, window resizing (and page zoom where the window cannot fit) for widths, `tabs.captureTab` for screenshots, and `fetch` for images. It cannot emulate a colour scheme, a language or a phone, so the panel offers only the page as shown.
+
+`node build.mjs --target firefox` builds `dist-firefox/` from the same source. The target is a build-time constant, so each build carries only its own driver. The Firefox manifest is Manifest V2 with a sidebar, because Firefox grants the `<all_urls>` permission that `tabs.captureTab` needs only to Manifest V2 add-ons.
+
 ## Import fidelity
 
 The plugin keeps Auto Layout only when every child lands within 1.5 px of where the page put it; otherwise the frame stays freely positioned. Fonts resolve through each CSS font stack. Images larger than 4096 px are scaled down, and screenshots are cut into strips so they keep full detail.

@@ -8,6 +8,8 @@ Install **PageRecast** from the Chrome Web Store. It works in Chrome, Edge, Brav
 
 To run the latest build instead, download `pagerecast-chrome-extension-*.zip` from [Releases](https://github.com/Shades-Media-Group/PageRecast/releases), unzip it, open `chrome://extensions`, turn on **Developer mode**, choose **Load unpacked** and pick the unzipped folder.
 
+Using Firefox? See [Firefox](firefox.md).
+
 Pin the extension so its icon stays in the toolbar. `Alt+Shift+P` opens it too.
 
 ## 2. Install the Figma plugin

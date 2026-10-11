@@ -2,7 +2,7 @@
 
 _Last updated: 11 October 2026_
 
-PageRecast is a Chrome extension and a Figma plugin made by Shades Media Group. This policy covers both.
+PageRecast is a browser extension for Chrome and Firefox and a Figma plugin, made by Shades Media Group. This policy covers all of them.
 
 ## The short version
 
@@ -15,6 +15,10 @@ PageRecast does not collect, transmit, sell or share any personal data. Everythi
 - **Local storage on your device**, to keep your settings and recent captures. You can delete any capture from the panel; removing the extension deletes all of them.
 
 The extension makes no requests to any server of ours. Images in a capture are read from your browser's cache or loaded the same way the page loads them.
+
+## The Firefox extension
+
+The Firefox version accesses the same things, but reads the page with Firefox's `tabs` and `scripting` permissions and access to all websites (`<all_urls>`) instead of the `debugger` permission. It uses that access only on the tab you capture, to read the page, take its screenshot and load its images. As in Chrome, nothing leaves your device.
 
 ## What the Figma plugin accesses
 

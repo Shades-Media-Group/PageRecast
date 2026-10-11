@@ -32,7 +32,7 @@ Claude Desktop, Cursor and other clients take the usual `mcpServers` entry:
 
 The `.recast` format specification is available as the resource `pagerecast://docs/scene-format`.
 
-Set `PAGERECAST_BROWSER` to use a specific Chrome or Chromium, and `PAGERECAST_BRIDGE_PORT` to move the Figma bridge off port 7357.
+Set `PAGERECAST_BROWSER` to use a specific Chrome or Chromium, and `PAGERECAST_BRIDGE_PORT` to move the Figma bridge off port 7357 for testing (the plugin looks on 7357 only).
 
 The full guide, including the bridge protocol: <https://github.com/Shades-Media-Group/PageRecast/blob/main/docs/guides/mcp.md>.
 

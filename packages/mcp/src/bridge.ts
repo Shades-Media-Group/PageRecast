@@ -252,7 +252,7 @@ export class FigmaBridge {
       .catch(() => ({ app: undefined }))
     if (status.app !== APP)
       throw new BridgeError(
-        `Port ${this.options.port} is taken by another program. Set PAGERECAST_BRIDGE_PORT to a free port in the MCP server's environment and the same port in the plugin, or import the file by dropping it on the plugin window.`,
+        `Port ${this.options.port} is taken by another program, so the Figma plugin cannot collect captures. Free the port (the plugin looks on 7357 only; PAGERECAST_BRIDGE_PORT moves the bridge for testing), or import the file by dropping it on the plugin window.`,
       )
     let state: BridgeState
     try {

@@ -140,10 +140,10 @@ Every error comes back as a tool result the agent can read, with the next step i
 
 ## Environment
 
-| Variable                 | Default | Meaning                                 |
-| ------------------------ | ------- | --------------------------------------- |
-| `PAGERECAST_BROWSER`     |         | Path to the Chrome or Chromium to run   |
-| `PAGERECAST_BRIDGE_PORT` | `7357`  | Port of the Figma bridge on `127.0.0.1` |
+| Variable                 | Default | Meaning                                                                                          |
+| ------------------------ | ------- | ------------------------------------------------------------------------------------------------ |
+| `PAGERECAST_BROWSER`     |         | Path to the Chrome or Chromium to run                                                            |
+| `PAGERECAST_BRIDGE_PORT` | `7357`  | Port of the Figma bridge on `127.0.0.1`; the plugin looks on 7357 only, so change it for testing |
 
 ## The Figma bridge
 
@@ -151,7 +151,7 @@ An agent cannot click inside Figma, so `send_to_figma` leaves the file where the
 
 Pairing keeps other software away from your captures. Each bridge makes a random pairing code such as `7F0Y-5AC6-3PXH-R78Q`; the agent shows it to you once, you type it into the plugin, and from then on files arrive on their own until the agent session ends.
 
-The plugin side of the bridge ships separately. Until your plugin has it, or when the bridge cannot be reached (see [limits](#limits)), drop the file at the returned path on the plugin window. That always works.
+In the plugin, open the **MCP** tab and turn on **Listen for agent imports**. When an agent is running, the plugin asks for its pairing code once; captures then import as they arrive, through the same review as a pasted capture. When the bridge cannot be reached (see [limits](#limits)), drop the file at the returned path on the plugin window. That always works.
 
 ### Can a Figma plugin reach localhost?
 
@@ -175,13 +175,13 @@ So the bridge is a convenience, never the only path: when it cannot connect, the
 - The plugin must be open in Figma to receive files; they wait in the bridge until it is.
 - At most 20 files wait at once (the oldest is dropped), each up to 256 MB, in memory only. They disappear when the agent session ends.
 - Each agent session that owns the bridge makes a new pairing code, so the plugin asks again after a restart.
-- Port 7357 must be free. When another program holds it, set `PAGERECAST_BRIDGE_PORT` and the same port in the plugin.
+- Port 7357 must be free: the plugin looks there only. `PAGERECAST_BRIDGE_PORT` moves the bridge for tests.
 
 ## Bridge protocol
 
 This is the contract the Figma plugin implements. Version 1.
 
-**Base URL** `http://127.0.0.1:7357` (`http://localhost:7357` also works). The port comes from `PAGERECAST_BRIDGE_PORT`.
+**Base URL** `http://127.0.0.1:7357` (`http://localhost:7357` also works). The plugin uses port 7357; `PAGERECAST_BRIDGE_PORT` moves the server for tests.
 
 **Authentication** Every `/v1/files` route needs `Authorization: Bearer <pairing code>`. The code is four groups of four Crockford base32 characters joined by hyphens, such as `7F0Y-5AC6-3PXH-R78Q`; letters may be lower case. A wrong or missing code returns `401`.
 
@@ -212,15 +212,17 @@ Errors are JSON `{"error": "…"}` with `400` (bad body or header), `401` (pairi
 
 ### What the plugin does
 
-1. **Look for a bridge.** When the window opens, `GET /v1/status`. No answer means no agent is running: show nothing and try again every few seconds.
+1. **Look for a bridge.** While **Listen for agent imports** is on, `GET /v1/status`. No answer means no agent is running: say so quietly and try again every few seconds.
 2. **Pair.** With a bridge and no stored code, ask for the pairing code. Keep it in `figma.clientStorage`.
 3. **Poll.** Every 2 seconds while the window is open, `GET /v1/files`. Each poll also tells the agent the plugin is connected.
-4. **Import.** For each file, oldest first: `GET /v1/files/{id}`, pass the bytes to the same `decode` and import flow a dropped file goes through, then `DELETE /v1/files/{id}` once it is imported or dismissed.
+4. **Import.** For each file, oldest first: `GET /v1/files/{id}`, pass the bytes to the same `decode` and import flow a dropped file goes through, then `DELETE /v1/files/{id}` as soon as it is downloaded, so it imports once. While a review or an import is on screen, files wait in the bridge.
 5. **Re-pair.** On `401`, forget the stored code and ask again: the agent session restarted.
 
-Make the requests from the UI iframe, where dropped and pasted files are already handled. Its `fetch` sends `Origin: null` and, because of the `Authorization` header, a CORS preflight that the bridge answers.
+The plugin makes the requests from its UI iframe (`apps/figma-plugin/src/ui/agent.ts`), where dropped and pasted files are already handled. Its `fetch` sends `Origin: null` and, because of the `Authorization` header, a CORS preflight that the bridge answers.
 
-### Manifest change for the plugin
+### The plugin's network access
+
+`apps/figma-plugin/manifest.json` lists the bridge explicitly next to `"*"`:
 
 ```json
 "networkAccess": {

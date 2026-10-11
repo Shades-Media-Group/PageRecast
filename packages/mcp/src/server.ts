@@ -334,7 +334,7 @@ export function createServer(options: ServerOptions): McpServer {
           pluginConnected: queued.pluginConnected,
           next: queued.pluginConnected
             ? 'The plugin is open and paired; it imports the file within a few seconds.'
-            : `The plugin has not polled yet. The user opens the PageRecast plugin in Figma and pairs it with code ${queued.pairingCode}; the file waits until then. Without pairing, the user can drop ${path} on the plugin window instead.`,
+            : `The plugin has not polled yet. In Figma, the user opens the PageRecast plugin, turns on Listen for agent imports in its MCP tab and pairs it with code ${queued.pairingCode}; the file waits until then. Without pairing, the user can drop ${path} on the plugin window instead.`,
         })
       }),
   )

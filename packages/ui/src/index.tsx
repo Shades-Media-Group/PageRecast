@@ -450,7 +450,8 @@ export function ResetPreferences({ changed, onReset }: { changed: boolean; onRes
         <p class="hint">{t('reset.saved')}</p>
         <button
           type="button"
-          class="text-button text-button--danger"
+          // Ink until it asks for the second click; only the warning is red.
+          class={confirming ? 'text-button text-button--danger' : 'text-button'}
           disabled={!changed}
           onClick={() => {
             if (!confirming) return setConfirming(true)

@@ -186,3 +186,10 @@ body,
   font-weight: 600;
   pointer-events: none;
 }
+
+/* One-time rating request on the done screen. */
+.actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}

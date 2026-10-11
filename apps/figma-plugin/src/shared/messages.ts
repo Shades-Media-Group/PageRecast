@@ -33,9 +33,22 @@ export interface Settings {
   domains: Record<string, ImportOptions>
   /** Show the review screen before importing. Holding ⌘ or Ctrl shows it anyway. */
   review: boolean
+  /** Successful imports on this device; counted locally, never sent anywhere. */
+  imports: number
+  /** The one-time rating request has been shown. */
+  askedForRating: boolean
 }
 
-export const DEFAULT_SETTINGS: Settings = { defaults: DEFAULT_OPTIONS, domains: {}, review: true }
+export const DEFAULT_SETTINGS: Settings = {
+  defaults: DEFAULT_OPTIONS,
+  domains: {},
+  review: true,
+  imports: 0,
+  askedForRating: false,
+}
+
+/** Imports after which the plugin asks, once, for a rating. */
+export const RATING_AFTER_IMPORTS = 5
 
 export function optionsFor(settings: Settings, domain: string): ImportOptions {
   return { ...DEFAULT_OPTIONS, ...settings.defaults, ...settings.domains[domain] }

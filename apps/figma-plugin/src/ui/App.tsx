@@ -20,6 +20,7 @@ import {
 import {
   DEFAULT_SETTINGS,
   optionsFor,
+  RATING_AFTER_IMPORTS,
   type ImportOptions,
   type ImportReport,
   type MainToUi,
@@ -40,7 +41,7 @@ type Stage =
       options: ImportOptions
     }
   | { kind: 'importing'; label: string; progress: number }
-  | { kind: 'done'; report: ImportReport }
+  | { kind: 'done'; report: ImportReport; askRating: boolean }
   | { kind: 'error'; message: string }
 
 const send = (message: UiToMain) => parent.postMessage({ pluginMessage: message }, '*')
@@ -49,7 +50,8 @@ const link = (url: string) => (event: Event) => {
   event.preventDefault()
   openUrl(url)
 }
-const EXTENSION_URL = `${REPO_URL}#install`
+const EXTENSION_URL = 'https://pagerecast.shades.md/#install'
+const COMMUNITY_URL = 'https://www.figma.com/community/plugin/1690893819753299295'
 const ACCEPT = '.recast,.json,.html,.htm'
 
 const deviceIcon = (width: number): IconName =>
@@ -156,7 +158,14 @@ export function App() {
                 : 0.3 + 0.65 * (done / Math.max(total, 1)),
         })
       }
-      if (message.type === 'done') setStage({ kind: 'done', report: message.report })
+      if (message.type === 'done') {
+        // Counted on this device only, to ask for a rating once after a few good imports.
+        const current = settingsRef.current
+        const imports = current.imports + 1
+        const askRating = !current.askedForRating && imports >= RATING_AFTER_IMPORTS
+        saveSettings({ ...current, imports, askedForRating: current.askedForRating || askRating })
+        setStage({ kind: 'done', report: message.report, askRating })
+      }
       if (message.type === 'error') setStage({ kind: 'error', message: message.message })
     }
     const onPaste = (event: ClipboardEvent) => {
@@ -267,7 +276,7 @@ export function App() {
             {stage.kind === 'ready' && (
               <Review stage={stage} onChange={(patch) => setStage({ ...stage, ...patch })} />
             )}
-            {stage.kind === 'done' && <Done report={stage.report} />}
+            {stage.kind === 'done' && <Done report={stage.report} askRating={stage.askRating} />}
           </main>
 
           {stage.kind === 'ready' ? (
@@ -360,7 +369,7 @@ function FileTab({ onChoose }: { onChoose: () => void }) {
         <dl class="stats">
           <div class="pr-row">
             <dt>.recast</dt>
-            <dd class="muted">Saved from the extension</dd>
+            <dd class="muted">Saved from the extension or sent by a teammate</dd>
           </div>
           <div class="pr-row">
             <dt>.html, .htm</dt>
@@ -502,7 +511,8 @@ function Review({
   )
 }
 
-function Done({ report }: { report: ImportReport }) {
+function Done({ report, askRating }: { report: ImportReport; askRating: boolean }) {
+  const [rating, setRating] = useState(askRating)
   const rows: [string, number][] = [
     ['Text layers', report.texts],
     ['Images', report.images],
@@ -527,6 +537,26 @@ function Done({ report }: { report: ImportReport }) {
           </p>
         </div>
       </Section>
+      {rating && (
+        <Section title="Enjoying PageRecast?">
+          <p class="muted">
+            A rating on the Figma Community helps other designers find it. We only ask once.
+          </p>
+          <div class="actions">
+            <Button
+              onClick={() => {
+                openUrl(COMMUNITY_URL)
+                setRating(false)
+              }}
+            >
+              Rate PageRecast
+            </Button>
+            <Button variant="ghost" onClick={() => setRating(false)}>
+              Not now
+            </Button>
+          </div>
+        </Section>
+      )}
       <Section title="Created">
         <dl class="stats">
           {rows.map(([label, value]) => (

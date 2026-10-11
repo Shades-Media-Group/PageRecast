@@ -38,3 +38,15 @@ Thumbs.db
 .impeccable/review/
 .impeccable/live/
 graphify-out/
+
+# Website pages, generated from apps/site/templates and apps/site/i18n by apps/site/pages.ts
+apps/site/index.html
+apps/site/sample/index.html
+apps/site/gallery/
+apps/site/privacy/
+apps/site/capture/
+apps/site/fr/
+apps/site/ro/
+apps/site/ru/
+apps/site/es/
+apps/site/zh/

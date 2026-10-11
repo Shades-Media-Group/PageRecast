@@ -30,11 +30,12 @@
     "cli": "node packages/cli/build.mjs && node packages/cli/dist/pagerecast.mjs",
     "mcp": "node packages/mcp/build.mjs && node packages/mcp/dist/pagerecast-mcp.mjs",
     "package": "node scripts/package.mjs",
-    "verify": "yarn typecheck && yarn lint && yarn test && yarn build",
+    "verify": "yarn typecheck && yarn lint && yarn test && yarn build && yarn build:site",
     "format": "prettier --write .",
     "release": "node scripts/release.mjs",
     "brand": "node scripts/brand.mjs",
     "dev:site": "yarn --cwd apps/site dev",
+    "build:site": "yarn --cwd apps/site build",
     "deploy:site": "yarn --cwd apps/site deploy"
   },
   "packageManager": "yarn@1.22.22",

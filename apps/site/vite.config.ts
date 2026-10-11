@@ -10,6 +10,15 @@ export default defineConfig({
   base: '/',
   define: { __VERSION__: JSON.stringify(version) },
   plugins: [pages()],
+  // `vite preview` sends the production CSP, so a page that breaks it fails locally too.
+  preview: {
+    headers: {
+      'Content-Security-Policy': readFileSync(
+        new URL('public/_headers', import.meta.url),
+        'utf8',
+      ).match(/Content-Security-Policy: (.+)/)![1]!,
+    },
+  },
   build: {
     outDir: 'dist',
     emptyOutDir: true,

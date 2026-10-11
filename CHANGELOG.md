@@ -6,6 +6,12 @@ All notable changes to PageRecast are recorded here. The format follows
 
 ## [Unreleased]
 
+## [1.1.1] - 2026-10-11
+
+### Fixed
+
+- The Figma plugin manifest lists only `"*"` under network access. Figma rejected 1.1.0's manifest, which also listed the local bridge separately.
+
 ## [1.1.0] - 2026-10-11
 
 PageRecast now captures interaction states, builds components and design
@@ -64,6 +70,7 @@ plugin that rebuilds them as editable layers. Free, open source and local.
 - Remember import options per site, with defaults for new sites.
 - Place a locked screenshot beside each frame for comparison.
 
-[Unreleased]: https://github.com/Shades-Media-Group/PageRecast/compare/v1.1.0...HEAD
+[Unreleased]: https://github.com/Shades-Media-Group/PageRecast/compare/v1.1.1...HEAD
+[1.1.1]: https://github.com/Shades-Media-Group/PageRecast/compare/v1.1.0...v1.1.1
 [1.1.0]: https://github.com/Shades-Media-Group/PageRecast/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/Shades-Media-Group/PageRecast/releases/tag/v1.0.0

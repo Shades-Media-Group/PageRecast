@@ -1,6 +1,6 @@
 {
   "name": "pagerecast-mcp",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "MCP server for PageRecast: AI agents capture web pages as .recast files, extract their design tokens and hand captures to the Figma plugin. Free, open source and local-only.",
   "license": "MIT",
   "author": "Shades Media Group (https://shades.md)",

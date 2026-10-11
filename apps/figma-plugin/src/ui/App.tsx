@@ -75,7 +75,7 @@ const link = (url: string) => (event: Event) => {
 }
 const EXTENSION_URL = 'https://pagerecast.shades.md/#install'
 const COMMUNITY_URL = 'https://www.figma.com/community/plugin/1690893819753299295'
-const ACCEPT = '.recast,.json,.html,.htm,.zip,.mhtml,.mht'
+const ACCEPT = '.recast,.json,.html,.htm,.zip,.mhtml,.mht,.eml'
 
 const deviceIcon = (width: number): IconName =>
   width >= 1000 ? 'desktop' : width >= 600 ? 'tablet' : 'mobile'
@@ -494,6 +494,10 @@ function FileTab({ onChoose }: { onChoose: () => void }) {
           <div class="pr-prop">
             <dt>.mhtml</dt>
             <dd>A page saved by the browser as a single file</dd>
+          </div>
+          <div class="pr-prop">
+            <dt>.eml</dt>
+            <dd>An HTML email with its images</dd>
           </div>
         </dl>
       </Section>

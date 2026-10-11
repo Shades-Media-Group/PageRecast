@@ -87,4 +87,35 @@ describe('mhtmlPage', () => {
       new Uint8Array([0x89, 0x50, 0x4e, 0x47]),
     )
   })
+
+  it('finds the HTML body and inline images of an email in nested parts', () => {
+    const text = [
+      'From: a@example.com',
+      'Content-Type: multipart/related;',
+      '\tboundary="outer"',
+      '',
+      '--outer',
+      'Content-Type: multipart/alternative; boundary="inner"',
+      '',
+      '--inner',
+      'Content-Type: text/plain',
+      '',
+      'Plain',
+      '--inner',
+      'Content-Type: text/html; charset=utf-8',
+      '',
+      '<img src="cid:logo@x">',
+      '--inner--',
+      '--outer',
+      'Content-Type: image/png',
+      'Content-Transfer-Encoding: base64',
+      'Content-ID: <logo@x>',
+      '',
+      'iVBORw0K',
+      '--outer--',
+    ].join('\r\n')
+    const page = mhtmlPage(text)
+    expect(page.html).toBe('<img src="cid:logo@x">')
+    expect(page.resources.get('cid:logo@x')).toMatchObject({ type: 'image/png' })
+  })
 })

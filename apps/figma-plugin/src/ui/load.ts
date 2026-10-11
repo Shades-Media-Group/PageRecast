@@ -23,7 +23,7 @@ export async function readFile(file: File): Promise<RecastFile> {
         1440,
         name,
       )
-    if (/\.mht(ml)?$/i.test(file.name))
+    if (/\.(mht|mhtml|eml)$/i.test(file.name))
       return renderHtml(inlinePage(mhtmlPage(await file.text())), 1440, name)
   } catch (error) {
     throw error instanceof SceneError

@@ -126,41 +126,51 @@ function decodeBase64(text: string): Uint8Array {
   return bytes
 }
 
-/** A single-file saved page (MHTML), as browsers write it. */
+/**
+ * A page saved as one MIME file: MHTML as browsers write it, or an email
+ * (`.eml`) with its HTML body and inline images. Nested multiparts, as
+ * emails use, are read too.
+ */
 export function mhtmlPage(text: string): SavedPage {
-  const boundary = /boundary="?([^";\r\n]+)"?/i.exec(text)?.[1]
-  if (!boundary) throw new Error('This is not a saved web page.')
-  const resources: Resources = new Map()
-  let html = ''
-  let url = ''
-  for (const part of text.split(`--${boundary}`).slice(1)) {
-    const split = part.search(/\r?\n\r?\n/)
-    if (split < 0) continue
-    const head = part.slice(0, split)
-    const body = part
-      .slice(split)
-      .replace(/^\r?\n\r?\n/, '')
-      .replace(/\r?\n$/, '')
-    const header = (name: string) =>
-      new RegExp(`^${name}:\\s*([^\\r\\n;]+)`, 'im').exec(head)?.[1]?.trim() ?? ''
-    const type = header('Content-Type').toLowerCase()
-    const encoding = header('Content-Transfer-Encoding').toLowerCase()
-    const location =
-      header('Content-Location') ||
-      (header('Content-ID') && `cid:${header('Content-ID').replace(/[<>]/g, '')}`)
-    const bytes =
-      encoding === 'base64'
-        ? decodeBase64(body)
-        : encoding === 'quoted-printable'
-          ? decodeQuotedPrintable(body)
-          : new TextEncoder().encode(body)
-    if (!html && type === 'text/html') {
-      html = new TextDecoder().decode(bytes)
-      url = location
-    } else if (location) resources.set(location, { type, bytes })
+  const page: SavedPage = { html: '', url: '', resources: new Map() }
+  const read = (text: string, boundary: string, depth: number) => {
+    for (const part of text.split(`--${boundary}`).slice(1)) {
+      const split = part.search(/\r?\n\r?\n/)
+      if (split < 0) continue
+      const head = part.slice(0, split)
+      const body = part
+        .slice(split)
+        .replace(/^\r?\n\r?\n/, '')
+        .replace(/\r?\n$/, '')
+      const header = (name: string) =>
+        new RegExp(`^${name}:\\s*([^\\r\\n;]+)`, 'im').exec(head)?.[1]?.trim() ?? ''
+      const type = header('Content-Type').toLowerCase()
+      const inner = /boundary="?([^";\r\n]+)"?/i.exec(head)?.[1]
+      if (type.startsWith('multipart/') && inner && depth < 4) {
+        read(body, inner, depth + 1)
+        continue
+      }
+      const encoding = header('Content-Transfer-Encoding').toLowerCase()
+      const location =
+        header('Content-Location') ||
+        (header('Content-ID') && `cid:${header('Content-ID').replace(/[<>]/g, '')}`)
+      const bytes =
+        encoding === 'base64'
+          ? decodeBase64(body)
+          : encoding === 'quoted-printable'
+            ? decodeQuotedPrintable(body)
+            : new TextEncoder().encode(body)
+      if (!page.html && type === 'text/html') {
+        page.html = new TextDecoder().decode(bytes)
+        page.url = location
+      } else if (location) page.resources.set(location, { type, bytes })
+    }
   }
-  if (!html) throw new Error('This saved page has no HTML.')
-  return { html, url, resources }
+  const boundary = /boundary="?([^";\r\n]+)"?/i.exec(text)?.[1]
+  if (!boundary) throw new Error('This is not a saved web page or email.')
+  read(text, boundary, 0)
+  if (!page.html) throw new Error('This file has no HTML page in it.')
+  return page
 }
 
 function dataUrl({ type, bytes }: Resource): string {

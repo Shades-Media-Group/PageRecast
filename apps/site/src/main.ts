@@ -3,13 +3,15 @@ import '@fontsource-variable/hanken-grotesk/wght.css'
 import '@fontsource-variable/inter/wght.css'
 import './common.css'
 import './site.css'
+import 'shades-gradient/preferences.css'
+import type { ConsentLabels } from 'shades-gradient/consent'
+import { preferences, reducedMotion, type PreferenceLabels } from 'shades-gradient/preferences'
 import logo from '../../../assets/brand/logo.svg?raw'
 import { fill, lang, strings } from './strings'
 
 declare const __VERSION__: string
 
 const base = import.meta.env.BASE_URL
-const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches
 
 /** The home page's translated strings (i18n/<lang>.json, home.runtime). */
 interface HomeStrings {
@@ -95,7 +97,7 @@ function countUp(scope: HTMLElement, stats: Demo['stats']) {
   const run = () => {
     const start = performance.now()
     const tick = (now: number) => {
-      const p = reduced ? 1 : Math.min(1, (now - start) / 1200)
+      const p = reducedMotion() ? 1 : Math.min(1, (now - start) / 1200)
       const eased = 1 - Math.pow(1 - p, 3)
       for (const [el, value] of counters)
         el.textContent = Math.round(value * eased).toLocaleString(lang)
@@ -138,7 +140,7 @@ function explode(data: Demo) {
   const layout = () => {
     const rect = section.getBoundingClientRect()
     const travel = Math.max(1, rect.height - innerHeight)
-    const t = reduced
+    const t = reducedMotion()
       ? 1
       : Math.min(1, Math.max(0, (innerHeight * 0.35 - rect.top) / travel) * 1.25)
     const scale = Math.min(
@@ -280,3 +282,7 @@ fetch(`${base}demo/explode.json`)
     anatomy(data.anatomy)
   })
   .catch(() => document.querySelector<HTMLElement>('[data-explode]')?.setAttribute('hidden', ''))
+
+// The display and accessibility panel, shared with every Shades site.
+const shared = strings<{ prefs: PreferenceLabels; consent: ConsentLabels }>()
+preferences({ labels: shared.prefs, consent: shared.consent })

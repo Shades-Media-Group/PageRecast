@@ -9,6 +9,7 @@
  */
 import { execFileSync } from 'node:child_process'
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs'
+import { createRequire } from 'node:module'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import type { Plugin } from 'vite'
@@ -27,7 +28,12 @@ export const LOCALES = [
   { code: 'ro', lang: 'ro', og: 'ro_RO', name: 'Română' },
   { code: 'ru', lang: 'ru', og: 'ru_RU', name: 'Русский' },
   { code: 'es', lang: 'es', og: 'es_ES', name: 'Español' },
-  { code: 'zh', lang: 'zh-Hans', og: 'zh_CN', name: '中文' },
+  { code: 'it', lang: 'it', og: 'it_IT', name: 'Italiano' },
+  { code: 'tr', lang: 'tr', og: 'tr_TR', name: 'Türkçe' },
+  { code: 'hi', lang: 'hi', og: 'hi_IN', name: 'हिन्दी' },
+  { code: 'ja', lang: 'ja', og: 'ja_JP', name: '日本語' },
+  { code: 'zh', lang: 'zh-Hans', og: 'zh_CN', name: '简体中文' },
+  { code: 'zh-hant', lang: 'zh-Hant', og: 'zh_TW', name: '繁體中文' },
 ] as const
 type Locale = (typeof LOCALES)[number]
 
@@ -43,16 +49,12 @@ const MACHINE_TRANSLATION = false
 
 const MACHINE = [
   ['de', 'de', 'Deutsch'],
-  ['it', 'it', 'Italiano'],
   ['pt', 'pt', 'Português'],
   ['pl', 'pl', 'Polski'],
   ['uk', 'uk', 'Українська'],
-  ['tr', 'tr', 'Türkçe'],
   ['nl', 'nl', 'Nederlands'],
-  ['ja', 'ja', '日本語'],
   ['ko', 'ko', '한국어'],
   ['ar', 'ar', 'العربية'],
-  ['hi', 'hi', 'हिन्दी'],
   ['id', 'id', 'Bahasa Indonesia'],
   ['vi', 'vi', 'Tiếng Việt'],
   ['th', 'th', 'ไทย'],
@@ -280,6 +282,9 @@ function head(locale: Locale, page: Page, t: (key: string) => string, dict: Dict
     '@graph': structuredData(locale, page, t, dict),
   }).replaceAll('<', '\\u003c')
   return [
+    // The reader's theme and accessibility choices, before anything paints. The test
+    // page is left alone: captures set its theme themselves.
+    ...(page.id === 'sample' ? [] : ['<script vite-ignore src="/preferences-boot.js"></script>']),
     `<title>${title}</title>`,
     `<meta name="description" content="${description}" />`,
     `<meta name="robots" content="${'noindex' in page ? 'noindex, follow' : 'index, follow, max-image-preview:large'}" />`,
@@ -331,8 +336,12 @@ function render(locale: Locale, page: Page): string {
         <summary><span class="visually-hidden">${t('language')}: </span>${locale.name}</summary>
         <div class="lang-menu">
           <ul>${own}</ul>
-          ${MACHINE_TRANSLATION ? `<p class="lang-more">${t('moreLanguages')}<span>${t('machine')}</span></p>
-          <ul class="lang-machine">${machine}</ul>` : ''}
+          ${
+            MACHINE_TRANSLATION
+              ? `<p class="lang-more">${t('moreLanguages')}<span>${t('machine')}</span></p>
+          <ul class="lang-machine">${machine}</ul>`
+              : ''
+          }
         </div>
       </details>`
     },
@@ -340,11 +349,15 @@ function render(locale: Locale, page: Page): string {
       const { own, machine } = languages(locale, page)
       return `<nav class="langs" aria-label="${html(t('language'))}">
         <ul>${own}</ul>
-        ${MACHINE_TRANSLATION ? `<details>
+        ${
+          MACHINE_TRANSLATION
+            ? `<details>
           <summary>${t('moreLanguages')}</summary>
           <p>${t('machine')}</p>
           <ul>${machine}</ul>
-        </details>` : ''}
+        </details>`
+            : ''
+        }
       </nav>`
     },
     // Google's own button, as a plain link: no Google script, no cookie.
@@ -372,9 +385,7 @@ function render(locale: Locale, page: Page): string {
       // Strings the scripts need, read by main.ts and capture.ts.
       .replace(
         '</body>',
-        runtime
-          ? `  <script type="application/json" id="strings">${JSON.stringify(runtime).replaceAll('<', '\\u003c')}</script>\n  </body>`
-          : '</body>',
+        `  <script type="application/json" id="strings">${JSON.stringify({ ...(runtime as Dict | undefined), prefs: dict.prefs, consent: dict.consent }).replaceAll('<', '\\u003c')}</script>\n  </body>`,
       )
   )
 }
@@ -464,6 +475,13 @@ export function pages(): Plugin {
         ['icon-512.png', 'png/app-icon-512.png'],
       ])
         this.emitFile({ type: 'asset', fileName, source: readFileSync(join(brand, source!)) })
+      this.emitFile({
+        type: 'asset',
+        fileName: 'preferences-boot.js',
+        source: readFileSync(
+          createRequire(import.meta.url).resolve('shades-gradient/preferences-boot.js'),
+        ),
+      })
       const { summary, full } = llms()
       this.emitFile({ type: 'asset', fileName: 'sitemap.xml', source: sitemap() })
       this.emitFile({ type: 'asset', fileName: 'llms.txt', source: summary })

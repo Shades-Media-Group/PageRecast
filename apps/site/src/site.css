@@ -90,10 +90,24 @@ h2 {
   text-wrap: balance;
 }
 
-/* Chinese headings need room between lines and no negative tracking. */
-:lang(zh) h1,
-:lang(zh) h2,
-:lang(zh) h3 {
+/* Traditional Chinese, Japanese and Hindi use their own system faces after Hanken. */
+:lang(zh-Hant) body {
+  font-family:
+    'Hanken Grotesk Variable', 'PingFang TC', 'Microsoft JhengHei', 'Noto Sans TC', sans-serif;
+}
+:lang(ja) body {
+  font-family:
+    'Hanken Grotesk Variable', 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'Yu Gothic', 'Meiryo',
+    'Noto Sans JP', sans-serif;
+}
+:lang(hi) body {
+  font-family:
+    'Hanken Grotesk Variable', 'Kohinoor Devanagari', 'Nirmala UI', 'Noto Sans Devanagari',
+    sans-serif;
+}
+
+/* Chinese, Japanese and Hindi headings need room between lines and no negative tracking. */
+:is(:lang(zh), :lang(ja), :lang(hi)) :is(h1, h2, h3) {
   letter-spacing: 0;
   line-height: 1.2;
 }
@@ -1305,4 +1319,17 @@ code {
   margin-top: 48px;
   color: var(--ink-3);
   font-size: 14px;
+}
+
+/* Display preferences (shades-gradient/preferences): the reader's theme, and more contrast.
+   Last in the file, so it wins over the dark-mode blocks above. */
+:root[data-theme='light'] {
+  color-scheme: light;
+}
+:root[data-theme='dark'] {
+  color-scheme: dark;
+}
+:root[data-g-contrast] {
+  --ink-2: var(--ink);
+  --ink-3: var(--ink);
 }

@@ -1,4 +1,4 @@
-import { SCENE_FORMAT, SCENE_VERSION, type RecastFile } from './types'
+import { SCENE_FORMAT, SCENE_VERSION, type RecastFile, type SceneNode } from './types'
 
 /** Clipboard payloads start with this prefix so the plugin can recognise them. */
 export const CLIPBOARD_PREFIX = 'pagerecast:1:'
@@ -89,5 +89,38 @@ export function validate(value: unknown): RecastFile {
     throw new SceneError('This capture is empty.')
   }
   if (!file.assets || typeof file.assets !== 'object') file.assets = {}
+  for (const capture of file.captures) if (capture?.root) checkStates(capture.root)
   return file as RecastFile
+}
+
+const isObject = (v: unknown): v is Record<string, unknown> =>
+  typeof v === 'object' && v !== null && !Array.isArray(v)
+const STATES = new Set(['hover', 'focus', 'active'])
+const NUMBERS = ['x', 'y', 'width', 'height', 'rotation', 'opacity']
+const ARRAYS = ['fills', 'shadows']
+
+function validOverride(o: unknown): boolean {
+  return (
+    isObject(o) &&
+    NUMBERS.every((k) => o[k] === undefined || Number.isFinite(o[k])) &&
+    ARRAYS.every((k) => o[k] === undefined || Array.isArray(o[k]))
+  )
+}
+
+/** Drops malformed `states` instead of failing the import: the layers still build. */
+function checkStates(node: SceneNode) {
+  if (node.type !== 'frame') return
+  const states: unknown = node.states
+  if (
+    states !== undefined &&
+    !(
+      isObject(states) &&
+      Object.entries(states).every(
+        ([state, overrides]) =>
+          STATES.has(state) && isObject(overrides) && Object.values(overrides).every(validOverride),
+      )
+    )
+  )
+    delete node.states
+  if (Array.isArray(node.children)) node.children.forEach(checkStates)
 }

@@ -5,9 +5,12 @@ import type {
   FlexLayout,
   FrameNode,
   ImageFit,
+  NodeStates,
+  Outline,
   Paint,
   SceneNode,
   Scope,
+  StateOverride,
   Stroke,
   TextNode,
   TextRun,
@@ -22,6 +25,7 @@ import {
   parseUrl,
   splitTopLevel,
 } from './css'
+import { INTERACTIVE, collectStateRules, markState } from './states'
 
 export type PendingAsset =
   | { kind: 'image'; url: string }
@@ -42,6 +46,8 @@ export interface WalkOptions {
   /** Required when scope is `element`. */
   target?: Element | null
   maxNodes?: number
+  /** Record hover, focus and active looks of interactive elements. Off by default. */
+  states?: boolean
 }
 
 export interface WalkResult {
@@ -112,6 +118,21 @@ const BLENDS = new Set<BlendMode>([
   'color',
   'luminosity',
 ])
+/** At most this many elements are re-measured in their states, to keep capture fast. */
+const MAX_STATE_ELEMENTS = 60
+/** Elements with bigger subtrees (a tabindex on <main>) are not worth re-measuring. */
+const MAX_STATE_SUBTREE = 200
+const STATES = ['hover', 'focus', 'active'] as const
+const same = (a: unknown, b: unknown) => JSON.stringify(a) === JSON.stringify(b)
+
+function flatten(nodes: SceneNode[], into = new Map<string, SceneNode>()) {
+  for (const node of nodes) {
+    into.set(node.key, node)
+    if (node.type === 'frame') flatten(node.children, into)
+  }
+  return into
+}
+
 const HEADINGS: Record<string, number> = { h1: 1, h2: 2, h3: 3, h4: 4, h5: 5, h6: 6 }
 const TAG_NAMES: Record<string, string> = {
   header: 'Header',
@@ -161,6 +182,12 @@ export function walk(doc: Document, options: WalkOptions): WalkResult {
   const colorCache = new Map<string, Color | null>()
   let count = 0
   let truncated = false
+  // State capture: the joined selector of every rewritten state rule, the
+  // re-measure budget, and outlines (read only here, never on default nodes).
+  let stateSelector = ''
+  let stateBudget = MAX_STATE_ELEMENTS
+  let measuring = false
+  let outlines = new Map<string, Outline>()
 
   const scrollX = win.scrollX
   const scrollY = win.scrollY
@@ -509,9 +536,11 @@ export function walk(doc: Document, options: WalkOptions): WalkResult {
   /** True when an element holds only text and plain inline elements. */
   function isTextBlock(el: Element): boolean {
     let hasText = false
+    let ownText = false
+    let interactive = false
     for (const child of Array.from(el.childNodes)) {
       if (child.nodeType === 3) {
-        if ((child.textContent ?? '').trim()) hasText = true
+        if ((child.textContent ?? '').trim()) hasText = ownText = true
         continue
       }
       if (child.nodeType !== 1) continue
@@ -533,8 +562,11 @@ export function walk(doc: Document, options: WalkOptions): WalkResult {
         continue
       }
       hasText = true
+      if (stateSelector && childEl.matches(INTERACTIVE)) interactive = true
     }
-    return hasText
+    // With states on, `<li><a>Item</a></li>` keeps the link as its own element so
+    // it can carry states. Links inside running text stay runs of the paragraph.
+    return hasText && !(interactive && !ownText)
   }
 
   function collapse(text: string, cs: CSSStyleDeclaration): string {
@@ -907,6 +939,11 @@ export function walk(doc: Document, options: WalkOptions): WalkResult {
       ...(alignSelfMap[cs.alignSelf] ? { alignSelf: alignSelfMap[cs.alignSelf] } : {}),
     }
 
+    if (stateSelector) {
+      const outline = outlineOf(cs)
+      if (outline) outlines.set(key, outline)
+    }
+
     const padding = [cs.paddingTop, cs.paddingRight, cs.paddingBottom, cs.paddingLeft].map(
       (v) => parseFloat(v) || 0,
     )
@@ -972,6 +1009,11 @@ export function walk(doc: Document, options: WalkOptions): WalkResult {
       visitChildren(el, key, frame.children, cs, contentBox)
     }
 
+    if (stateSelector && !measuring && visible && stateBudget > 0 && el.matches(INTERACTIVE)) {
+      const states = captureStates(el, key, frame)
+      if (states) frame.states = states
+    }
+
     const paintsSomething =
       frame.fills.length > 0 ||
       frame.stroke ||
@@ -987,7 +1029,8 @@ export function walk(doc: Document, options: WalkOptions): WalkResult {
       frame.rotation ||
       a11y ||
       tag === 'html' ||
-      tag === 'body'
+      tag === 'body' ||
+      frame.states
     if (!meaningful && frame.children.length <= 1) {
       // A pure wrapper: hoist its children instead of adding an empty frame.
       count--
@@ -1002,9 +1045,105 @@ export function walk(doc: Document, options: WalkOptions): WalkResult {
     return order
   }
 
+  function outlineOf(cs: CSSStyleDeclaration): Outline | undefined {
+    const width = parseFloat(cs.outlineWidth) || 0
+    const outlineColor = color(cs.outlineColor)
+    if (cs.outlineStyle === 'none' || width === 0 || !outlineColor || outlineColor.a === 0)
+      return undefined
+    return {
+      width,
+      offset: parseFloat(cs.outlineOffset) || 0,
+      color: outlineColor,
+      style:
+        cs.outlineStyle === 'dashed' || cs.outlineStyle === 'dotted' ? cs.outlineStyle : 'solid',
+    }
+  }
+
+  /** Re-walks an element in each state and keeps what differs from `base`. */
+  function captureStates(el: Element, key: string, base: FrameNode): NodeStates | undefined {
+    if (el.getElementsByTagName('*').length > MAX_STATE_SUBTREE) return undefined
+    const before = flatten([base])
+    const beforeOutlines = outlines
+    const states: NodeStates = {}
+    let measured = false
+    for (const state of STATES) {
+      const undo = markState(el, state)
+      const saved = { count, rasters: rasters.length, truncated }
+      const after: SceneNode[] = []
+      outlines = new Map()
+      try {
+        // Skip the re-walk when no state rule matches anything in the subtree.
+        if (!el.matches(stateSelector) && !el.querySelector(stateSelector)) continue
+        measured = true
+        measuring = true
+        visit(el, key, after)
+      } finally {
+        measuring = false
+        count = saved.count
+        rasters.length = saved.rasters
+        truncated = saved.truncated
+        undo()
+      }
+      const overrides: Record<string, StateOverride> = {}
+      for (const node of flatten(after).values()) {
+        const old = before.get(node.key)
+        if (!old || old.type !== node.type) continue
+        const o: StateOverride = {}
+        for (const k of ['x', 'y', 'width', 'height'] as const)
+          if (Math.abs(node[k] - old[k]) > 0.01) o[k] = node[k]
+        if ((node.rotation ?? 0) !== (old.rotation ?? 0)) o.rotation = node.rotation ?? 0
+        if ((node.opacity ?? 1) !== (old.opacity ?? 1)) o.opacity = node.opacity ?? 1
+        if (node.type === 'frame' && old.type === 'frame') {
+          if (!same(node.fills, old.fills)) o.fills = node.fills
+          if (!same(node.stroke, old.stroke)) o.stroke = node.stroke ?? null
+          if (!same(node.radius, old.radius)) o.radius = node.radius ?? null
+          if (!same(node.shadows ?? [], old.shadows ?? [])) o.shadows = node.shadows ?? []
+          const outline = outlines.get(node.key)
+          if (!same(outline, beforeOutlines.get(node.key))) o.outline = outline ?? null
+        }
+        if (node.type === 'text' && old.type === 'text') {
+          if (!same(node.style.color, old.style.color)) o.color = node.style.color
+          if (node.style.decoration !== old.style.decoration) o.decoration = node.style.decoration
+        }
+        if (Object.keys(o).length) overrides[node.key] = o
+      }
+      if (Object.keys(overrides).length) states[state] = overrides
+    }
+    outlines = beforeOutlines
+    if (measured) stateBudget--
+    return Object.keys(states).length ? states : undefined
+  }
+
+  // State rules go in before the walk; they match nothing until an element is
+  // marked. Transitions are off so a marked element reads its end state at once.
+  let stateStyle: HTMLStyleElement | null = null
+  if (options.states) {
+    const rules = collectStateRules(doc)
+    stateSelector = rules.selectors
+      .filter((selector) => {
+        try {
+          docEl.matches(selector)
+          return true
+        } catch {
+          return false
+        }
+      })
+      .join(',')
+    if (stateSelector) {
+      stateStyle = doc.createElement('style')
+      stateStyle.setAttribute('data-pagerecast-states', '')
+      stateStyle.textContent = `*,*::before,*::after{transition:none!important}\n${rules.css}`
+      ;(doc.head ?? docEl).appendChild(stateStyle)
+    }
+  }
+
   const rootEl = options.scope === 'element' && options.target ? options.target : docEl
   const nodes: SceneNode[] = []
-  visit(rootEl, rootEl.localName, nodes)
+  try {
+    visit(rootEl, rootEl.localName, nodes)
+  } finally {
+    stateStyle?.remove()
+  }
   let root = nodes[0]
   if (!root || root.type !== 'frame' || nodes.length > 1) {
     root = {

@@ -157,7 +157,49 @@ export interface FrameNode extends BaseNode {
   grow?: number
   alignSelf?: FlexLayout['align']
   children: SceneNode[]
+  /** Interactive elements only, and only when the capture recorded states. */
+  states?: NodeStates
 }
+
+/** States an interactive element can be captured in. */
+export type InteractionState = 'hover' | 'focus' | 'active'
+
+/** A CSS outline, drawn outside the border box. Recorded only inside states. */
+export interface Outline {
+  width: number
+  offset: number
+  color: Color
+  style: 'solid' | 'dashed' | 'dotted'
+}
+
+/**
+ * What one node looks like in a state, as fields of the same name on the node.
+ * Only fields that differ from the default are present; `null` removes the
+ * default value (a border that disappears on hover).
+ */
+export interface StateOverride {
+  x?: number
+  y?: number
+  width?: number
+  height?: number
+  rotation?: number
+  opacity?: number
+  /** Frames. */
+  fills?: Paint[]
+  stroke?: Stroke | null
+  radius?: [number, number, number, number] | null
+  shadows?: Shadow[]
+  outline?: Outline | null
+  /** Text: replaces the colour and decoration of every run. */
+  color?: Color
+  decoration?: TextStyle['decoration']
+}
+
+/**
+ * Per state, the overrides for nodes in the element's subtree, keyed by node
+ * `key` (the element's own key included). A state that changes nothing is absent.
+ */
+export type NodeStates = Partial<Record<InteractionState, Record<string, StateOverride>>>
 
 export interface TextStyle {
   fontFamily: string[]

@@ -67,4 +67,25 @@ describe('scene codec', () => {
       'newer PageRecast',
     )
   })
+
+  it('keeps valid states and drops malformed ones', async () => {
+    const button = {
+      ...file.captures[0]!.root,
+      id: 'n1',
+      key: 'html/button1',
+      states: { hover: { 'html/button1': { fills: [], opacity: 0.8 } } },
+    }
+    const broken = {
+      ...button,
+      id: 'n2',
+      key: 'html/button2',
+      states: { hover: { k: { x: 'a' } } },
+    }
+    const withStates = structuredClone(file)
+    withStates.captures[0]!.root.children = [button, broken as unknown as typeof button]
+    const decoded = await decode(JSON.stringify(withStates))
+    const [kept, dropped] = decoded.captures[0]!.root.children as (typeof button)[]
+    expect(kept!.states).toEqual(button.states)
+    expect(dropped!.states).toBeUndefined()
+  })
 })

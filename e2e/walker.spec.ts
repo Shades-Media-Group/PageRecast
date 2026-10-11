@@ -21,17 +21,17 @@ function all(node: SceneNode): SceneNode[] {
   return node.type === 'frame' ? [node, ...node.children.flatMap(all)] : [node]
 }
 
-async function capture(page: Page): Promise<WalkResult> {
+async function capture(page: Page, states = false): Promise<WalkResult> {
   await page.addScriptTag({ content: bundle })
-  return page.evaluate(() => {
+  return page.evaluate((states) => {
     const api = window.__pagerecast!
     const restore = api.prepare(document, { hideOverlays: true, freezeAnimations: true })
     try {
-      return api.walk(document, { scope: 'page' })
+      return api.walk(document, { scope: 'page', states })
     } finally {
       restore()
     }
-  })
+  }, states)
 }
 
 test('captures the kitchen sink faithfully', async ({ page }) => {
@@ -103,4 +103,60 @@ test('captures the kitchen sink faithfully', async ({ page }) => {
 
   // The page is restored afterwards.
   expect(await page.locator('pr-pseudo').count()).toBe(0)
+})
+
+test('records interaction states only when asked', async ({ page }) => {
+  await page.goto(fixture('states.html'))
+  const off = all((await capture(page)).root)
+  expect(off.some((n) => 'states' in n)).toBe(false)
+
+  const nodes = all((await capture(page, true)).root)
+  const frame = (html: string) =>
+    nodes.find((n): n is FrameNode => n.type === 'frame' && n.html === html)!
+  const red = { r: 1, g: 0, b: 0, a: 1 }
+
+  // Hover changes the button and, through `.btn:hover .dot`, its child.
+  const button = frame('button.btn')
+  const dot = frame('span.dot')
+  expect(button.states?.hover?.[button.key]?.fills).toEqual([{ type: 'solid', color: red }])
+  expect(button.states?.hover?.[dot.key]?.fills).toEqual([
+    { type: 'solid', color: { r: 0, g: 0, b: 0, a: 1 } },
+  ])
+  // Focus-visible draws an outline; active presses (opacity) while hovering.
+  expect(button.states?.focus?.[button.key]?.outline).toEqual({
+    width: 2,
+    offset: 2,
+    color: { r: 0, g: 128 / 255, b: 0, a: 1 },
+    style: 'solid',
+  })
+  expect(button.states?.active?.[button.key]).toMatchObject({
+    opacity: 0.5,
+    fills: [{ color: red }],
+  })
+
+  // Text links: colour and underline inside @media; `li:hover > a` via the ancestor.
+  const link = frame('a.link')
+  const hover = Object.values(link.states?.hover ?? {})[0]
+  expect(hover).toEqual({
+    color: { r: 128 / 255, g: 0, b: 128 / 255, a: 1 },
+    decoration: 'underline',
+  })
+  const item = nodes.find((n): n is FrameNode => n.type === 'frame' && n.key.endsWith('/li1/a1'))!
+  expect(Object.values(item.states?.hover ?? {})[0]?.color).toEqual({
+    r: 1,
+    g: 128 / 255,
+    b: 0,
+    a: 1,
+  })
+
+  // CSS nesting and tabindex elements.
+  const nested = frame('div.nested')
+  expect(nested.states?.hover?.[nested.key]?.fills).toBeDefined()
+
+  // No state rules, or only `:not(:hover)`: nothing recorded.
+  expect(nodes.some((n) => n.type === 'frame' && n.html === 'button.plain' && n.states)).toBe(false)
+  expect(nodes.some((n) => n.type === 'frame' && n.html === 'a.calm' && n.states)).toBe(false)
+
+  // The page is left as it was.
+  expect(await page.locator('[data-pr-state], style[data-pagerecast-states]').count()).toBe(0)
 })

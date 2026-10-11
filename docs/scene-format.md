@@ -47,6 +47,31 @@ Coordinates are CSS pixels relative to the capture's top-left. Colours are sRGB 
 
 Paints are `solid`, `linear` (CSS angle), `radial` (normalised centre and radii), `conic` (start angle and centre) or `image`.
 
+## Interaction states
+
+When the capture runs with states on, a frame for an interactive element (`a[href]`, `button`, `input`, `select`, `textarea`, `summary`, roles `button`, `link` and `tab`, or `tabindex` of 0 or more) may carry `states`. It holds one entry per state that looks different: `hover`, `focus` (`:focus` and `:focus-visible`) and `active` (pressed, which also counts as hovered). Each entry maps the `key` of a node in the element's subtree, the element's own included, to the fields that change:
+
+```json
+"states": {
+  "hover": {
+    "html/body1/button1": { "fills": [{ "type": "solid", "color": { "r": 1, "g": 0, "b": 0, "a": 1 } }] },
+    "html/body1/button1/#text": { "color": { "r": 1, "g": 1, "b": 1, "a": 1 }, "decoration": "underline" }
+  },
+  "focus": {
+    "html/body1/button1": { "outline": { "width": 2, "offset": 2, "color": { "r": 0, "g": 0.5, "b": 0, "a": 1 }, "style": "solid" } }
+  }
+}
+```
+
+| Field                                              | Meaning                                                          |
+| -------------------------------------------------- | ---------------------------------------------------------------- |
+| `x`, `y`, `width`, `height`, `rotation`, `opacity` | Same meaning as on the node                                      |
+| `fills`, `stroke`, `radius`, `shadows`             | Frames only; `null` for `stroke` or `radius` removes the default |
+| `outline`                                          | `width`, `offset`, `color`, `style`, or `null` when it goes away |
+| `color`, `decoration`                              | Text only; applies to every run                                  |
+
+Only differences are recorded, and a state that changes nothing is left out. States come from the page's own stylesheets, so rules in cross-origin stylesheets and hover effects made with JavaScript are not seen. The Figma plugin turns each such element into a component set with a `State` property and places an instance of `State=Default` where the element was.
+
 ## Assets
 
 `assets` maps ids to either `{ "kind": "image", "mime", "width", "height", "data" }` (base64) or `{ "kind": "image", "url" }` for images the plugin should download, or `{ "kind": "svg", "markup" }`.

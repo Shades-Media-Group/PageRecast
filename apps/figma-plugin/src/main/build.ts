@@ -18,6 +18,7 @@ import {
 } from '../shared/messages'
 import { FontResolver } from './fonts'
 import { rotatedTransform } from './geometry'
+import { pageGroups } from '../shared/pages'
 import { hex, imagePaint, solid, toBlend, toEffects, toPaints } from './paints'
 import { differences, findPatterns, type Difference, type Pattern } from './patterns'
 import { withState } from './states'
@@ -767,68 +768,77 @@ export async function importFile(
   const updatedRoots: FrameNode[] = []
   const section = figma.createSection()
   section.name = file.source.title || new URL(file.source.url).hostname
-  let cursor = 0
-  let tallest = 0
+  // A combined file gets one row per page; its labels already name the page.
+  const groups = pageGroups(file.captures)
+  let rowY = 0
+  let widest = 0
   const roots = new Map<Capture, FrameNode>()
-  for (const capture of file.captures) {
-    if (options.components) patterns.set(capture, findPatterns(capture.root, file.assets))
-    const key = importKey(file.source.url, capture)
-    const earlier = key ? imported.get(key) : undefined
-    if (earlier && earlier.pages.length > 1)
-      report.warnings.push(
-        `${capture.label} is on this page more than once, so it was added as a new frame.`,
-      )
-    const start = cursor
-    const root = (await build(capture.root, section, -cursor, 0, capture)) as FrameNode
-    root.name = `${section.name} · ${capture.label}`
-    root.x = cursor
-    root.y = 0
-    roots.set(capture, root)
-    cursor += root.width
-    tallest = Math.max(tallest, root.height)
+  for (const group of groups) {
+    let cursor = 0
+    let tallest = 0
+    for (const capture of group) {
+      if (options.components) patterns.set(capture, findPatterns(capture.root, file.assets))
+      const key = importKey(file.source.url, capture)
+      const earlier = key ? imported.get(key) : undefined
+      if (earlier && earlier.pages.length > 1)
+        report.warnings.push(
+          `${capture.label} is on this page more than once, so it was added as a new frame.`,
+        )
+      const start = cursor
+      const root = (await build(capture.root, section, -cursor, 0, capture)) as FrameNode
+      root.name = groups.length > 1 ? capture.label : `${section.name} · ${capture.label}`
+      root.x = cursor
+      root.y = rowY
+      roots.set(capture, root)
+      cursor += root.width
+      tallest = Math.max(tallest, root.height)
 
-    const strips = capture.screenshot ? tiles[capture.screenshot] : undefined
-    let reference: FrameNode | undefined
-    if (options.screenshot && strips?.length) {
-      reference = figma.createFrame()
-      section.appendChild(reference)
-      reference.name = `Reference · ${capture.label}`
-      size(reference, capture.width, capture.height)
-      reference.x = cursor + REFERENCE_GAP
-      reference.y = 0
-      reference.fills = []
-      for (const strip of strips) {
-        const hash = hashes.get(strip.key)
-        if (!hash) continue
-        const rect = figma.createRectangle()
-        reference.appendChild(rect)
-        rect.name = 'Screenshot'
-        rect.resize(capture.width, Math.max(strip.height * capture.height, 0.01))
-        rect.y = strip.y * capture.height
-        rect.fills = [imagePaint(hash, 'fill')]
+      const strips = capture.screenshot ? tiles[capture.screenshot] : undefined
+      let reference: FrameNode | undefined
+      if (options.screenshot && strips?.length) {
+        reference = figma.createFrame()
+        section.appendChild(reference)
+        reference.name = `Reference · ${capture.label}`
+        size(reference, capture.width, capture.height)
+        reference.x = cursor + REFERENCE_GAP
+        reference.y = rowY
+        reference.fills = []
+        for (const strip of strips) {
+          const hash = hashes.get(strip.key)
+          if (!hash) continue
+          const rect = figma.createRectangle()
+          reference.appendChild(rect)
+          rect.name = 'Screenshot'
+          rect.resize(capture.width, Math.max(strip.height * capture.height, 0.01))
+          rect.y = strip.y * capture.height
+          rect.fills = [imagePaint(hash, 'fill')]
+        }
+        reference.locked = true
+        cursor += REFERENCE_GAP + capture.width
       }
-      reference.locked = true
-      cursor += REFERENCE_GAP + capture.width
+      const components = componentFrames.get(capture)
+      if (key) {
+        mark(root, key, 'page', file.source.capturedAt)
+        if (reference) mark(reference, key, 'reference', file.source.capturedAt)
+        if (components) mark(components, key, 'components', file.source.capturedAt)
+      }
+      if (earlier?.pages.length === 1) {
+        await replaceEarlier(earlier, root, reference, components)
+        updatedRoots.push(root)
+        cursor = start
+        continue
+      }
+      if (components) {
+        components.x = cursor + REFERENCE_GAP
+        components.y = rowY
+        cursor += REFERENCE_GAP + components.width
+        tallest = Math.max(tallest, components.height)
+      }
+      cursor += CAPTURE_GAP
     }
-    const components = componentFrames.get(capture)
-    if (key) {
-      mark(root, key, 'page', file.source.capturedAt)
-      if (reference) mark(reference, key, 'reference', file.source.capturedAt)
-      if (components) mark(components, key, 'components', file.source.capturedAt)
-    }
-    if (earlier?.pages.length === 1) {
-      await replaceEarlier(earlier, root, reference, components)
-      updatedRoots.push(root)
-      cursor = start
-      continue
-    }
-    if (components) {
-      components.x = cursor + REFERENCE_GAP
-      components.y = 0
-      cursor += REFERENCE_GAP + components.width
-      tallest = Math.max(tallest, components.height)
-    }
-    cursor += CAPTURE_GAP
+    if (cursor === 0) continue
+    widest = Math.max(widest, cursor)
+    rowY += tallest + CAPTURE_GAP
   }
 
   progress({ type: 'progress', phase: 'styles', done: 0, total: 1 })
@@ -862,7 +872,10 @@ export async function importFile(
 
   // Put the section beside whatever is already on the page.
   const padding = 120
-  section.resizeWithoutConstraints(cursor - CAPTURE_GAP + padding * 2, tallest + padding * 2)
+  section.resizeWithoutConstraints(
+    widest - CAPTURE_GAP + padding * 2,
+    rowY - CAPTURE_GAP + padding * 2,
+  )
   for (const child of section.children) {
     child.x += padding
     child.y += padding

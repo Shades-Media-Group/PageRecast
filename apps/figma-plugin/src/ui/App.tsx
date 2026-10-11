@@ -28,6 +28,7 @@ import {
   type Settings,
   type UiToMain,
 } from '../shared/messages'
+import { pageOf, pageTitle } from '../shared/pages'
 import { prepareImages, readFile, readText, renderHtml } from './load'
 
 type Tab = 'paste' | 'file' | 'code'
@@ -504,8 +505,12 @@ function OptionToggles({
   )
 }
 
-/** One row per captured width, with the light and dark frames of that width. */
+/**
+ * One row per captured width of each page, with the light and dark frames of
+ * that width. A combined file names its page in front of the label.
+ */
 interface WidthGroup {
+  page: string
   width: number
   device: string
   light?: Capture
@@ -513,15 +518,18 @@ interface WidthGroup {
 }
 
 function groupByWidth(captures: Capture[]): WidthGroup[] {
-  const groups = new Map<number, WidthGroup>()
+  const groups = new Map<string, WidthGroup>()
   for (const capture of captures) {
     const width = capture.viewport.width
-    const group = groups.get(width) ?? {
+    const key = `${pageOf(capture)}|${width}`
+    const page = pageTitle(capture)
+    const group = groups.get(key) ?? {
+      page,
       width,
-      device: capture.label.split(' · ')[0] || 'Frame',
+      device: capture.label.slice(page ? page.length + 3 : 0).split(' · ')[0] || 'Frame',
     }
     group[capture.theme] ??= capture
-    groups.set(width, group)
+    groups.set(key, group)
   }
   return [...groups.values()]
 }
@@ -553,7 +561,7 @@ function Review({
   const themes = (['light', 'dark'] as const).filter((t) => groups.some((g) => g[t]))
   const [previewId, setPreviewId] = useState(file.captures[0]!.id)
   const shown = file.captures.find((c) => c.id === previewId) ?? file.captures[0]!
-  const shownGroup = groups.find((g) => g.width === shown.viewport.width)!
+  const shownGroup = groups.find((g) => g.light === shown || g.dark === shown)!
   const domain = domainOf(file)
 
   const toggle = (capture: Capture) => {
@@ -612,13 +620,16 @@ function Review({
               <span>{t === 'dark' ? 'Dark' : 'Light'}</span>
             ))}
           </div>
-          {groups.map((group) => (
+          {groups.map((group, i) => [
+            group.page && group.page !== groups[i - 1]?.page && (
+              <p class="frames-page truncate">{group.page}</p>
+            ),
             <div class={group === shownGroup ? 'frame-row is-shown' : 'frame-row'}>
               <button
                 type="button"
                 class="frame-pick"
                 aria-pressed={group === shownGroup}
-                aria-label={`Preview ${group.device} ${group.width}`}
+                aria-label={`Preview ${group.page} ${group.device} ${group.width}`.trim()}
                 onClick={() => pick(group)}
               >
                 <Icon name={deviceIcon(group.width)} size={16} />
@@ -641,8 +652,8 @@ function Review({
                   </span>
                 )
               })}
-            </div>
-          ))}
+            </div>,
+          ])}
         </div>
       </Section>
       {updating(stage) > 0 && (

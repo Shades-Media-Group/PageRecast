@@ -179,6 +179,12 @@ body,
 .frames-head > span + span {
   text-align: center;
 }
+.frames-page {
+  padding: 8px 8px 0;
+  color: var(--ink);
+  font-weight: 600;
+  line-height: 24px;
+}
 .frame-row {
   min-height: var(--row);
   padding: 0 8px;

@@ -1,5 +1,6 @@
 import type { Capture, Color, RecastFile, TextStyle } from '@pagerecast/scene'
 import { nearestColor, nearestNumber, numberScale, typeKey, type Candidate } from './match'
+import { pageOf } from '../shared/pages'
 import { hex, solid } from './paints'
 
 export interface ColorRef {
@@ -30,6 +31,9 @@ const MAX_VARIABLES = 48
 const MAX_TEXT_STYLES = 32
 
 const colorKey = (c: Color) => `${hex(c)}${c.a < 1 ? Math.round(c.a * 100) : ''}`
+/** The same element in a light and a dark capture: same page, width and DOM path. */
+const pairKey = (ref: ColorRef) =>
+  `${pageOf(ref.capture)}|${ref.capture.viewport.width}|${ref.kind}|${ref.key}`
 
 function hostOf(file: RecastFile) {
   try {
@@ -72,13 +76,12 @@ export function createVariables(
 
   // Dark counterpart: the most common dark colour on the same elements.
   const darkByKey = new Map<string, Color>()
-  for (const ref of dark)
-    darkByKey.set(`${ref.capture.viewport.width}|${ref.kind}|${ref.key}`, ref.color)
+  for (const ref of dark) darkByKey.set(pairKey(ref), ref.color)
   const counterparts = new Map<string, Color>()
   if (paired) {
     const votes = new Map<string, Map<string, { color: Color; n: number }>>()
     for (const ref of light) {
-      const match = darkByKey.get(`${ref.capture.viewport.width}|${ref.kind}|${ref.key}`)
+      const match = darkByKey.get(pairKey(ref))
       if (!match) continue
       const k = colorKey(ref.color)
       const bucket = votes.get(k) ?? new Map()

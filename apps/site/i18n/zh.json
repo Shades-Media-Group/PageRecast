@@ -94,15 +94,15 @@
         "steps": {
           "capture": {
             "name": "捕获页面",
-            "text": "在 Chrome 中打开页面，打开 PageRecast 侧边栏，选择宽度和主题，然后点击 Capture。"
+            "text": "在 Chrome 中打开页面，打开 PageRecast 侧边栏，选择宽度和主题，然后点击“捕获”。"
           },
           "copy": {
             "name": "复制到 Figma",
-            "text": "点击 Copy for Figma，或保存为 .recast 文件，方便分享或稍后打开。"
+            "text": "点击“复制到 Figma”，或保存为 .recast 文件，方便分享或稍后打开。"
           },
           "paste": {
             "name": "粘贴到 Figma",
-            "text": "运行 PageRecast 插件，按 ⌘ V 或 Ctrl V 粘贴，检查框架后点击 Import。"
+            "text": "运行 PageRecast 插件，按 ⌘ V 或 Ctrl V 粘贴，检查框架后点击“导入到 Figma”。"
           }
         }
       },
@@ -216,7 +216,7 @@
     },
     "share": {
       "title": "与团队分享捕获",
-      "step1": "在扩展中，点击 Copy for Figma 旁边的下载按钮。",
+      "step1": "在扩展中，点击“复制到 Figma”旁边的下载按钮。",
       "step2": "像发送其他文件一样发送 <code>.recast</code> 文件。",
       "step3": "同事在 Figma 中把它拖到 PageRecast 上即可。除了插件，无需安装其他东西。"
     }
@@ -230,7 +230,7 @@
     "shortTitle": "简要说明",
     "short": "PageRecast 不收集、不传输、不出售也不分享任何个人数据。一切都在你的电脑上完成。",
     "chromeTitle": "Chrome 扩展访问的内容",
-    "chromePage": "<strong>你选择捕获的页面。</strong>当你点击 Capture 时，扩展会通过 Chrome 的 <code>debugger</code> 权限，读取当前标签页、你输入的网址，或 Figma 插件经由我们的捕获页面发送的网址（只有该页面可以发起请求，而且只能在你于该页面点击 Capture 之后）的布局、样式、文本和图片。它只在本次捕获期间连接，结束后即断开。",
+    "chromePage": "<strong>你选择捕获的页面。</strong>当你点击“捕获”时，扩展会通过 Chrome 的 <code>debugger</code> 权限，读取当前标签页、你输入的网址，或 Figma 插件经由我们的捕获页面发送的网址（只有该页面可以发起请求，而且只能在你于该页面点击 Capture 之后）的布局、样式、文本和图片。它只在本次捕获期间连接，结束后即断开。",
     "chromeTabs": "<strong>标签页的标题、地址和图标</strong>，用于显示将要捕获的页面。",
     "chromeStorage": "<strong>你设备上的本地存储</strong>，用于保存设置和最近的捕获。你可以在面板中删除任何捕获；移除扩展会删除全部捕获。",
     "chromeNetwork": "扩展不会向我们的任何服务器发送请求。捕获中的图片从浏览器缓存读取，或按页面本身的方式加载。",
@@ -241,7 +241,7 @@
     "pluginImages": "<strong>捕获中引用的图片</strong>，直接从图片所属的网站下载。",
     "pluginStorage": "<strong>Figma 的插件存储</strong>，用于记住你的导入设置。",
     "pluginAgents": "<strong>AI 智能体在你电脑上排队的捕获</strong>，仅在你开启智能体导入时访问。插件通过你输入的配对码，从 <code>127.0.0.1</code> 获取这些捕获，这是 PageRecast MCP 服务器在你自己电脑上运行的服务。",
-    "pluginWeb": "插件的 Web 标签页会打开 <code>pagerecast.shades.md/capture/</code>，页面地址和设置放在链接的 <code>#</code> 之后，浏览器从不会把这部分发送给服务器。该页面把它们交给你浏览器中的扩展，捕获结果会在那里复制到剪贴板。",
+    "pluginWeb": "插件的“网页”标签页会打开 <code>pagerecast.shades.md/capture/</code>，页面地址和设置放在链接的 <code>#</code> 之后，浏览器从不会把这部分发送给服务器。该页面把它们交给你浏览器中的扩展，捕获结果会在那里复制到剪贴板。",
     "dataTitle": "我们收到的数据",
     "data": "没有。没有账号、统计、崩溃报告，也没有任何形式的跟踪。",
     "childrenTitle": "儿童",
@@ -264,7 +264,7 @@
     "installAfter": "安装后请重新加载此页面。Firefox 和 Safari 暂不支持捕获链接。",
     "note": "你捕获的页面由此浏览器中的扩展读取，不会发送给 PageRecast 或任何其他人。",
     "runtime": {
-      "invalid": "此捕获链接不完整。请在 Figma 中 PageRecast 插件的 Web 标签页重新开始。",
+      "invalid": "此捕获链接不完整。请在 Figma 中 PageRecast 插件的“网页”标签页重新开始。",
       "target": "{host}，{widths} px，{theme}{language}。",
       "and": " 和 ",
       "language": "，语言：{language}",
@@ -292,7 +292,7 @@
     "heading": "一个为<em>重塑</em><br />而生的页面。",
     "intro": "下面每个章节都用到了 PageRecast 能转换为 Figma 功能的内容。以几种宽度、浅色和深色主题捕获本页面，粘贴到 Figma 中对比一下。",
     "step1": "打开 PageRecast 侧边栏",
-    "step2": "选择宽度和两种主题，然后点击 Capture",
+    "step2": "选择宽度和两种主题，然后点击 捕获",
     "step3": "在 Figma 中粘贴到 PageRecast 插件",
     "type": {
       "title": "排版",

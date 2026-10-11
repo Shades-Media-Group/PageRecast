@@ -94,15 +94,15 @@
         "steps": {
           "capture": {
             "name": "Captura la página",
-            "text": "Abre la página en Chrome, abre el panel lateral de PageRecast, elige los anchos y los temas y pulsa Capture."
+            "text": "Abre la página en Chrome, abre el panel lateral de PageRecast, elige los anchos y los temas y pulsa Captura."
           },
           "copy": {
             "name": "Cópiala para Figma",
-            "text": "Pulsa Copy for Figma o guarda un archivo .recast para compartirlo o abrirlo más tarde."
+            "text": "Pulsa Copiar para Figma o guarda un archivo .recast para compartirlo o abrirlo más tarde."
           },
           "paste": {
             "name": "Pégala en Figma",
-            "text": "Abre el plugin de PageRecast, pega con ⌘ V o Ctrl V, revisa los marcos y pulsa Import."
+            "text": "Abre el plugin de PageRecast, pega con ⌘ V o Ctrl V, revisa los marcos y pulsa Importar a Figma."
           }
         }
       },
@@ -216,7 +216,7 @@
     },
     "share": {
       "title": "Comparte una captura con tu equipo",
-      "step1": "En la extensión, pulsa el botón de descarga junto a Copy for Figma.",
+      "step1": "En la extensión, pulsa el botón de descarga junto a Copiar para Figma.",
       "step2": "Envía el archivo <code>.recast</code> como cualquier otro archivo.",
       "step3": "Tu compañero lo suelta sobre PageRecast en Figma. No hay que instalar nada más que el plugin."
     }
@@ -230,7 +230,7 @@
     "shortTitle": "En resumen",
     "short": "PageRecast no recopila, transmite, vende ni comparte ningún dato personal. Todo ocurre en tu ordenador.",
     "chromeTitle": "A qué accede la extensión de Chrome",
-    "chromePage": "<strong>La página que eliges capturar.</strong> Cuando pulsas Capture, la extensión lee el diseño, los estilos, el texto y las imágenes de la pestaña actual, de una URL que escribes o de una URL que el plugin de Figma envió a través de nuestra página de captura (solo esa página puede pedirlo, y solo después de que pulses Capture en ella), mediante el permiso <code>debugger</code> de Chrome. Se conecta solo para esa captura y se desconecta cuando termina.",
+    "chromePage": "<strong>La página que eliges capturar.</strong> Cuando pulsas Captura, la extensión lee el diseño, los estilos, el texto y las imágenes de la pestaña actual, de una URL que escribes o de una URL que el plugin de Figma envió a través de nuestra página de captura (solo esa página puede pedirlo, y solo después de que pulses Capture en ella), mediante el permiso <code>debugger</code> de Chrome. Se conecta solo para esa captura y se desconecta cuando termina.",
     "chromeTabs": "<strong>Títulos, direcciones e iconos de las pestañas</strong>, para mostrar qué página se va a capturar.",
     "chromeStorage": "<strong>El almacenamiento local de tu dispositivo</strong>, para guardar tus ajustes y capturas recientes. Puedes borrar cualquier captura desde el panel; al quitar la extensión se borran todas.",
     "chromeNetwork": "La extensión no hace peticiones a ningún servidor nuestro. Las imágenes de una captura se leen de la caché del navegador o se cargan igual que las carga la página.",
@@ -293,7 +293,7 @@
     "heading": "Una página hecha<br />para <em>rehacerse.</em>",
     "intro": "Cada sección de abajo usa algo que PageRecast convierte en una función de Figma. Captura esta página en varios anchos, en claro y en oscuro, pégala en Figma y compara las dos.",
     "step1": "Abre el panel lateral de PageRecast",
-    "step2": "Elige anchos y los dos temas y pulsa Capture",
+    "step2": "Elige anchos y los dos temas y pulsa Captura",
     "step3": "Pega en el plugin PageRecast de Figma",
     "type": {
       "title": "Tipografía",

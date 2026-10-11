@@ -17,7 +17,7 @@
 - Privacy: captures are built in the browser and stay on the computer. The only network requests are the Figma plugin downloading images the page already uses, from the sites they belong to.
 - File format: `.recast`, gzipped JSON with a documented, open schema.
 - Automation: a command line (`npm install -g pagerecast`), a library, and an MCP server for AI agents (`npx -y pagerecast-mcp`) that capture pages, read design tokens and send captures to Figma, all locally.
-- Languages of this site: English, French, Romanian, Russian, Spanish and Simplified Chinese.
+- Languages: the extension, the Figma plugin and this site are in English, French, Romanian, Russian, Spanish and Simplified Chinese.
 - Current version: {{@version}}.
 
 ## Install

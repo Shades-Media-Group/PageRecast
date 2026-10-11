@@ -98,11 +98,11 @@
           },
           "copy": {
             "name": "La copier pour Figma",
-            "text": "Cliquez sur Copy for Figma, ou enregistrez un fichier .recast pour le partager ou l’ouvrir plus tard."
+            "text": "Cliquez sur Copier pour Figma, ou enregistrez un fichier .recast pour le partager ou l’ouvrir plus tard."
           },
           "paste": {
             "name": "La coller dans Figma",
-            "text": "Lancez le plugin PageRecast, collez avec ⌘ V ou Ctrl V, vérifiez les cadres et cliquez sur Import."
+            "text": "Lancez le plugin PageRecast, collez avec ⌘ V ou Ctrl V, vérifiez les cadres et cliquez sur Importer dans Figma."
           }
         }
       },
@@ -216,7 +216,7 @@
     },
     "share": {
       "title": "Partager une capture avec votre équipe",
-      "step1": "Dans l’extension, cliquez sur le bouton de téléchargement à côté de Copy for Figma.",
+      "step1": "Dans l’extension, cliquez sur le bouton de téléchargement à côté de Copier pour Figma.",
       "step2": "Envoyez le fichier <code>.recast</code> comme n’importe quel autre fichier.",
       "step3": "Votre collègue le dépose sur PageRecast dans Figma. Rien d’autre à installer que le plugin."
     }

@@ -20,6 +20,7 @@ export default defineConfig({
         sample: fileURLToPath(new URL('sample/index.html', import.meta.url)),
         privacy: fileURLToPath(new URL('privacy/index.html', import.meta.url)),
         gallery: fileURLToPath(new URL('gallery/index.html', import.meta.url)),
+        capture: fileURLToPath(new URL('capture/index.html', import.meta.url)),
       },
     },
   },

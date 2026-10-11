@@ -58,7 +58,12 @@ await esbuild({
   bundle: true,
   format: firefox ? 'iife' : 'esm',
   minifySyntax: true,
-  define,
+  // Capture links (src/link.ts) run captures from the background in Chrome.
+  define: {
+    ...define,
+    __VERSION__: JSON.stringify(version),
+    __CAPTURE_BUNDLE__: JSON.stringify(firefox ? '' : inject.outputFiles[0].text),
+  },
   outfile: `${dist}background.js`,
   target: 'es2022',
 })
@@ -81,6 +86,9 @@ let manifest = {
   side_panel: { default_path: 'sidepanel/index.html' },
   background: { service_worker: 'background.js', type: 'module' },
   permissions: ['sidePanel', 'debugger', 'tabs', 'storage', 'unlimitedStorage', 'contextMenus'],
+  // Lets pagerecast.shades.md/capture/ hand over a capture link from the Figma plugin.
+  // Unlike a content script, this needs no host permission and adds no install warning.
+  externally_connectable: { matches: ['https://pagerecast.shades.md/*'] },
   commands: {
     _execute_action: { suggested_key: { default: 'Alt+Shift+P' }, description: 'Open PageRecast' },
     'capture-page': {
@@ -100,6 +108,7 @@ if (firefox) {
     side_panel: _sidePanel,
     background: _background,
     permissions: _permissions,
+    externally_connectable: _externallyConnectable,
     action,
     ...common
   } = manifest

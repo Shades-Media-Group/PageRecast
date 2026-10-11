@@ -1,3 +1,4 @@
+import { listenForLinks } from './link'
 import type { PendingCapture } from './store'
 
 // Chrome's side panel, or Firefox's sidebar (which has no "open on action click" setting).
@@ -18,6 +19,9 @@ function setUp() {
 
 if (__FIREFOX__)
   firefox.browserAction.onClicked.addListener(() => void firefox.sidebarAction.toggle())
+
+// Firefox has no `externally_connectable` for web pages, so capture links are Chrome's.
+if (!__FIREFOX__) listenForLinks()
 
 chrome.runtime.onStartup.addListener(setUp)
 chrome.runtime.onInstalled.addListener(() => {

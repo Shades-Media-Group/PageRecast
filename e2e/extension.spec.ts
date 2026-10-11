@@ -1,8 +1,10 @@
 import { chromium, expect, test, type BrowserContext, type Page } from '@playwright/test'
+import { execFileSync } from 'node:child_process'
 import { createServer, type Server } from 'node:http'
 import { readFile } from 'node:fs/promises'
 import { fileURLToPath } from 'node:url'
-import type { RecastFile } from '@pagerecast/scene'
+import { captureLink } from '@pagerecast/capture'
+import { decode, type RecastFile } from '@pagerecast/scene'
 
 const extensionPath = fileURLToPath(new URL('../apps/extension/dist', import.meta.url))
 const fixtures = fileURLToPath(new URL('./fixtures/', import.meta.url))
@@ -167,4 +169,55 @@ test('captures a list of URLs and picks them for one copy', async () => {
     timeout: 90_000,
   })
   await expect(panel.locator('.history .pr-check:checked')).toHaveCount(2)
+})
+
+test('a capture link from the Figma plugin captures through the site page and copies', async () => {
+  test.setTimeout(120_000)
+  // The page as deployed: built by Vite, served for pagerecast.shades.md from disk.
+  const site = fileURLToPath(new URL('../apps/site/', import.meta.url))
+  const vite = fileURLToPath(new URL('../node_modules/vite/bin/vite.js', import.meta.url))
+  execFileSync('node', [vite, 'build'], { cwd: site, stdio: 'pipe' })
+  await context.route('https://pagerecast.shades.md/**', async (route) => {
+    const path = new URL(route.request().url()).pathname
+    const file = `${site}dist${path.endsWith('/') ? `${path}index.html` : path}`
+    await route.fulfill({ path: file }).catch(() => route.fulfill({ status: 404 }))
+  })
+  await context.grantPermissions(['clipboard-read', 'clipboard-write'], {
+    origin: 'https://pagerecast.shades.md',
+  })
+
+  const page = await context.newPage()
+  const link = captureLink({ url: `${origin}/`, widths: [1440, 390], theme: 'light', language: '' })
+  // An unpacked extension has its own id; the page takes it from the query.
+  await page.goto(link.replace('/capture/#', `/capture/?extension=${extensionId}#`))
+  await expect(page.locator('#capture-target')).toHaveText(/127\.0\.0\.1:\d+ at 1440 and 390 px/)
+  await page.getByRole('button', { name: 'Capture', exact: true }).click()
+  await expect(page.locator('main.capture')).toHaveAttribute('data-state', /copied|ready/, {
+    timeout: 90_000,
+  })
+  if ((await page.locator('main.capture').getAttribute('data-state')) === 'ready')
+    await page.getByRole('button', { name: 'Copy for Figma' }).click()
+  await expect(page.locator('#capture-status')).toContainText('Copied — paste in Figma')
+  await shot(page, 'capture-link')
+
+  const file = await decode(await page.evaluate(() => navigator.clipboard.readText()))
+  expect(file.captures.map((c) => c.viewport.width)).toEqual([1440, 390])
+})
+
+test('the capture page asks for the extension when none answers', async () => {
+  const page = await context.newPage()
+  const link = captureLink({
+    url: 'https://example.com/',
+    widths: [1440],
+    theme: 'light',
+    language: '',
+  })
+  // An id no installed extension has.
+  await page.goto(
+    link.replace('/capture/#', '/capture/?extension=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa#'),
+  )
+  await expect(page.getByRole('heading', { name: 'Install the extension first' })).toBeVisible({
+    timeout: 10_000,
+  })
+  await shot(page, 'capture-link-missing')
 })

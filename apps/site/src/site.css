@@ -1099,3 +1099,43 @@ code {
     grid-template-columns: 1fr;
   }
 }
+
+/* Capture links from the Figma plugin: what will be captured, one action, its status. */
+.capture .capture-target {
+  margin-top: 16px;
+  color: var(--ink);
+  font-size: 20px;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+.capture-run {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px 24px;
+  margin-top: 32px;
+}
+.capture-run[hidden],
+.capture-run [hidden] {
+  display: none;
+}
+.capture .capture-status {
+  flex: 1 1 280px;
+  margin-top: 0;
+}
+.capture[data-state='copied'] .capture-status {
+  color: var(--ink);
+  font-weight: 600;
+}
+.capture a.btn--primary {
+  color: #fff;
+}
+.capture .btn:disabled {
+  opacity: 0.5;
+  cursor: progress;
+}
+.capture .capture-note {
+  margin-top: 48px;
+  color: var(--ink-3);
+  font-size: 14px;
+}

@@ -41,9 +41,10 @@
       <ul>
         <li>
           <strong>The page you choose to capture.</strong> When you press Capture, the extension
-          reads the layout, styles, text and images of the current tab, or of a URL you type, using
-          Chrome's <code>debugger</code> permission. It attaches only for that capture and detaches
-          when it ends.
+          reads the layout, styles, text and images of the current tab, of a URL you type, or of a
+          URL the Figma plugin sent through our capture page (only that page can ask, and only after
+          you press Capture there), using Chrome's <code>debugger</code> permission. It attaches
+          only for that capture and detaches when it ends.
         </li>
         <li>
           <strong>Tab titles, addresses and icons</strong>, to show which page will be captured.
@@ -77,7 +78,18 @@
           websites they belong to.
         </li>
         <li><strong>Figma's plugin storage</strong>, to remember your import settings.</li>
+        <li>
+          <strong>Captures an AI agent queued on your computer</strong>, only when you turn on agent
+          imports. The plugin collects them from <code>127.0.0.1</code>, a server on your own
+          machine that the PageRecast MCP server runs, using a pairing code you enter.
+        </li>
       </ul>
+      <p>
+        The plugin's Web tab opens <code>pagerecast.shades.md/capture/</code> with the page address
+        and settings after the <code>#</code> of the link, a part browsers never send to a server.
+        That page passes them to the extension in your browser, and the capture is copied to your
+        clipboard there.
+      </p>
 
       <h2>Data we receive</h2>
       <p>None. There are no accounts, analytics, crash reports or tracking of any kind.</p>

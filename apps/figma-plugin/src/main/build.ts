@@ -378,10 +378,14 @@ export async function importFile(
     const before = kids.map(([node]) => ({ x: node.x, y: node.y, w: node.width, h: node.height }))
     const row = layout.direction === 'row'
     const borders = scene.stroke?.widths ?? [0, 0, 0, 0]
+    // Turning Auto Layout on makes the frame hug its content at once, so its
+    // own size is put back after the sizing modes are fixed.
+    const own = { w: frame.width, h: frame.height }
     frame.layoutMode = row ? 'HORIZONTAL' : 'VERTICAL'
     frame.layoutWrap = row && layout.wrap ? 'WRAP' : 'NO_WRAP'
     frame.primaryAxisSizingMode = 'FIXED'
     frame.counterAxisSizingMode = 'FIXED'
+    frame.resize(own.w, own.h)
     frame.paddingTop = layout.padding[0] + borders[0]
     frame.paddingRight = layout.padding[1] + borders[1]
     frame.paddingBottom = layout.padding[2] + borders[2]
@@ -425,8 +429,10 @@ export async function importFile(
         Math.abs(node.height - b.h) > 1.5
       )
     })
-    if (!drift) return true
+    const resized = Math.abs(frame.width - own.w) > 0.5 || Math.abs(frame.height - own.h) > 0.5
+    if (!drift && !resized) return true
     frame.layoutMode = 'NONE'
+    frame.resize(own.w, own.h)
     kids.forEach(([node], i) => {
       const b = before[i]!
       if ('layoutPositioning' in node) node.layoutPositioning = 'AUTO'
@@ -540,7 +546,12 @@ export async function importFile(
           if (scene.stroke.style === 'dashed') frame.dashPattern = [w * 3, w * 2]
           if (scene.stroke.style === 'dotted') frame.dashPattern = [w, w]
         }
-        frame.effects = toEffects(scene.shadows, scene.blur, scene.backdropBlur)
+        frame.effects = toEffects(
+          scene.shadows,
+          scene.blur,
+          scene.backdropBlur,
+          scene.clips && frame.fills.length > 0,
+        )
         if (scene.a11y?.alt) frame.setPluginData('alt', scene.a11y.alt)
 
         // ponytail: children of rotated frames keep their page-space boxes; exact
@@ -843,22 +854,51 @@ export async function importFile(
 
   progress({ type: 'progress', phase: 'styles', done: 0, total: 1 })
   // Styles already in the file win; only what is left gets new variables and styles.
+  // A failure here must not lose the layers already built: it becomes a note.
+  const step = async (what: string, run: () => unknown) => {
+    try {
+      await run()
+    } catch (error) {
+      report.warnings.push(
+        `${what} were skipped: ${error instanceof Error ? error.message : String(error)}`,
+      )
+    }
+  }
+  const warn = (message: string) => report.warnings.push(message)
+  // Repeated patterns became components above, which removed the copies they
+  // replaced; only layers still on the canvas take variables and styles.
+  for (const refs of [colorRefs, textRefs, numberRefs] as { node: BaseNode }[][]) {
+    const alive = refs.filter((ref) => !ref.node.removed)
+    refs.splice(0, refs.length, ...alive)
+  }
   if (options.useLocalStyles) {
-    const reused = await applyLocalStyles(colorRefs, textRefs)
-    report.reusedStyles = reused.local
-    report.matchedFromLibrary = reused.library
-  }
-  if (options.variables) report.variables = createVariables(colorRefs, file, roots)
-  if (options.useLocalStyles || options.variables) {
-    const numbers = await applyNumberVariables(numberRefs, {
-      reuse: options.useLocalStyles,
-      create: options.variables,
+    await step('Existing styles', async () => {
+      const reused = await applyLocalStyles(colorRefs, textRefs)
+      report.reusedStyles = reused.local
+      report.matchedFromLibrary = reused.library
     })
-    report.reusedStyles += numbers.local
-    report.matchedFromLibrary += numbers.library
-    report.variables += numbers.created
   }
-  if (options.textStyles) report.textStyles = await createTextStyles(textRefs, file)
+  if (options.variables) {
+    await step('Colour variables', () => {
+      report.variables = createVariables(colorRefs, file, roots, warn)
+    })
+  }
+  if (options.useLocalStyles || options.variables) {
+    await step('Spacing and radius variables', async () => {
+      const numbers = await applyNumberVariables(numberRefs, {
+        reuse: options.useLocalStyles,
+        create: options.variables,
+      })
+      report.reusedStyles += numbers.local
+      report.matchedFromLibrary += numbers.library
+      report.variables += numbers.created
+    })
+  }
+  if (options.textStyles) {
+    await step('Text styles', async () => {
+      report.textStyles = await createTextStyles(textRefs, file)
+    })
+  }
 
   if (section.children.length === 0) {
     // Every capture updated an earlier frame: nothing new to place.

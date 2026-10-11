@@ -423,6 +423,12 @@ function OptionToggles({
           onChange={(autoLayout) => onChange({ autoLayout })}
         />
         <Toggle
+          label="Components"
+          hint="From repeated cards, rows and links"
+          checked={options.components}
+          onChange={(components) => onChange({ components })}
+        />
+        <Toggle
           label="HTML layer names"
           hint="div.card instead of Card"
           checked={options.htmlNames}
@@ -624,6 +630,8 @@ function Done({ report, askRating }: { report: ImportReport; askRating: boolean 
     ['Images', report.images],
     ['Vectors', report.vectors],
     ['Auto Layout frames', report.autoLayouts],
+    ['Components', report.components],
+    ['Instances', report.instances],
     ['New colour variables', report.variables],
     ['New text styles', report.textStyles],
     ['Layers using existing styles', report.reusedStyles],

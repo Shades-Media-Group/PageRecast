@@ -3,6 +3,8 @@ import type { RecastFile } from '@pagerecast/scene'
 export interface ImportOptions {
   /** Convert flex containers to Auto Layout where the result matches the page. */
   autoLayout: boolean
+  /** Turn repeated patterns (cards, list rows, links) into components and instances. */
+  components: boolean
   /** Name layers after their HTML (`div.card`) instead of their role (`Card`). */
   htmlNames: boolean
   /** Create colour variables (with Light/Dark modes when both were captured). */
@@ -19,6 +21,7 @@ export interface ImportOptions {
 
 export const DEFAULT_OPTIONS: ImportOptions = {
   autoLayout: true,
+  components: true,
   htmlNames: false,
   variables: true,
   textStyles: true,
@@ -67,6 +70,10 @@ export interface ImportReport {
   vectors: number
   rasters: number
   autoLayouts: number
+  /** Main components: repeated patterns and elements with states. */
+  components: number
+  /** Instances placed for repeated patterns. */
+  instances: number
   variables: number
   textStyles: number
   /** Nodes bound to styles or variables that were already in the file. */

@@ -18,6 +18,7 @@ import type {
 import { FontResolver } from './fonts'
 import { rotatedTransform } from './geometry'
 import { hex, imagePaint, solid, toBlend, toEffects, toPaints } from './paints'
+import { differences, findPatterns, type Difference, type Pattern } from './patterns'
 import { withState } from './states'
 import {
   applyLocalStyles,
@@ -84,6 +85,8 @@ export async function importFile(
     vectors: 0,
     rasters: 0,
     autoLayouts: 0,
+    components: 0,
+    instances: 0,
     reusedStyles: 0,
     variables: 0,
     textStyles: 0,
@@ -126,6 +129,16 @@ export async function importFile(
   let inComponent = false
   let collectRefs = true
   const componentFrames = new Map<Capture, FrameNode>()
+  // Repeated patterns, per capture. While a main component is built, nested
+  // patterns stay plain layers and every built node is recorded, so each
+  // occurrence's overrides can find their counterpart in its instance.
+  const patterns = new Map<Capture, Map<SceneFrame, Pattern>>()
+  const mains = new Map<
+    Pattern,
+    { component: ComponentNode; scene: SceneFrame; paths: Map<Scene, number[]> }
+  >()
+  const componentNames = new Set<string>()
+  let recording: Map<Scene, SceneNode> | null = null
 
   const fontFor = (style: TextStyle): FontName => {
     const font = fonts.resolve(style)
@@ -404,6 +417,18 @@ export async function importFile(
     capture: Capture,
   ): Promise<SceneNode | null> {
     await tick()
+    const node = await buildNode(scene, parent, ox, oy, capture)
+    if (node && recording) recording.set(scene, node)
+    return node
+  }
+
+  async function buildNode(
+    scene: Scene,
+    parent: Parent,
+    ox: number,
+    oy: number,
+    capture: Capture,
+  ): Promise<SceneNode | null> {
     switch (scene.type) {
       case 'text':
         return buildText(scene, parent, ox, oy, capture)
@@ -448,6 +473,8 @@ export async function importFile(
       }
       case 'frame': {
         if (scene.states && !inComponent) return buildStates(scene, parent, ox, oy, capture)
+        const pattern = !inComponent && !recording ? patterns.get(capture)?.get(scene) : undefined
+        if (pattern) return buildPattern(scene, pattern, parent, ox, oy, capture)
         const frame = figma.createFrame()
         parent.appendChild(frame)
         frame.name = nameOf(scene)
@@ -505,13 +532,7 @@ export async function importFile(
    * clean copy, every state is in one place, and each width and theme keeps its
    * own components because their looks differ.
    */
-  async function buildStates(
-    scene: SceneFrame,
-    parent: Parent,
-    ox: number,
-    oy: number,
-    capture: Capture,
-  ): Promise<SceneNode> {
+  function componentsFrame(capture: Capture): FrameNode {
     let container = componentFrames.get(capture)
     if (!container) {
       container = figma.createFrame()
@@ -524,6 +545,26 @@ export async function importFile(
       container.itemSpacing = VARIANT_GAP * 2
       componentFrames.set(capture, container)
     }
+    return container
+  }
+
+  /** A name not yet used by a component of this capture: "Card", "Card 2", … */
+  function componentName(scene: Scene, capture: Capture) {
+    const base = nameOf(scene)
+    let name = base
+    for (let i = 2; componentNames.has(`${capture.id}|${name}`); i++) name = `${base} ${i}`
+    componentNames.add(`${capture.id}|${name}`)
+    return name
+  }
+
+  async function buildStates(
+    scene: SceneFrame,
+    parent: Parent,
+    ox: number,
+    oy: number,
+    capture: Capture,
+  ): Promise<SceneNode> {
+    const container = componentsFrame(capture)
     const variants: ComponentNode[] = []
     inComponent = true
     try {
@@ -543,7 +584,8 @@ export async function importFile(
       collectRefs = true
     }
     const set = figma.combineAsVariants(variants, container)
-    set.name = nameOf(scene)
+    set.name = componentName(scene, capture)
+    report.components++
     set.fills = []
     set.layoutMode = 'HORIZONTAL'
     set.primaryAxisSizingMode = 'AUTO'
@@ -556,6 +598,90 @@ export async function importFile(
     return instance
   }
 
+  /**
+   * A repeated pattern: the first occurrence becomes a main component in the
+   * capture's Components frame, and every occurrence (that one included)
+   * becomes an instance with its own text, links and images as overrides.
+   */
+  async function buildPattern(
+    scene: SceneFrame,
+    pattern: Pattern,
+    parent: Parent,
+    ox: number,
+    oy: number,
+    capture: Capture,
+  ): Promise<SceneNode> {
+    let main = mains.get(pattern)
+    if (!main) {
+      const recorded = new Map<Scene, SceneNode>()
+      recording = recorded
+      let frame: FrameNode
+      try {
+        frame = (await buildNode(
+          scene,
+          componentsFrame(capture),
+          scene.x,
+          scene.y,
+          capture,
+        )) as FrameNode
+      } finally {
+        recording = null
+      }
+      // Child indices from the main's root: an instance mirrors them exactly.
+      const paths = new Map<Scene, number[]>([[scene, []]])
+      for (const [node, built] of recorded) {
+        const path: number[] = []
+        let at: BaseNode = built
+        while (at !== frame && at.parent && 'children' in at.parent) {
+          path.unshift(at.parent.children.indexOf(at as SceneNode))
+          at = at.parent
+        }
+        if (at === frame) paths.set(node, path)
+      }
+      const component = figma.createComponentFromNode(frame)
+      component.name = componentName(scene, capture)
+      main = { component, scene, paths }
+      mains.set(pattern, main)
+      report.components++
+    } else {
+      done += countNodes(scene) - 1
+    }
+    const instance = main.component.createInstance()
+    parent.appendChild(instance)
+    place(instance, scene, ox, oy)
+    for (const diff of differences(main.scene, scene)) {
+      let target: SceneNode | undefined = instance
+      for (const i of main.paths.get(diff.node) ?? [-1])
+        target = target && 'children' in target ? target.children[i] : undefined
+      if (target) override(target, diff)
+    }
+    report.instances++
+    return instance
+  }
+
+  function override(node: SceneNode, diff: Difference) {
+    try {
+      if (node.type === 'TEXT') {
+        if (diff.text !== undefined) node.characters = diff.text
+        if (diff.name !== undefined && !options.htmlNames) node.name = diff.name
+        if (diff.href !== undefined && options.hyperlinks)
+          node.setRangeHyperlink(
+            0,
+            node.characters.length,
+            diff.href ? { type: 'URL', value: diff.href } : null,
+          )
+      } else if (diff.asset !== undefined && 'fills' in node) {
+        const hash = hashes.get(diff.asset)
+        const fit = diff.node.type === 'image' ? diff.node.fit : 'fill'
+        node.fills = hash ? [imagePaint(hash, fit)] : [solid({ r: 0.9, g: 0.9, b: 0.9, a: 1 })]
+      } else if (diff.fills && 'fills' in node) {
+        node.fills = toPaints(diff.fills, node.width, node.height, hashes)
+      }
+    } catch {
+      report.warnings.push(`An instance could not take its own content (${node.name}).`)
+    }
+  }
+
   // Lay captures out left to right, each followed by its screenshot reference.
   const section = figma.createSection()
   section.name = file.source.title || new URL(file.source.url).hostname
@@ -563,6 +689,7 @@ export async function importFile(
   let tallest = 0
   const roots = new Map<Capture, FrameNode>()
   for (const capture of file.captures) {
+    if (options.components) patterns.set(capture, findPatterns(capture.root, file.assets))
     const root = (await build(capture.root, section, -cursor, 0, capture)) as FrameNode
     root.name = `${section.name} · ${capture.label}`
     root.x = cursor

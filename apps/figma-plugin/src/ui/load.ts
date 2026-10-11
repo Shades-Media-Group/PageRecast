@@ -1,6 +1,7 @@
 import { decode, fromBase64, SceneError, type RecastFile } from '@pagerecast/scene'
 import { assemble, viewportLabel, walk } from '@pagerecast/capture'
 import type { ImageBytes, ImageTiles } from '../shared/messages'
+import { imageUses, shrinkFactor } from '../shared/images'
 
 const MAX_SIDE = 4096
 declare const __VERSION__: string
@@ -96,17 +97,14 @@ async function encode(
   sh: number,
   dw: number,
   dh: number,
+  type: 'image/png' | 'image/jpeg' = 'image/png',
 ) {
   const canvas = new OffscreenCanvas(dw, dh)
   canvas.getContext('2d')!.drawImage(bitmap, sx, sy, sw, sh, 0, 0, dw, dh)
-  const blob = await canvas.convertToBlob({ type: 'image/png' })
+  const blob = await canvas.convertToBlob({ type, quality: 0.9 })
   return new Uint8Array(await blob.arrayBuffer())
 }
 
-/**
- * Turns every image asset into bytes Figma accepts. Oversized images are
- * scaled down; screenshots are cut into strips so they keep full detail.
- */
 /** PNG, JPEG or GIF, by their first bytes: the formats Figma can decode. */
 export function figmaReadable(bytes: Uint8Array): boolean {
   const [a, b, c] = bytes
@@ -117,10 +115,18 @@ export function figmaReadable(bytes: Uint8Array): boolean {
   )
 }
 
+/**
+ * Turns every image asset into bytes Figma accepts. Oversized images are
+ * scaled down; screenshots are cut into strips so they keep full detail.
+ * With `smaller`, images are also scaled down to twice the size they show
+ * at on the page, which keeps big photos from bloating the Figma file.
+ */
 export async function prepareImages(
   file: RecastFile,
   onProgress: (done: number, total: number) => void,
+  smaller = false,
 ) {
+  const uses = smaller ? imageUses(file) : null
   const images: ImageBytes = {}
   const tiles: ImageTiles = {}
   const failed: string[] = []
@@ -161,24 +167,34 @@ export async function prepareImages(
             )
             tiles[id].push({ key, y: y / height, height: h / height })
           }
-        } else if (width > MAX_SIDE || height > MAX_SIDE) {
-          const scale = MAX_SIDE / Math.max(width, height)
-          images[id] = await encode(
-            bitmap,
-            0,
-            0,
-            width,
-            height,
-            Math.round(width * scale),
-            Math.round(height * scale),
-          )
         } else {
           const bytes = new Uint8Array(await blob.arrayBuffer())
+          const limit = Math.min(1, MAX_SIDE / Math.max(width, height))
+          const scale = Math.min(limit, uses ? shrinkFactor(uses.get(id), width, height) : 1)
+          // Photos stay JPEG when made smaller; everything else keeps transparency as PNG.
+          const type = blob.type === 'image/jpeg' && scale < 1 ? 'image/jpeg' : 'image/png'
+          const resized =
+            scale < 0.9 || limit < 1
+              ? await encode(
+                  bitmap,
+                  0,
+                  0,
+                  width,
+                  height,
+                  Math.max(1, Math.round(width * scale)),
+                  Math.max(1, Math.round(height * scale)),
+                  type,
+                )
+              : null
           // Figma decodes only PNG, JPEG and GIF; WebP, AVIF and the rest are
-          // re-encoded here, where the browser can read them.
-          images[id] = figmaReadable(bytes)
-            ? bytes
-            : await encode(bitmap, 0, 0, width, height, width, height)
+          // re-encoded here, where the browser can read them. A smaller copy
+          // that turns out heavier than the original is not used.
+          images[id] =
+            resized && (limit < 1 || resized.byteLength < bytes.byteLength)
+              ? resized
+              : figmaReadable(bytes)
+                ? bytes
+                : await encode(bitmap, 0, 0, width, height, width, height)
         }
         bitmap.close()
       } catch {

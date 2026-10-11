@@ -2,17 +2,18 @@
 
 The options appear on the review screen in the plugin, and under **Settings** (the sliders icon at the top).
 
-| Option                      | What it does                                                                                                                                        |
-| --------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Auto Layout**             | Turns flex rows and columns into Auto Layout, but only where the result lands exactly where the page put it. Anything else stays freely positioned. |
-| **Components**              | Turns repeated cards, list rows and links into a main component with instances that keep their own text, links and images.                          |
-| **Interaction states**      | Turns elements captured with hover, focus and active looks into component sets with a `State` property.                                             |
-| **HTML layer names**        | Names layers after their markup (`div.card`) instead of their role (`Card`, `Link "Pricing"`).                                                      |
-| **Use the file's styles**   | Applies colour variables, colour styles and text styles that already exist in the file when a value matches exactly.                                |
-| **Create colour variables** | Turns colours used more than once into variables. With light and dark captures they get Light and Dark modes.                                       |
-| **Create text styles**      | Turns type used more than once into local text styles.                                                                                              |
-| **Links**                   | Keeps links on text as Figma hyperlinks.                                                                                                            |
-| **Screenshot reference**    | Places a locked screenshot beside each frame so you can compare.                                                                                    |
+| Option                      | What it does                                                                                                                                                                      |
+| --------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Auto Layout**             | Turns flex rows and columns into Auto Layout, but only where the result lands exactly where the page put it. Anything else stays freely positioned.                               |
+| **Components**              | Turns repeated cards, list rows and links into a main component with instances that keep their own text, links and images.                                                        |
+| **Interaction states**      | Turns elements captured with hover, focus and active looks into component sets with a `State` property.                                                                           |
+| **HTML layer names**        | Names layers after their markup (`div.card`) instead of their role (`Card`, `Link "Pricing"`).                                                                                    |
+| **Use the file's styles**   | Applies colour variables, colour styles and text styles that already exist in the file when a value matches exactly.                                                              |
+| **Create colour variables** | Turns colours used more than once into variables. With light and dark captures they get Light and Dark modes.                                                                     |
+| **Create text styles**      | Turns type used more than once into local text styles.                                                                                                                            |
+| **Links**                   | Keeps links on text as Figma hyperlinks.                                                                                                                                          |
+| **Screenshot reference**    | Places a locked screenshot beside each frame so you can compare.                                                                                                                  |
+| **Smaller images**          | Off by default, so images keep every pixel the page loaded. On, each image is scaled down to twice the size it shows at, which keeps big photos from making the Figma file heavy. |
 
 ## Options for one import
 

@@ -23,6 +23,8 @@ export interface ImportOptions {
   hyperlinks: boolean
   /** Place a locked screenshot of the page next to each import. */
   screenshot: boolean
+  /** Scale images down to twice the size they show at, for a lighter file. */
+  smallerImages: boolean
 }
 
 export const DEFAULT_OPTIONS: ImportOptions = {
@@ -35,6 +37,7 @@ export const DEFAULT_OPTIONS: ImportOptions = {
   useLocalStyles: true,
   hyperlinks: true,
   screenshot: true,
+  smallerImages: false,
 }
 
 /** Options for new sites, options remembered per site, and the review switch. */

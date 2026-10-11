@@ -129,12 +129,15 @@ export function App() {
       captures: file.captures.filter((c) => selected.has(c.id)),
     }
     setStage({ kind: 'importing', label: 'Preparing images', progress: 0.04 })
-    const { images, tiles } = await prepareImages(chosen, (done, total) =>
-      setStage({
-        kind: 'importing',
-        label: `Preparing images  ${done} / ${total}`,
-        progress: 0.04 + 0.22 * (done / Math.max(total, 1)),
-      }),
+    const { images, tiles } = await prepareImages(
+      chosen,
+      (done, total) =>
+        setStage({
+          kind: 'importing',
+          label: `Preparing images  ${done} / ${total}`,
+          progress: 0.04 + 0.22 * (done / Math.max(total, 1)),
+        }),
+      options.smallerImages,
     )
     send({ type: 'import', file: chosen, images, tiles, options, fonts, update })
   }
@@ -585,6 +588,12 @@ function OptionToggles({
           hint="Locked, beside each frame"
           checked={options.screenshot}
           onChange={(screenshot) => onChange({ screenshot })}
+        />
+        <Toggle
+          label="Smaller images"
+          hint="Twice their size on the page, for a lighter file"
+          checked={options.smallerImages}
+          onChange={(smallerImages) => onChange({ smallerImages })}
         />
       </Section>
     </>

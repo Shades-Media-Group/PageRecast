@@ -17,6 +17,8 @@ export interface CaptureSettings {
   hideOverlays: boolean
   preload: boolean
   screenshot: boolean
+  /** Record hover, focus and active styles of interactive elements. */
+  states: boolean
   /** BCP 47 tag such as `de-DE`; empty keeps the browser's language. */
   language: string
 }
@@ -298,7 +300,7 @@ export async function captureTab(
       await wait(60)
       const walk = await evaluate<WalkResult>(
         target,
-        `window.__pagerecast.walk(document, { scope: ${JSON.stringify(settings.scope)}, target: document.querySelector('[data-pagerecast-target]') })`,
+        `window.__pagerecast.walk(document, { scope: ${JSON.stringify(settings.scope)}, target: document.querySelector('[data-pagerecast-target]'), states: ${settings.states} })`,
       )
 
       report('saving images')

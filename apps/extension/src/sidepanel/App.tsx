@@ -225,6 +225,7 @@ export function App() {
           hideOverlays: settings.hideOverlays,
           preload: settings.preload,
           screenshot: settings.screenshot,
+          states: settings.states,
           language: settings.language,
         },
         (progress) => setStatus({ kind: 'capturing', progress }),
@@ -478,6 +479,12 @@ export function App() {
                 hint="Scrolls the page once first"
                 checked={settings.preload}
                 onChange={(preload) => update({ preload })}
+              />
+              <Toggle
+                label="Hover and focus states"
+                hint="Buttons and links become components with variants"
+                checked={settings.states}
+                onChange={(states) => update({ states })}
               />
               <Toggle
                 label="Screenshot reference"

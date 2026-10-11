@@ -8,6 +8,8 @@ export interface Settings {
   hideOverlays: boolean
   preload: boolean
   screenshot: boolean
+  /** Hover, focus and active looks, imported as component variants. */
+  states: boolean
   language: string
   seenDebuggerNote: boolean
   /** Settings stay folded into a summary once the user has captured. */
@@ -29,6 +31,7 @@ export const DEFAULT_SETTINGS: Settings = {
   hideOverlays: true,
   preload: true,
   screenshot: true,
+  states: true,
   language: '',
   seenDebuggerNote: false,
   editing: true,

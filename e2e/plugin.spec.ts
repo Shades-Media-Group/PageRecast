@@ -1,0 +1,209 @@
+import { expect, test, type Page } from '@playwright/test'
+import { execFileSync } from 'node:child_process'
+import { fileURLToPath } from 'node:url'
+import { encodeFile, SCENE_FORMAT, SCENE_VERSION, type RecastFile } from '@pagerecast/scene'
+import { captureLink } from '@pagerecast/capture'
+import { DEFAULT_SETTINGS } from '../apps/figma-plugin/src/shared/messages'
+import { startBridge, type Bridge } from '../packages/mcp/src/bridge'
+
+const root = fileURLToPath(new URL('..', import.meta.url))
+const TABS = ['Web', 'Extension', 'File', 'Code', 'MCP', 'API']
+
+// The plugin window builds once; its tests share that build.
+test.describe.configure({ mode: 'serial' })
+
+test.beforeAll(() => {
+  execFileSync('node', ['apps/figma-plugin/build.mjs'], { cwd: root })
+})
+
+/** The plugin UI as Figma frames it: 400 × 620, settings from the main thread. */
+async function open(page: Page, scheme: 'light' | 'dark' = 'light') {
+  const errors: string[] = []
+  page.on('pageerror', (e) => errors.push(e.message))
+  page.on('console', (m) => m.type() === 'error' && errors.push(m.text()))
+  await page.setViewportSize({ width: 400, height: 620 })
+  await page.emulateMedia({ colorScheme: scheme })
+  await page.goto(`file://${root}apps/figma-plugin/dist/ui.html`)
+  if (scheme === 'dark')
+    await page.evaluate(() => document.documentElement.classList.add('figma-dark'))
+  // The UI posts to `parent`, which is this window outside Figma: keep what it sends.
+  await page.evaluate((settings) => {
+    const sent: unknown[] = []
+    ;(window as unknown as { sent: unknown[] }).sent = sent
+    window.addEventListener('message', (e) => {
+      const m = (e.data as { pluginMessage?: { type: string } }).pluginMessage
+      if (m && m.type !== 'ready') sent.push(m)
+    })
+    window.postMessage({ pluginMessage: { type: 'ready', settings, version: '1.0.0' } }, '*')
+  }, DEFAULT_SETTINGS)
+  await expect(page.getByRole('tab', { name: 'Web' })).toHaveAttribute('aria-selected', 'true')
+  return errors
+}
+
+const sent = (page: Page) =>
+  page.evaluate(() => (window as unknown as { sent: { type: string; url?: string }[] }).sent)
+
+// Set PR_SHOTS to a folder to keep screenshots of every tab for design review.
+async function shot(page: Page, name: string) {
+  if (process.env.PR_SHOTS)
+    await page.screenshot({ path: `${process.env.PR_SHOTS}/plugin-${name}.png` })
+}
+
+test('every tab renders in light and dark without errors', async ({ page }) => {
+  for (const scheme of ['light', 'dark'] as const) {
+    const errors = await open(page, scheme)
+    for (const name of TABS) {
+      await page.getByRole('tab', { name, exact: true }).click()
+      await expect(page.getByRole('tab', { name, exact: true })).toHaveAttribute(
+        'aria-selected',
+        'true',
+      )
+      await shot(page, `${name.toLowerCase()}-${scheme}`)
+    }
+    await page.getByRole('tab', { name: 'Web' }).click()
+    await page.getByRole('button', { name: 'Edit' }).click()
+    await shot(page, `web-edit-${scheme}`)
+    expect(errors).toEqual([])
+  }
+})
+
+test('the Web tab hands the URL and settings to the extension through a capture link', async ({
+  page,
+}) => {
+  await open(page)
+  const capture = page.getByRole('button', { name: 'Capture in browser' })
+  await expect(capture).toBeDisabled()
+  await page.getByLabel('Page URL').fill('not a url')
+  await expect(page.getByText('Enter a web address')).toBeVisible()
+
+  await page.getByRole('button', { name: 'Edit' }).click()
+  await page.getByRole('checkbox', { name: /Mobile/ }).check()
+  await page.getByRole('button', { name: 'Both' }).click()
+  await page.getByLabel('Language').fill('de-DE')
+  await page.getByLabel('Page URL').fill('example.com/pricing')
+  await capture.click()
+
+  // postMessage delivers on a later task.
+  await expect
+    .poll(async () => (await sent(page)).filter((m) => m.type === 'open-url').at(-1)?.url)
+    .toBe(
+      captureLink({
+        url: 'https://example.com/pricing',
+        widths: [1440, 390],
+        theme: 'both',
+        language: 'de-DE',
+      }),
+    )
+  await expect(page.getByText('Opened example.com in your browser')).toBeVisible()
+  // The settings are kept for next time.
+  const saved = (await sent(page)).filter((m) => m.type === 'settings').at(-1) as unknown as {
+    settings: typeof DEFAULT_SETTINGS
+  }
+  expect(saved.settings.web).toEqual({ widths: [1440, 390], theme: 'both', language: 'de-DE' })
+})
+
+test('a capture pasted into a field imports instead of filling it', async ({ page }) => {
+  await open(page)
+  const file: RecastFile = minimalFile()
+  const { encodeClipboard } = await import('@pagerecast/scene')
+  const payload = await encodeClipboard(file)
+  await page.getByLabel('Page URL').focus()
+  await page.evaluate((text) => {
+    const event = new ClipboardEvent('paste', { clipboardData: new DataTransfer(), bubbles: true })
+    event.clipboardData!.setData('text', text)
+    document.activeElement!.dispatchEvent(event)
+  }, payload)
+  await expect(page.getByRole('button', { name: 'Back from Review' })).toBeVisible()
+})
+
+function minimalFile(): RecastFile {
+  return {
+    format: SCENE_FORMAT,
+    version: SCENE_VERSION,
+    generator: { name: 'PageRecast', version: '1.0.0', surface: 'extension' },
+    source: { url: 'https://example.com/', title: 'From an agent', capturedAt: '' },
+    assets: {},
+    captures: [
+      {
+        id: 'c1',
+        label: 'Desktop · 1440 · Light',
+        viewport: { width: 1440, height: 900, deviceScaleFactor: 1, mobile: false },
+        theme: 'light',
+        scope: 'page',
+        width: 1440,
+        height: 900,
+        root: {
+          type: 'frame',
+          id: 'n0',
+          key: 'html',
+          name: 'Page',
+          tag: 'html',
+          x: 0,
+          y: 0,
+          width: 1440,
+          height: 900,
+          fills: [],
+          clips: true,
+          position: 'static',
+          children: [],
+        },
+      },
+    ],
+  }
+}
+
+test.describe('agent imports', () => {
+  let bridge: Bridge
+  test.beforeEach(async ({ page }) => {
+    bridge = await startBridge({ port: 0 })
+    // The plugin always looks on 127.0.0.1:7357; send that to this test's bridge.
+    await page.route('http://127.0.0.1:7357/**', async (route) => {
+      const request = route.request()
+      const response = await route.fetch({
+        url: request.url().replace('http://127.0.0.1:7357', bridge.url),
+      })
+      await route.fulfill({
+        response,
+        headers: { ...response.headers(), 'access-control-allow-origin': '*' },
+      })
+    })
+  })
+  test.afterEach(async () => bridge.close())
+
+  test('pairs once, then imports what the agent sends and clears it from the bridge', async ({
+    page,
+  }) => {
+    const errors = await open(page)
+    await page.getByRole('tab', { name: 'MCP' }).click()
+    await page.getByRole('switch', { name: /Listen for agent imports/ }).check()
+    await expect(page.getByText('An agent is running')).toBeVisible()
+
+    await page.getByRole('textbox', { name: 'Pairing code' }).fill('AAAA-AAAA-AAAA-AAAA')
+    await page.getByRole('button', { name: 'Pair' }).click()
+    await expect(page.getByText('That code does not match')).toBeVisible()
+
+    // Typed loosely: lower case, without hyphens.
+    await page
+      .getByRole('textbox', { name: 'Pairing code' })
+      .fill(bridge.pairingCode.toLowerCase().replace(/-/g, ''))
+    await page.getByRole('button', { name: 'Pair' }).click()
+    await expect(page.getByText('Paired.')).toBeVisible()
+    await shot(page, 'mcp-paired-light')
+
+    bridge.add(await encodeFile(minimalFile()), {
+      name: 'example.com.recast',
+      title: 'From an agent',
+      url: 'https://example.com/',
+    })
+    await expect(page.getByRole('button', { name: 'Back from Review' })).toBeVisible({
+      timeout: 10_000,
+    })
+    await expect(page.getByRole('heading', { name: 'From an agent' })).toBeVisible()
+    const left = await fetch(`${bridge.url}/v1/files`, {
+      headers: { Authorization: `Bearer ${bridge.pairingCode}` },
+    })
+    expect(await left.json()).toEqual({ files: [] })
+    // The browser logs the deliberate wrong-code attempt; nothing else may fail.
+    expect(errors.filter((e) => !e.includes('status of 401'))).toEqual([])
+  })
+})

@@ -13,6 +13,7 @@ All notable changes to PageRecast are recorded here. The format follows
 - The `pagerecast` package is now also a library with types: `capture`, `encode`, `decode`, `tokens` and `info`.
 - `PAGERECAST_BROWSER` picks the Chrome or Chromium the command line, the library and the MCP server run.
 - The Chrome extension captures a URL sent from the Figma plugin: `pagerecast.shades.md/capture/` passes it on after you press Capture, and the result is copied for pasting in Figma. It needs no new permission.
+- The Figma plugin's tabs are now Web, Extension, File, Code, MCP and API. Web imports a page by URL through the extension; Extension holds the install link and paste; MCP has agent setup and **Listen for agent imports**, which pairs with the local bridge and imports what agents send; API has the library and command-line snippets. `⌘V` imports a capture on every tab, even with a field focused.
 
 ## [1.0.0] - 2026-10-11
 

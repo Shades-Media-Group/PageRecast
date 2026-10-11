@@ -338,3 +338,106 @@ body,
   gap: 8px;
   margin-top: 12px;
 }
+
+/* Web: the URL field and its single primary action. */
+.url-form {
+  display: grid;
+  gap: 8px;
+}
+.url-form .pr-input[aria-invalid='true'] {
+  border-color: var(--error);
+}
+.hint--error {
+  color: var(--error);
+}
+.sent {
+  margin-top: 8px;
+}
+/* Widths to capture: one 32 px row per preset; the icon says which device. */
+.width-list {
+  margin: 0 0 4px;
+}
+.width-option {
+  display: grid;
+  grid-template-columns: 16px minmax(0, 1fr) auto 24px;
+  align-items: center;
+  gap: 8px;
+  min-height: var(--row);
+  color: var(--ink-2);
+  cursor: pointer;
+}
+.width-option .pr-icon {
+  color: var(--ink-3);
+}
+.width-option .pr-check {
+  justify-self: end;
+}
+.text-button--gap {
+  margin-top: 8px;
+}
+
+/* Extension: the paste shortcut beside its one line of explanation. */
+.paste {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: 12px;
+}
+.paste .keys {
+  margin: 0;
+}
+
+/* MCP and API: commands and config to copy, the one place for monospace. */
+.snippet {
+  margin: 0;
+  padding: 8px;
+  overflow-x: auto;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--raised);
+  color: var(--ink);
+  font:
+    400 11px/1.6 ui-monospace,
+    'SF Mono',
+    Menlo,
+    Consolas,
+    monospace;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  tab-size: 2;
+}
+.snippet-aside {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+.snippet-aside .muted {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 11px;
+}
+.pair {
+  display: grid;
+  grid-template-columns: 72px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+}
+.pair > label {
+  color: var(--ink-3);
+  font-size: 11px;
+}
+.pair .hint {
+  grid-column: 2 / -1;
+  margin-top: 0;
+}
+.doc-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+}
+.intro .hint {
+  margin-top: 0;
+}

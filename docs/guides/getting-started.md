@@ -43,3 +43,11 @@ You can also press **Download** to save a `.recast` file and drop it into the pl
 To bring several captures into Figma with one paste, press **Select** above **Recent**, tick the captures you want and press **Copy N for Figma**. They are combined into one capture, and the plugin imports every frame together, each named after its page. The download button beside it saves the combined `.recast` file.
 
 To capture pages you don't have open, paste their URLs into the field under **Page**, separated by spaces, commas or new lines, and press the arrow. PageRecast opens and captures each one in turn with your settings, then ticks them all, ready for **Copy N for Figma**.
+
+### Start from Figma
+
+The plugin's **Web** tab takes a URL, the widths, the theme and a language. **Capture in browser** opens `pagerecast.shades.md/capture/` in your browser with those settings in the link. The page finds the extension, you press **Capture**, and the capture is copied for you: paste it back in the plugin. The settings travel in the part of the link after `#`, which browsers never send to a server, and the page talks only to the extension in your browser.
+
+This needs the Chrome extension (or Edge, Brave, Arc). Without it the page says so and links to the store; until then, save the page from your browser as `.html` or `.mhtml` and open it in the plugin's **File** tab.
+
+The **MCP** tab lets AI agents send captures straight into the plugin: see [AI agents (MCP)](mcp.md). The **API** tab has the commands for capturing from code: see [the API](api.md).

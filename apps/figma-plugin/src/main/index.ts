@@ -17,6 +17,8 @@ async function start() {
     ...saved,
     defaults: { ...DEFAULT_SETTINGS.defaults, ...saved?.defaults },
     fonts: { ...saved?.fonts },
+    web: { ...DEFAULT_SETTINGS.web, ...saved?.web },
+    agent: { ...DEFAULT_SETTINGS.agent, ...saved?.agent },
   }
   send({ type: 'ready', settings, version: __VERSION__ })
 }

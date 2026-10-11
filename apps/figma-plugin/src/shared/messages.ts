@@ -52,6 +52,17 @@ export interface Settings {
   askedForRating: boolean
   /** Replacements picked for fonts Figma lacks, remembered for the next import. */
   fonts: FontChoices
+  /** What the Web tab asks the extension to capture. */
+  web: WebCapture
+  /** The local agent bridge (docs/guides/mcp.md): listening, and the pairing code. */
+  agent: { listen: boolean; code: string }
+}
+
+export interface WebCapture {
+  widths: number[]
+  theme: 'light' | 'dark' | 'both'
+  /** BCP 47 tag such as `de-DE`; empty keeps the browser's language. */
+  language: string
 }
 
 export const DEFAULT_SETTINGS: Settings = {
@@ -61,6 +72,8 @@ export const DEFAULT_SETTINGS: Settings = {
   imports: 0,
   askedForRating: false,
   fonts: {},
+  web: { widths: [1440], theme: 'light', language: '' },
+  agent: { listen: false, code: '' },
 }
 
 /** Imports after which the plugin asks, once, for a rating. */

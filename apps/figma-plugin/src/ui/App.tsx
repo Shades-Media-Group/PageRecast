@@ -1,5 +1,11 @@
 import { useEffect, useMemo, useRef, useState } from 'preact/hooks'
-import { SceneError, type Capture, type RecastFile } from '@pagerecast/scene'
+import {
+  CLIPBOARD_PREFIX,
+  decode,
+  SceneError,
+  type Capture,
+  type RecastFile,
+} from '@pagerecast/scene'
 import {
   Button,
   CREDIT,
@@ -37,10 +43,21 @@ import {
   type MissingFont,
 } from '../shared/fonts'
 import { prepareImages, readFile, readFiles, readText, renderHtml } from './load'
+import { BridgeClient, listen, Unauthorized, type AgentState } from './agent'
+import { ApiTab, ExtensionTab, McpTab, WebTab } from './tabs'
 
 const sizeOf = (files: File[]) => files.reduce((sum, f) => sum + f.size, 0)
 
-type Tab = 'paste' | 'file' | 'code'
+type Tab = 'web' | 'extension' | 'file' | 'code' | 'mcp' | 'api'
+
+const TABS: { value: Tab; label: string }[] = [
+  { value: 'web', label: 'Web' },
+  { value: 'extension', label: 'Extension' },
+  { value: 'file', label: 'File' },
+  { value: 'code', label: 'Code' },
+  { value: 'mcp', label: 'MCP' },
+  { value: 'api', label: 'API' },
+]
 type Stage =
   | { kind: 'empty' }
   | { kind: 'reading' }
@@ -73,7 +90,6 @@ const link = (url: string) => (event: Event) => {
   event.preventDefault()
   openUrl(url)
 }
-const EXTENSION_URL = 'https://pagerecast.shades.md/#install'
 const COMMUNITY_URL = 'https://www.figma.com/community/plugin/1690893819753299295'
 const ACCEPT = '.recast,.json,.html,.htm,.zip,.mhtml,.mht,.eml'
 
@@ -97,7 +113,7 @@ function screenshotUrl(file: RecastFile, capture?: Capture): string | null {
 }
 
 export function App() {
-  const [tab, setTab] = useState<Tab>('paste')
+  const [tab, setTab] = useState<Tab>('web')
   const [view, setView] = useState<'main' | 'settings'>('main')
   const [stage, setStage] = useState<Stage>({ kind: 'empty' })
   const [settings, setSettings] = useState<Settings>(DEFAULT_SETTINGS)
@@ -107,6 +123,9 @@ export function App() {
   const modifier = useRef(false)
   const settingsRef = useRef(settings)
   settingsRef.current = settings
+  const stageRef = useRef(stage)
+  stageRef.current = stage
+  const [agent, setAgent] = useState<AgentState>({ kind: 'off' })
 
   const saveSettings = (next: Settings) => {
     setSettings(next)
@@ -243,10 +262,13 @@ export function App() {
       if (message.type === 'error') setStage({ kind: 'error', message: message.message })
     }
     const onPaste = (event: ClipboardEvent) => {
-      if ((event.target as HTMLElement)?.closest?.('textarea, input')) return
+      const text = event.clipboardData?.getData('text') ?? ''
+      // Fields keep what is pasted into them, except a capture, which imports from any tab.
+      const inField = (event.target as HTMLElement)?.closest?.('textarea, input')
+      if (inField && !text.trimStart().startsWith(CLIPBOARD_PREFIX)) return
+      if (inField) event.preventDefault()
       const file = event.clipboardData?.files[0]
       if (file) return void load(() => readFile(file), file.size)
-      const text = event.clipboardData?.getData('text') ?? ''
       if (text.trim()) void load(() => readText(text), text.length)
     }
     const onKey = (e: KeyboardEvent) => (modifier.current = e.metaKey || e.ctrlKey)
@@ -259,6 +281,40 @@ export function App() {
       window.removeEventListener('keyup', onKey)
     }
   }, [])
+
+  // Captures an AI agent sends through the local bridge (docs/guides/mcp.md).
+  const listening = settings.agent.listen
+  useEffect(() => {
+    if (!listening) return setAgent({ kind: 'off' })
+    return listen({
+      code: () => settingsRef.current.agent.code,
+      // Files wait while a review or an import is on screen.
+      ready: () => ['empty', 'error', 'done'].includes(stageRef.current.kind),
+      onState: (next) =>
+        setAgent((current) =>
+          next.kind === 'connected' && !next.last && current.kind === 'connected' ? current : next,
+        ),
+      onFile: (_file, bytes) => void load(() => decode(bytes), bytes.length),
+      onUnauthorized: () =>
+        saveSettings({
+          ...settingsRef.current,
+          agent: { ...settingsRef.current.agent, code: '' },
+        }),
+    })
+  }, [listening])
+
+  const pair = async (code: string): Promise<string | null> => {
+    try {
+      await new BridgeClient().list(code)
+    } catch (error) {
+      return error instanceof Unauthorized
+        ? 'That code does not match. Check the code the agent showed you.'
+        : 'The agent stopped answering. Start it again, then pair.'
+    }
+    saveSettings({ ...settingsRef.current, agent: { listen: true, code } })
+    setAgent({ kind: 'connected' })
+    return null
+  }
 
   const reset = () => setStage({ kind: 'empty' })
   const feedbackUrl = `${REPO_URL}/issues/new?template=feedback.yml&surface=Figma%20plugin&version=${version}`
@@ -313,15 +369,7 @@ export function App() {
       ) : (
         <>
           {stage.kind === 'empty' || stage.kind === 'error' ? (
-            <Tabs
-              value={tab}
-              onChange={setTab}
-              options={[
-                { value: 'paste', label: 'Paste' },
-                { value: 'file', label: 'File' },
-                { value: 'code', label: 'Code' },
-              ]}
-            />
+            <Tabs value={tab} onChange={setTab} options={TABS} />
           ) : (
             <TitleBar
               title={
@@ -339,16 +387,42 @@ export function App() {
                 </Message>
               </Section>
             )}
-            {(stage.kind === 'empty' || stage.kind === 'error') && tab === 'paste' && <PasteTab />}
-            {(stage.kind === 'empty' || stage.kind === 'error') && tab === 'file' && (
-              <FileTab onChoose={() => fileInput.current?.click()} />
-            )}
-            {(stage.kind === 'empty' || stage.kind === 'error') && tab === 'code' && (
-              <CodeTab
-                onRender={(html, width) =>
-                  load(() => renderHtml(html, width, 'HTML code'), html.length)
-                }
-              />
+            {(stage.kind === 'empty' || stage.kind === 'error') && (
+              <>
+                {tab === 'web' && (
+                  <WebTab
+                    web={settings.web}
+                    onChange={(web) => saveSettings({ ...settingsRef.current, web })}
+                    open={openUrl}
+                    onExtension={() => setTab('extension')}
+                  />
+                )}
+                {tab === 'extension' && <ExtensionTab open={openUrl} />}
+                {tab === 'file' && <FileTab onChoose={() => fileInput.current?.click()} />}
+                {tab === 'code' && (
+                  <CodeTab
+                    onRender={(html, width) =>
+                      load(() => renderHtml(html, width, 'HTML code'), html.length)
+                    }
+                  />
+                )}
+                {tab === 'mcp' && (
+                  <McpTab
+                    listening={listening}
+                    state={agent}
+                    onListen={(on) =>
+                      saveSettings({
+                        ...settingsRef.current,
+                        agent: { ...settingsRef.current.agent, listen: on },
+                      })
+                    }
+                    onPair={pair}
+                    open={openUrl}
+                  />
+                )}
+                {tab === 'api' && <ApiTab open={openUrl} />}
+                <Credit />
+              </>
             )}
             {stage.kind === 'reading' && <Working label="Reading the capture" progress={0.1} />}
             {stage.kind === 'importing' && (
@@ -428,33 +502,6 @@ function TitleBar({ title, onBack }: { title: string; onBack: () => void }) {
   )
 }
 
-function PasteTab() {
-  return (
-    <>
-      <section class="intro">
-        <div class="keys" aria-hidden="true">
-          <span class="pr-keycap">⌘</span>
-          <span class="pr-keycap">V</span>
-        </div>
-        <h1>Paste a capture</h1>
-        <p>Copy a page with the PageRecast extension, then paste it anywhere in this window.</p>
-        <a class="link" href={EXTENSION_URL} onClick={link(EXTENSION_URL)}>
-          Get the Chrome extension
-          <Icon name="external" size={16} />
-        </a>
-      </section>
-      <Section title="The extension captures">
-        <ul class="facts">
-          <li>Pages behind a login, staging and localhost</li>
-          <li>Several widths and both themes in one go</li>
-          <li>A whole page, the visible area or one element</li>
-        </ul>
-      </Section>
-      <Credit />
-    </>
-  )
-}
-
 function Credit() {
   return (
     <p class="credit">
@@ -501,7 +548,6 @@ function FileTab({ onChoose }: { onChoose: () => void }) {
           </div>
         </dl>
       </Section>
-      <Credit />
     </>
   )
 }

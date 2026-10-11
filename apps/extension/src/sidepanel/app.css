@@ -143,6 +143,22 @@ body,
 .history-text .muted {
   font-size: 11px;
 }
+/* Picking captures to copy as one file: the whole row is the checkbox. */
+.history--pick li {
+  display: block;
+}
+.history .pick {
+  display: grid;
+  grid-template-columns: 16px 48px minmax(0, 1fr);
+  align-items: center;
+  gap: 12px;
+  min-height: 48px;
+  cursor: pointer;
+}
+.history .pick:has(:checked) img,
+.history .pick:has(:checked) .thumb {
+  box-shadow: 0 0 0 2px var(--red);
+}
 .history-actions {
   display: flex;
   opacity: 0;

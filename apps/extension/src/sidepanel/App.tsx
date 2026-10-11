@@ -26,6 +26,7 @@ import {
   type LineupFrame,
 } from '@pagerecast/ui'
 import { CaptureError, captureTab, openTab, type CaptureProgress } from '../capture'
+import { mergeFiles } from '../merge'
 import {
   addHistory,
   DEFAULT_SETTINGS,
@@ -102,6 +103,15 @@ function ago(ms: number) {
   return hours < 24 ? `${hours} h ago` : new Date(ms).toLocaleDateString()
 }
 
+function save(data: Uint8Array, name: string) {
+  const href = URL.createObjectURL(new Blob([data as BlobPart], { type: 'application/gzip' }))
+  const a = document.createElement('a')
+  a.href = href
+  a.download = name
+  a.click()
+  setTimeout(() => URL.revokeObjectURL(href), 1000)
+}
+
 function fileName(title: string) {
   const slug =
     title
@@ -130,6 +140,8 @@ export function App() {
   /** The site whose remembered area, widths and theme are applied. */
   const [siteHost, setSiteHost] = useState<string | null>()
   const [pending, setPending] = useState<PendingCapture | null>(null)
+  const [selecting, setSelecting] = useState(false)
+  const [picked, setPicked] = useState<Set<string>>(new Set())
   const [tab, setTab] = useState<Tab | null>(null)
   const [status, setStatus] = useState<Status>({ kind: 'idle' })
   const [history, setHistory] = useState<Entry[]>([])
@@ -266,6 +278,7 @@ export function App() {
       })
     if (views === 0)
       return setStatus({ kind: 'error', message: 'Choose at least one width, then capture.' })
+    setSelecting(false)
     setStatus({
       kind: 'capturing',
       progress: {
@@ -341,15 +354,24 @@ export function App() {
     setTimeout(() => setCopied((id) => (id === entry.id ? null : id)), 2400)
   }
 
-  const download = (entry: Entry) => {
-    const href = URL.createObjectURL(
-      new Blob([entry.data as BlobPart], { type: 'application/gzip' }),
-    )
-    const a = document.createElement('a')
-    a.href = href
-    a.download = fileName(entry.title)
-    a.click()
-    setTimeout(() => URL.revokeObjectURL(href), 1000)
+  const download = (entry: Entry) => save(entry.data, fileName(entry.title))
+
+  const chosen = history.filter((h) => picked.has(h.id))
+  const merged = async () => mergeFiles(await Promise.all(chosen.map((h) => decode(h.data))))
+
+  const copyChosen = async () => {
+    await navigator.clipboard.writeText(await encodeClipboard(await merged()))
+    setCopied('tray')
+    setTimeout(() => setCopied((id) => (id === 'tray' ? null : id)), 2400)
+  }
+
+  const downloadChosen = async () =>
+    save(await encodeFile(await merged()), fileName(`${chosen.length} pages`))
+
+  const pick = (id: string) => {
+    const next = new Set(picked)
+    if (!next.delete(id)) next.add(id)
+    setPicked(next)
   }
 
   const remove = async (entry: Entry) => {
@@ -618,10 +640,30 @@ export function App() {
         )}
 
         {older.length > 0 && (
-          <Section title="Recent" aside="On this device">
+          <Section
+            title="Recent"
+            aside={
+              history.length > 1 ? (
+                <button
+                  type="button"
+                  class="text-button"
+                  onClick={() => {
+                    setSelecting(!selecting)
+                    setPicked(new Set())
+                  }}
+                >
+                  {selecting ? 'Done' : 'Select'}
+                </button>
+              ) : (
+                'On this device'
+              )
+            }
+          >
             <History
-              entries={older}
+              entries={selecting ? history : older}
               copied={copied}
+              picked={selecting ? picked : null}
+              onPick={pick}
               onCopy={copy}
               onDownload={download}
               onRemove={remove}
@@ -663,6 +705,38 @@ export function App() {
               </span>
             </div>
           </div>
+        ) : selecting ? (
+          <>
+            <p class="next">
+              {chosen.length > 1
+                ? 'One file, so a single paste imports every frame.'
+                : 'Tick the captures to bring into Figma together.'}
+            </p>
+            <div class="dock-row">
+              <Button
+                variant="primary"
+                size="lg"
+                block
+                icon={copied === 'tray' ? 'check' : 'copy'}
+                data-done={copied === 'tray' ? '' : undefined}
+                disabled={chosen.length === 0}
+                onClick={copyChosen}
+              >
+                {copied === 'tray'
+                  ? 'Copied'
+                  : chosen.length
+                    ? `Copy ${chosen.length} for Figma`
+                    : 'Choose captures to combine'}
+              </Button>
+              {chosen.length > 0 && (
+                <IconButton
+                  icon="download"
+                  label="Download as one .recast file"
+                  onClick={downloadChosen}
+                />
+              )}
+            </div>
+          </>
         ) : current ? (
           <>
             <p class="next">Then paste it into the PageRecast plugin in Figma.</p>
@@ -723,25 +797,30 @@ function Result({ entry }: { entry: Entry }) {
   )
 }
 
+/** Recent captures; with `picked` set, each row is a checkbox for the combined copy. */
 function History({
   entries,
   copied,
+  picked,
+  onPick,
   onCopy,
   onDownload,
   onRemove,
 }: {
   entries: Entry[]
   copied: string | null
+  picked: Set<string> | null
+  onPick: (id: string) => void
   onCopy: (entry: Entry) => void
   onDownload: (entry: Entry) => void
   onRemove: (entry: Entry) => void
 }) {
   return (
-    <ul class="history">
+    <ul class={picked ? 'history history--pick' : 'history'}>
       {entries.map((entry) => {
         const thumb = entry.frames?.[0]?.src ?? entry.thumbnail
-        return (
-          <li>
+        const body = (
+          <>
             {thumb ? <img src={thumb} alt="" /> : <span class="thumb" />}
             <div class="history-text">
               <p class="truncate">{entry.title}</p>
@@ -750,6 +829,23 @@ function History({
                 {ago(entry.createdAt)}
               </p>
             </div>
+          </>
+        )
+        return picked ? (
+          <li>
+            <label class="pick">
+              <input
+                class="pr-check"
+                type="checkbox"
+                checked={picked.has(entry.id)}
+                onChange={() => onPick(entry.id)}
+              />
+              {body}
+            </label>
+          </li>
+        ) : (
+          <li>
+            {body}
             <div class="history-actions">
               <IconButton
                 icon={copied === entry.id ? 'check' : 'copy'}

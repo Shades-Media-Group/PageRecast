@@ -35,3 +35,7 @@ The first time, Chrome shows a bar saying PageRecast started debugging the brows
 The import is selected on the canvas when it finishes, with a report of what was created and any fonts that were replaced.
 
 You can also press **Download** to save a `.recast` file and drop it into the plugin later.
+
+### Several pages at once
+
+To bring several captures into Figma with one paste, press **Select** above **Recent**, tick the captures you want and press **Copy N for Figma**. They are combined into one capture, and the plugin imports every frame together, each named after its page. The download button beside it saves the combined `.recast` file.

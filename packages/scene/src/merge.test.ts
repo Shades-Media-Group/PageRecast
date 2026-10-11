@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import type { RecastFile } from '@pagerecast/scene'
+import type { RecastFile } from './types'
 import { mergeFiles } from './merge'
 
 const file = (title: string): RecastFile => ({

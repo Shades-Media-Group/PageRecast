@@ -1,4 +1,4 @@
-import { decode, fromBase64, SceneError, type RecastFile } from '@pagerecast/scene'
+import { decode, fromBase64, mergeFiles, SceneError, type RecastFile } from '@pagerecast/scene'
 import { assemble, viewportLabel, walk } from '@pagerecast/capture'
 import type { ImageBytes, ImageTiles } from '../shared/messages'
 import { imageUses, shrinkFactor } from '../shared/images'
@@ -12,6 +12,11 @@ export async function readFile(file: File): Promise<RecastFile> {
     return renderHtml(await file.text(), 1440, file.name.replace(/\.html?$/i, ''))
   }
   return decode(new Uint8Array(await file.arrayBuffer()))
+}
+
+/** Reads several files as one import, a page row per file, like the extension's combined copy. */
+export async function readFiles(files: File[]): Promise<RecastFile> {
+  return mergeFiles(await Promise.all(files.map(readFile)))
 }
 
 /** Reads pasted text: a clipboard capture, capture JSON, or raw HTML. */

@@ -36,7 +36,7 @@ The first time, Chrome shows a bar saying PageRecast started debugging the brows
 
 The import is selected on the canvas when it finishes, with a report of what was created and any fonts that were replaced.
 
-You can also press **Download** to save a `.recast` file and drop it into the plugin later.
+You can also press **Download** to save a `.recast` file and drop it into the plugin later. Dropping or choosing several `.recast` and `.html` files at once imports them together, one row per page.
 
 ### Several pages at once
 

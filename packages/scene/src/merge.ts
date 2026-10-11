@@ -1,4 +1,4 @@
-import type { Asset, RecastFile } from '@pagerecast/scene'
+import type { Asset, RecastFile } from './types'
 
 /**
  * Joins several captures into one file so a single paste imports every frame.

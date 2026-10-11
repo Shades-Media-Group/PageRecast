@@ -36,7 +36,9 @@ import {
   type FontChoices,
   type MissingFont,
 } from '../shared/fonts'
-import { prepareImages, readFile, readText, renderHtml } from './load'
+import { prepareImages, readFile, readFiles, readText, renderHtml } from './load'
+
+const sizeOf = (files: File[]) => files.reduce((sum, f) => sum + f.size, 0)
 
 type Tab = 'paste' | 'file' | 'code'
 type Stage =
@@ -272,8 +274,8 @@ export function App() {
       onDrop={(e) => {
         e.preventDefault()
         setDragging(false)
-        const file = e.dataTransfer?.files[0]
-        if (file) void load(() => readFile(file), file.size)
+        const files = [...(e.dataTransfer?.files ?? [])]
+        if (files.length) void load(() => readFiles(files), sizeOf(files))
       }}
     >
       <header class="pr-header">
@@ -294,10 +296,11 @@ export function App() {
         ref={fileInput}
         type="file"
         accept={ACCEPT}
+        multiple
         hidden
         onChange={(e) => {
-          const file = e.currentTarget.files?.[0]
-          if (file) void load(() => readFile(file), file.size)
+          const files = [...(e.currentTarget.files ?? [])]
+          if (files.length) void load(() => readFiles(files), sizeOf(files))
           e.currentTarget.value = ''
         }}
       />
@@ -406,7 +409,7 @@ export function App() {
 
       {dragging && (
         <div class="drop" aria-hidden="true">
-          Drop a .recast or .html file
+          Drop .recast or .html files
         </div>
       )}
     </div>
@@ -469,7 +472,7 @@ function FileTab({ onChoose }: { onChoose: () => void }) {
     <>
       <section class="intro">
         <h1>Open a file</h1>
-        <p>Drop a file anywhere in this window, or choose one.</p>
+        <p>Drop files anywhere in this window, or choose them. Several files import together.</p>
         <Button icon="file" onClick={onChoose}>
           Choose file
         </Button>

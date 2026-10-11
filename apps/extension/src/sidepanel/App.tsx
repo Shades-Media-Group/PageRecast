@@ -4,6 +4,7 @@ import {
   encodeClipboard,
   encodeFile,
   FILE_EXTENSION,
+  mergeFiles,
   type SceneNode,
   type Scope,
 } from '@pagerecast/scene'
@@ -27,7 +28,6 @@ import {
 } from '@pagerecast/ui'
 import { splitTopLevel } from '@pagerecast/capture'
 import { canEmulate, CaptureError, captureTab, openTab, type CaptureProgress } from '../capture'
-import { mergeFiles } from '../merge'
 import {
   addHistory,
   DEFAULT_SETTINGS,

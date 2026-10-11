@@ -259,7 +259,7 @@
     "status": "Pagina se deschide într-o filă nouă cât timp PageRecast o capturează, apoi se închide.",
     "copy": "Copiază pentru Figma",
     "installTitle": "Instalează mai întâi extensia",
-    "installText": "Nu s-a întâmplat nimic pentru că extensia PageRecast nu este instalată în acest browser sau este dezactivată. Importul după URL trece prin ea: capturează pagina chiar aici, pe calculatorul tău.",
+    "installText": "Nu s-a întâmplat nimic pentru că extensia PageRecast nu este instalată în acest browser sau este dezactivată. „Capturează în browser” trece prin ea: capturează pagina chiar aici, pe calculatorul tău, inclusiv paginile cu autentificare sau de pe localhost. Pentru paginile publice, „Importă pagina” din plugin funcționează și fără ea.",
     "installButton": "Adaugă în Chrome",
     "installAfter": "După instalare, reîncarcă această pagină. Firefox și Safari nu pot deschide încă linkuri de captură.",
     "note": "Pagina pe care o capturezi este citită de extensia din acest browser. Nimic nu este trimis către PageRecast sau altcuiva.",

@@ -259,7 +259,7 @@
     "status": "La pagina si apre in una nuova scheda mentre PageRecast la cattura, poi si chiude.",
     "copy": "Copia per Figma",
     "installTitle": "Prima installa l'estensione",
-    "installText": "Non è successo nulla perché l'estensione PageRecast non è installata in questo browser, oppure è disattivata. L'importazione da URL passa da lì: cattura la pagina proprio qui, sul tuo computer.",
+    "installText": "Non è successo nulla perché l'estensione PageRecast non è installata in questo browser, oppure è disattivata. Cattura nel browser passa da lì: cattura la pagina proprio qui, sul tuo computer, anche dietro un accesso o su localhost. Per le pagine pubbliche, Importa pagina nel plugin funziona anche senza.",
     "installButton": "Aggiungi a Chrome",
     "installAfter": "Dopo l'installazione, ricarica questa pagina. Firefox e Safari non possono ancora aprire i link di cattura.",
     "note": "La pagina che catturi viene letta dall'estensione in questo browser. Niente viene inviato a PageRecast né a nessun altro.",

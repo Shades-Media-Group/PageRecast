@@ -259,7 +259,7 @@
     "status": "PageRecast 擷取時，頁面會在新分頁中開啟，完成後自動關閉。",
     "copy": "複製到 Figma",
     "installTitle": "請先安裝擴充功能",
-    "installText": "沒有任何反應，是因為這個瀏覽器沒有安裝 PageRecast 擴充功能，或已將它停用。網址匯入要透過它進行：它會在這裡、在你的電腦上擷取頁面。",
+    "installText": "沒有任何反應，是因為這個瀏覽器沒有安裝 PageRecast 擴充功能，或已將它停用。「在瀏覽器中擷取」要透過它進行：它會在這裡、在你的電腦上擷取頁面，包括需要登入或位於 localhost 的頁面。公開頁面則可直接在外掛中使用「匯入頁面」，不需要它。",
     "installButton": "加到 Chrome",
     "installAfter": "安裝後請重新載入本頁。Firefox 與 Safari 目前還無法使用擷取連結。",
     "note": "你擷取的頁面由這個瀏覽器中的擴充功能讀取。不會傳送任何內容給 PageRecast 或其他任何人。",

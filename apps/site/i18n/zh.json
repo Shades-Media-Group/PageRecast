@@ -259,7 +259,7 @@
     "status": "PageRecast 捕获时会在新标签页中打开页面，完成后自动关闭。",
     "copy": "复制到 Figma",
     "installTitle": "请先安装扩展",
-    "installText": "没有任何反应，是因为此浏览器未安装 PageRecast 扩展，或扩展已停用。网址导入需要通过它进行：它会在这里、在你的电脑上捕获页面。",
+    "installText": "没有任何反应，是因为此浏览器未安装 PageRecast 扩展，或扩展已停用。“在浏览器中捕获”需要通过它进行：它会在这里、在你的电脑上捕获页面，包括需要登录或位于 localhost 的页面。公开页面可直接在插件中使用“导入页面”，无需扩展。",
     "installButton": "添加到 Chrome",
     "installAfter": "安装后请重新加载此页面。Firefox 和 Safari 暂不支持捕获链接。",
     "note": "你捕获的页面由此浏览器中的扩展读取，不会发送给 PageRecast 或任何其他人。",

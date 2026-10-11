@@ -259,7 +259,7 @@
     "status": "PageRecast sayfayı yakalarken sayfa yeni bir sekmede açılır, ardından kapanır.",
     "copy": "Figma için kopyala",
     "installTitle": "Önce uzantıyı kur",
-    "installText": "Hiçbir şey olmadı, çünkü PageRecast uzantısı bu tarayıcıda kurulu değil ya da kapalı. URL ile içe aktarma onun üzerinden çalışır: sayfayı tam burada, bilgisayarında yakalar.",
+    "installText": "Hiçbir şey olmadı, çünkü PageRecast uzantısı bu tarayıcıda kurulu değil ya da kapalı. Tarayıcıda yakalama onun üzerinden çalışır: sayfayı tam burada, bilgisayarında yakalar; giriş gerektiren ve localhost sayfaları da dahil. Herkese açık sayfalar için eklentideki Sayfayı içe aktar onsuz da çalışır.",
     "installButton": "Chrome'a ekle",
     "installAfter": "Kurduktan sonra bu sayfayı yenile. Firefox ve Safari henüz yakalama bağlantılarını açamıyor.",
     "note": "Yakaladığın sayfayı bu tarayıcıdaki uzantı okur. PageRecast'e ya da başka birine hiçbir şey gönderilmez.",

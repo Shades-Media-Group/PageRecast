@@ -259,7 +259,7 @@
     "status": "La página se abre en una pestaña nueva mientras PageRecast la captura y después se cierra.",
     "copy": "Copiar para Figma",
     "installTitle": "Instala primero la extensión",
-    "installText": "No ha pasado nada porque la extensión PageRecast no está instalada en este navegador o está desactivada. La importación por URL pasa por ella: captura la página aquí mismo, en tu ordenador.",
+    "installText": "No ha pasado nada porque la extensión PageRecast no está instalada en este navegador o está desactivada. Capturar en el navegador pasa por ella: captura la página aquí mismo, en tu ordenador, incluidas las páginas con inicio de sesión o en localhost. Para páginas públicas, Importar página en el plugin funciona sin ella.",
     "installButton": "Añadir a Chrome",
     "installAfter": "Después de instalarla, recarga esta página. Firefox y Safari todavía no admiten enlaces de captura.",
     "note": "La página que capturas la lee la extensión de este navegador. No se envía nada a PageRecast ni a nadie más.",

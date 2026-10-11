@@ -36,10 +36,10 @@ Success means a capture imports into Figma close enough to the live page that th
 
 ## Positioning
 
-A free, open-source and fully local website-to-Figma importer:
+A free, open-source and private website-to-Figma importer:
 
 - **No paywall:** unlimited imports, no tiers, no account.
-- **No server:** nothing leaves the user's machine, so private and behind-login pages are safe to capture, and there is no service that can go down.
+- **Private:** captures from the extension stay on the user's machine, so private and behind-login pages are safe to capture. The plugin's Web tab sends only the address the user types to PageRecast's server, which opens the public page, returns the layers and stores nothing; when that service is down, the extension still works.
 - **Open format:** the `.recast` capture format is documented.
 - **Everything included:** custom viewport widths, an element picker and a full import report, all free.
 
@@ -52,14 +52,14 @@ Made by Shades Media Group.
 3. They capture, then copy or download the result.
 4. In Figma they run the PageRecast plugin, paste or drop the capture, adjust the import options (Auto Layout, styles, variables, screenshot reference) and import.
 
-The plugin can also import `.html` files and pasted HTML/CSS code with no extension involved. During a capture, Chrome shows its own "started debugging this browser" bar, which the UI must explain before the user meets it.
+The plugin can also import a public page by URL through PageRecast's render service, and `.html` files and pasted HTML/CSS code, with no extension involved. During a capture, Chrome shows its own "started debugging this browser" bar, which the UI must explain before the user meets it.
 
 ## Capabilities and Constraints
 
 **Constraints**
 
 - **Free forever:** no payments, tiers, limits, trials, upgrade prompts or watermarks, anywhere.
-- **Local only:** no backend and no analytics. The only network use is the Figma plugin fetching images a capture references, and, when agent imports are on, polling the MCP server's bridge on `127.0.0.1`.
+- **Local first, no analytics:** no accounts, no analytics, no remote logging. Network use is the Figma plugin fetching images a capture references; the Web tab's render service (`POST https://pagerecast.shades.md/api/render`, Cloudflare Browser Rendering on the site Worker), which receives only a public page address and the capture settings and stores nothing; and, when agent imports are on, polling the MCP server's bridge on `127.0.0.1`. The render service needs Cloudflare's Workers Paid plan.
 - **Licence:** MIT © Shades Media Group.
 - **Version:** 1.1.1 is the current release; 1.0.0 was the first public one.
 
@@ -98,7 +98,7 @@ None yet: no users, testimonials, metrics or store ratings. Never invent them.
 
 1. **Fidelity first.** The import should look like the page; every substitution is reported, never hidden.
 2. **Free means free.** No limits and no upsell surface, ever.
-3. **Local and private by design.** Capture what the user sees without sending it anywhere.
+3. **Private by design.** The extension captures what the user sees without sending it anywhere; the render service sees only a public address and keeps nothing.
 4. **Figma-native density.** Every pixel of the panel and plugin does a job; nothing is decorative padding.
 5. **Plain language.** Settings explain their effect in one short line; a first-time user captures without reading the docs.
 

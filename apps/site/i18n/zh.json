@@ -20,7 +20,7 @@
   },
   "footer": {
     "top": "PageRecast，返回顶部",
-    "tagline": "把任意网页变成可编辑的 Figma 图层。免费、开源，数据从不离开你的电脑。",
+    "tagline": "任何网页，都能变成可编辑的 Figma 图层。免费、开源，无需账号，也没有追踪。",
     "label": "页脚",
     "product": "产品",
     "project": "项目",
@@ -74,8 +74,8 @@
       "pluginAlt": "PageRecast Figma 插件在导入前检查捕获结果"
     },
     "privacy": {
-      "title": "数据从不离开你的电脑。",
-      "text": "PageRecast 没有服务器。捕获在浏览器中生成，并保存在你的设备上，直到你把它粘贴进 Figma。无需账号，没有统计，没有限制，也不收费。"
+      "title": "从设计上保护隐私。",
+      "text": "扩展的捕获在你的浏览器中生成，并保存在你的电脑上。插件的“网页”标签页只把你输入的网址发送到 PageRecast 的服务器，服务器打开这个公开页面、返回图层，不保存任何内容。无需账号，没有分析，没有限制，也不收费。"
     },
     "open": {
       "title": "开放源代码，开放格式。",
@@ -133,7 +133,7 @@
         },
         "privacy": {
           "q": "我的数据是私密的吗？",
-          "a": "是的。PageRecast 没有服务器、没有账号，也没有统计。捕获在浏览器中生成并保存在你的电脑上。Figma 插件只会从原网站直接下载页面本来就使用的图片。"
+          "a": "是的。没有账号，也没有分析。扩展的捕获在你的浏览器中生成，并保存在你的电脑上。插件的“网页”标签页只把你输入的网址发送到 PageRecast 的服务器，服务器打开这个公开页面、返回图层，不保存任何内容。除此之外，插件只会从图片所属的网站直接下载页面已经使用的图片。"
         },
         "firefox": {
           "q": "支持 Firefox 吗？",
@@ -223,12 +223,12 @@
   },
   "privacy": {
     "title": "隐私政策 | PageRecast",
-    "description": "PageRecast 不收集、不传输、不出售也不分享任何个人数据。一切都在你的电脑上完成。",
+    "description": "PageRecast 不收集、出售或分享任何个人数据。扩展的捕获保存在你的电脑上。插件的“网页”标签页只把你输入的网址发送到 PageRecast 的服务器，服务器打开这个公开页面、返回图层，不保存任何内容。",
     "heading": "隐私政策",
-    "updated": "最后更新：2026 年 10 月 11 日",
+    "updated": "最后更新：2026 年 10 月 12 日",
     "intro": "PageRecast 是由 Shades Media Group 打造的 Chrome 和 Firefox 浏览器扩展以及 Figma 插件。本政策适用于以上所有产品。",
     "shortTitle": "简要说明",
-    "short": "PageRecast 不收集、不传输、不出售也不分享任何个人数据。一切都在你的电脑上完成。",
+    "short": "PageRecast 不收集、出售或分享任何个人数据。扩展的捕获保存在你的电脑上。插件的“网页”标签页只把你输入的网址发送到 PageRecast 的服务器，服务器打开这个公开页面、返回图层，不保存任何内容。",
     "chromeTitle": "Chrome 扩展访问的内容",
     "chromePage": "<strong>你选择捕获的页面。</strong>当你点击“捕获”时，扩展会通过 Chrome 的 <code>debugger</code> 权限，读取当前标签页、你输入的网址，或 Figma 插件经由我们的捕获页面发送的网址（只有该页面可以发起请求，而且只能在你于该页面点击 Capture 之后）的布局、样式、文本和图片。它只在本次捕获期间连接，结束后即断开。",
     "chromeTabs": "<strong>标签页的标题、地址和图标</strong>，用于显示将要捕获的页面。",
@@ -241,9 +241,9 @@
     "pluginImages": "<strong>捕获中引用的图片</strong>，直接从图片所属的网站下载。",
     "pluginStorage": "<strong>Figma 的插件存储</strong>，用于记住你的导入设置。",
     "pluginAgents": "<strong>AI 智能体在你电脑上排队的捕获</strong>，仅在你开启智能体导入时访问。插件通过你输入的配对码，从 <code>127.0.0.1</code> 获取这些捕获，这是 PageRecast MCP 服务器在你自己电脑上运行的服务。",
-    "pluginWeb": "插件的“网页”标签页会打开 <code>pagerecast.shades.md/capture/</code>，页面地址和设置放在链接的 <code>#</code> 之后，浏览器从不会把这部分发送给服务器。该页面把它们交给你浏览器中的扩展，捕获结果会在那里复制到剪贴板。",
+    "pluginWeb": "在插件的“网页”标签页中，“导入页面”会把你输入的网址，连同你选择的宽度、主题和语言，发送到 <code>pagerecast.shades.md/api/render</code>。服务器在 Cloudflare 的浏览器服务中不带 Cookie 地打开这个公开页面，把图层返回给插件，不保留任何内容：网址既不保存，也不写入日志。为了公平使用，服务器会按 IP 地址统计一分钟内的请求数，这个计数同样不会保存。localhost 或私有网络上的网址永远不会被发送。“在浏览器中捕获”则会打开 <code>pagerecast.shades.md/capture/</code>，网址和设置放在链接的 <code>#</code> 之后，浏览器从不会把这部分发送到服务器，由扩展在你的电脑上捕获页面。",
     "dataTitle": "我们收到的数据",
-    "data": "没有。没有账号、统计、崩溃报告，也没有任何形式的跟踪。",
+    "data": "没有。没有账号、分析、崩溃报告或任何形式的追踪。渲染服务只在打开页面期间看到你发送的网址。",
     "childrenTitle": "儿童",
     "children": "PageRecast 是一款设计工具，并非面向儿童。",
     "changesTitle": "变更",

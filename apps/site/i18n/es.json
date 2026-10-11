@@ -20,7 +20,7 @@
   },
   "footer": {
     "top": "PageRecast, volver arriba",
-    "tagline": "Cualquier página web, como capas editables de Figma. Gratis, de código abierto y nada sale de tu ordenador.",
+    "tagline": "Cualquier página web, como capas editables de Figma. Gratis, de código abierto, sin cuenta y sin rastreo.",
     "label": "Pie de página",
     "product": "Producto",
     "project": "Proyecto",
@@ -74,8 +74,8 @@
       "pluginAlt": "El plugin de Figma de PageRecast revisando la captura antes de importarla"
     },
     "privacy": {
-      "title": "Nada sale de tu ordenador.",
-      "text": "No hay ningún servidor de PageRecast. Las capturas se crean en tu navegador y se quedan en tu dispositivo hasta que las pegas en Figma. Sin cuenta, sin analítica, sin límites y sin precio."
+      "title": "Privado por diseño.",
+      "text": "Las capturas de la extensión se crean en tu navegador y se quedan en tu ordenador. La pestaña Web del plugin solo envía la dirección que escribes al servidor de PageRecast, que abre la página pública, devuelve las capas y no guarda nada. Sin cuenta, sin analíticas, sin límites y sin precio."
     },
     "open": {
       "title": "Código abierto. Formato abierto.",
@@ -133,7 +133,7 @@
         },
         "privacy": {
           "q": "¿Mis datos son privados?",
-          "a": "Sí. No hay servidor de PageRecast, ni cuenta, ni analítica. Las capturas se crean en tu navegador y se quedan en tu ordenador. El plugin de Figma solo descarga las imágenes que la página ya usa, directamente de los sitios a los que pertenecen."
+          "a": "Sí. No hay cuenta ni analíticas. Las capturas de la extensión se crean en tu navegador y se quedan en tu ordenador. La pestaña Web del plugin solo envía la dirección que escribes al servidor de PageRecast, que abre la página pública, devuelve las capas y no guarda nada. Por lo demás, el plugin solo descarga las imágenes que la página ya usa, directamente de sus sitios."
         },
         "firefox": {
           "q": "¿Funciona en Firefox?",
@@ -223,12 +223,12 @@
   },
   "privacy": {
     "title": "Política de privacidad | PageRecast",
-    "description": "PageRecast no recopila, transmite, vende ni comparte ningún dato personal. Todo ocurre en tu ordenador.",
+    "description": "PageRecast no recopila, vende ni comparte datos personales. Las capturas de la extensión se quedan en tu ordenador. La pestaña Web del plugin solo envía la dirección que escribes al servidor de PageRecast, que abre la página pública, devuelve las capas y no guarda nada.",
     "heading": "Política de privacidad",
-    "updated": "Última actualización: 11 de octubre de 2026",
+    "updated": "Última actualización: 12 de octubre de 2026",
     "intro": "PageRecast es una extensión de navegador para Chrome y Firefox y un plugin de Figma, creados por Shades Media Group. Esta política se aplica a todos ellos.",
     "shortTitle": "En resumen",
-    "short": "PageRecast no recopila, transmite, vende ni comparte ningún dato personal. Todo ocurre en tu ordenador.",
+    "short": "PageRecast no recopila, vende ni comparte datos personales. Las capturas de la extensión se quedan en tu ordenador. La pestaña Web del plugin solo envía la dirección que escribes al servidor de PageRecast, que abre la página pública, devuelve las capas y no guarda nada.",
     "chromeTitle": "A qué accede la extensión de Chrome",
     "chromePage": "<strong>La página que eliges capturar.</strong> Cuando pulsas Captura, la extensión lee el diseño, los estilos, el texto y las imágenes de la pestaña actual, de una URL que escribes o de una URL que el plugin de Figma envió a través de nuestra página de captura (solo esa página puede pedirlo, y solo después de que pulses Capture en ella), mediante el permiso <code>debugger</code> de Chrome. Se conecta solo para esa captura y se desconecta cuando termina.",
     "chromeTabs": "<strong>Títulos, direcciones e iconos de las pestañas</strong>, para mostrar qué página se va a capturar.",
@@ -241,9 +241,9 @@
     "pluginImages": "<strong>Las imágenes a las que hace referencia una captura</strong>, que descarga directamente de los sitios web a los que pertenecen.",
     "pluginStorage": "<strong>El almacenamiento de plugins de Figma</strong>, para recordar tus ajustes de importación.",
     "pluginAgents": "<strong>Las capturas que un agente de IA puso en cola en tu ordenador</strong>, solo cuando activas las importaciones de agentes. El plugin las recoge de <code>127.0.0.1</code>, un servidor en tu propia máquina que ejecuta el servidor MCP de PageRecast, con un código de emparejamiento que introduces tú.",
-    "pluginWeb": "La pestaña Web del plugin abre <code>pagerecast.shades.md/capture/</code> con la dirección de la página y los ajustes después del <code>#</code> del enlace, una parte que los navegadores nunca envían a un servidor. Esa página los pasa a la extensión de tu navegador, y la captura se copia allí en tu portapapeles.",
+    "pluginWeb": "En la pestaña Web del plugin, «Importar página» envía la dirección que escribes, con los anchos, el tema y el idioma elegidos, a <code>pagerecast.shades.md/api/render</code>. El servidor abre esa página pública en el servicio de navegador de Cloudflare, sin cookies, devuelve sus capas al plugin y no conserva nada: la dirección no se guarda ni se registra. Para que el servicio sea justo, cuenta las solicitudes por dirección IP durante un minuto; ese recuento tampoco se guarda. Las direcciones de localhost o de una red privada nunca se envían. «Capturar en el navegador», en cambio, abre <code>pagerecast.shades.md/capture/</code> con la dirección y los ajustes después del <code>#</code> del enlace, una parte que los navegadores nunca envían a un servidor, y la extensión captura la página en tu ordenador.",
     "dataTitle": "Datos que recibimos",
-    "data": "Ninguno. No hay cuentas, analítica, informes de errores ni seguimiento de ningún tipo.",
+    "data": "Ninguno. No hay cuentas, analíticas, informes de errores ni rastreo de ningún tipo. El servicio de renderizado solo ve la dirección que envías mientras abre la página.",
     "childrenTitle": "Menores",
     "children": "PageRecast es una herramienta de diseño y no está dirigida a menores.",
     "changesTitle": "Cambios",

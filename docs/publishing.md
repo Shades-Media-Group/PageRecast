@@ -64,7 +64,7 @@ WHAT YOU GET IN FIGMA
 • A screenshot beside each frame to compare
 
 PRIVATE BY DESIGN
-Captures are made and kept on your computer. There is no server, no account and no tracking.
+The extension makes captures and keeps them on your computer; it sends nothing to any server. No account and no tracking.
 
 Free and open source. Built by Shades Media Group.
 Source code: https://github.com/Shades-Media-Group/PageRecast
@@ -133,7 +133,7 @@ and the **Several widths and both colour schemes in one go** line replaced by `�
 ```
 Build from source: Node 22 and Yarn 1. Run "yarn install --frozen-lockfile" and then "yarn build:firefox". The add-on is written to apps/extension/dist-firefox. The bundles are minified by esbuild and Vite; nothing is obfuscated and no code is loaded remotely.
 
-<all_urls> is used only while the user captures a page: scripting.executeScript runs the capture engine (capture.js) in that tab, tabs.captureTab takes its screenshot, and images the page shows are read so the capture works offline. Nothing is sent anywhere; there is no server and no analytics. The window is resized (or the page zoomed) to each width the user picks, then restored.
+<all_urls> is used only while the user captures a page: scripting.executeScript runs the capture engine (capture.js) in that tab, tabs.captureTab takes its screenshot, and images the page shows are read so the capture works offline. The extension sends nothing anywhere and has no analytics. The window is resized (or the page zoomed) to each width the user picks, then restored.
 ```
 
 6. **Submit Version.** Listed add-ons are signed straight away and reviewed by a person afterwards.
@@ -182,12 +182,12 @@ The manifest now carries the permanent Community ID `1690893819753299295`. For a
 Import any website into Figma as editable layers: HTML to design, web to Figma, at every width and in light and dark. Free, with no limits and no account.
 
 HOW TO IMPORT A WEBSITE
-1. Install the PageRecast Chrome extension.
-2. Open the page in Chrome, choose widths and theme, and capture.
-3. Copy, then paste here with ⌘V.
+1. Open the Web tab and type the page address.
+2. Choose widths, theme and language, and press Import page.
+3. Check the frames and import.
 
 PRIVATE OR LOGGED-IN PAGES
-The extension captures exactly what your browser shows: dashboards after you sign in, staging, localhost.
+Install the PageRecast Chrome extension: it captures exactly what your browser shows, including dashboards after you sign in, staging and localhost. Copy, then paste here with ⌘V.
 
 IMPORT FILES AND CODE
 Drop a .recast or .html file, or paste HTML and CSS in the Code tab.
@@ -199,11 +199,19 @@ WHAT YOU GET
 • Fonts matched through each CSS font stack, with a report of any replacements
 • Options remembered per site
 
-Nothing leaves your computer. Free and open source, built by Shades Media Group.
+PRIVACY
+The Web tab sends only the address you type to PageRecast's server, which opens the public page, returns the layers and stores nothing. Captures from the extension stay on your computer. No account and no tracking.
+
+Free and open source, built by Shades Media Group.
 https://github.com/Shades-Media-Group/PageRecast
 ```
 
-3. Answer the data question: the plugin collects no data. The network access reason is already in the manifest.
+3. Answer the data questions. The network access reason is already in the manifest.
+   - **Does your plugin make network requests?** Yes, to three kinds of address:
+     - the websites a capture references, to download its images;
+     - PageRecast's own server, `https://pagerecast.shades.md/api/render`, when the user presses Import page in the Web tab. It receives the page address and the chosen widths, theme and language, renders the public page with Cloudflare Browser Rendering, returns the `.recast` file and stores and logs nothing;
+     - `127.0.0.1:7357`, a bridge on the user's own computer, only when agent imports are on.
+   - **Does your plugin collect user data?** No. The page address goes to the render service only to open that page; it is not stored, logged or tied to a person.
 4. **Submit for review.** Figma reviews new plugins in about a week.
 
 ---

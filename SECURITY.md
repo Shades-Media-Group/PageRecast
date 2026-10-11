@@ -19,8 +19,9 @@ Include what you found, how to reproduce it, and the version from the extension 
 
 ## How PageRecast handles your data
 
-- Captures are made and stored on your computer. There is no PageRecast server and no analytics.
+- Captures from the extension are made and stored on your computer. There are no accounts and no analytics.
+- The plugin's Web tab sends only the page address you type, and the capture settings, to `pagerecast.shades.md/api/render`. That service refuses localhost and private addresses, opens the public page in Cloudflare Browser Rendering without cookies, and stores and logs nothing.
 - The extension uses Chrome's `debugger` permission only while a capture runs, on the tab you capture, and detaches as soon as it finishes.
-- The Figma plugin's only network use is downloading images a capture references.
+- Besides that service, the Figma plugin's network use is downloading images a capture references and, when agent imports are on, the bridge on `127.0.0.1`.
 
 See [PRIVACY.md](PRIVACY.md) for the full policy.

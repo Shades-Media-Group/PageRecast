@@ -1,6 +1,6 @@
 # PageRecast: working notes for agents
 
-PageRecast is a Chrome extension and a Figma plugin that turn web pages into editable Figma layers. It is free, open source and local-only. Product truth lives in [PRODUCT.md](PRODUCT.md); the panel design contract lives in `apps/figma-plugin/.impeccable/surfaces/`.
+PageRecast is a Chrome extension and a Figma plugin that turn web pages into editable Figma layers. It is free, open source and private: captures stay on the user's machine, except the plugin's Web tab, which sends a public page address to the site's render service. Product truth lives in [PRODUCT.md](PRODUCT.md); the panel design contract lives in `apps/figma-plugin/.impeccable/surfaces/`.
 
 ## Commands
 
@@ -15,7 +15,7 @@ Use Node 22 (`.nvmrc`).
 ## Non-negotiables
 
 - Free forever: no payments, plans, limits, accounts or upgrade prompts anywhere.
-- Nothing leaves the user's machine. No analytics, no remote logging.
+- No analytics, no remote logging, no accounts. Captures from the extension never leave the user's machine. The one exception is the plugin's Web tab: it sends only the page address and capture settings to `POST /api/render` on pagerecast.shades.md (apps/site/worker), which renders the public page and stores and logs nothing. Keep it that way: no URL in logs, observability off, nothing persisted.
 - In the product (both apps, store listings) the credit is "Free and open source. Built by Shades Media Group". The README credits Cristian Brinza.
 - Never name or compare against other products in anything public: README, docs, UI, commits, listings.
 - Conventional commits, one logical change each, no AI attribution lines.

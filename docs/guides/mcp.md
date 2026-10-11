@@ -227,7 +227,7 @@ The plugin makes the requests from its UI iframe (`apps/figma-plugin/src/ui/agen
 ```json
 "networkAccess": {
   "allowedDomains": ["*"],
-  "reasoning": "Captures reference images on the websites they came from; the plugin downloads those images so they appear in the imported design. It also collects captures that a local AI agent queued on this computer (127.0.0.1). Nothing is sent anywhere."
+  "reasoning": "Captures reference images on the websites they came from; the plugin downloads those images so they appear in the imported design. The Web tab sends only the page address you type to PageRecast's render service at pagerecast.shades.md, which opens the public page, returns its layers and stores nothing. When you turn on agent imports, the plugin also collects captures that an AI agent queued on this computer (127.0.0.1, port 7357)."
 }
 ```
 

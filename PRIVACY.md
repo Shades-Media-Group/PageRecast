@@ -1,12 +1,12 @@
 # Privacy policy
 
-_Last updated: 11 October 2026_
+_Last updated: 12 October 2026_
 
 PageRecast is a browser extension for Chrome and Firefox and a Figma plugin, made by Shades Media Group. This policy covers all of them.
 
 ## The short version
 
-PageRecast does not collect, transmit, sell or share any personal data. Everything happens on your computer.
+PageRecast does not collect, sell or share any personal data. Captures from the extension stay on your computer. The plugin's Web tab sends only the address you type to PageRecast's server, which opens the public page, returns the layers and stores nothing.
 
 ## What the Chrome extension accesses
 
@@ -25,10 +25,17 @@ The Firefox version accesses the same things, but reads the page with Firefox's 
 - **The capture you paste or open**, to build layers in the current Figma file.
 - **Images referenced by a capture**, which it downloads directly from the websites they belong to.
 - **Figma's plugin storage**, to remember your import settings.
+- **Captures an AI agent queued on your computer**, only when you turn on agent imports. The plugin collects them from `127.0.0.1`, a server on your own machine that the PageRecast MCP server runs, using a pairing code you enter.
+
+### The Web tab
+
+**Import page** sends the address you type, with the widths, theme and language you chose, to `https://pagerecast.shades.md/api/render`. The server opens that public page in Cloudflare's browser service, without cookies, returns its layers to the plugin and keeps nothing: the address is not stored or logged. To keep the service fair, it counts requests per IP address for one minute; that count is not stored either. Addresses on localhost or a private network are never sent; the plugin refuses them before anything leaves Figma.
+
+**Capture in browser** instead opens `pagerecast.shades.md/capture/` with the address and settings after the `#` of the link, a part browsers never send to a server, and the extension captures the page on your computer.
 
 ## Data we receive
 
-None. There are no accounts, analytics, crash reports or tracking of any kind.
+None. There are no accounts, analytics, crash reports or tracking of any kind. The render service sees the address you send only while it opens the page.
 
 ## Children
 

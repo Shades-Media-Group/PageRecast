@@ -7,7 +7,7 @@
   </picture>
 </p>
 
-<h3 align="center">Turn any web page into editable Figma layers.<br>Free, open source, and nothing leaves your computer.</h3>
+<h3 align="center">Turn any web page into editable Figma layers.<br>Free, open source, with no account and no tracking.</h3>
 
 <p align="center">
   <a href="https://github.com/Shades-Media-Group/PageRecast/actions/workflows/ci.yml"><img alt="CI" src="https://img.shields.io/github/actions/workflow/status/Shades-Media-Group/PageRecast/ci.yml?branch=main&style=flat-square&label=ci"></a>
@@ -50,7 +50,7 @@
 - **Every layout in one go:** several widths from 240 to 3840 px, in light, dark or both, and in another language.
 - **Real Figma layers, not a picture:** frames, text with its fonts and styles, images, SVG vectors and Auto Layout where it matches the page.
 - **Fits your file:** colour variables with Light and Dark modes, text styles, or the styles already in your file.
-- **Free with no catch:** no account, no plan, no limits, no server.
+- **Free with no catch:** no account, no plan, no limits, no tracking.
 
 ## How it works
 
@@ -71,11 +71,11 @@ Want something to try first? The [test page](https://pagerecast.shades.md/sample
 | Cookie banners hidden, lazy content loaded, animations settled     | Colour variables with Light and Dark modes, text styles, or your existing styles |
 | Copy for Figma, or save a [`.recast`](docs/scene-format.md) file   | A locked screenshot beside each frame to compare against                         |
 
-The plugin also imports `.html` files and pasted HTML and CSS without the extension, and remembers import options per site.
+Without the extension, the plugin's Web tab imports a public page by its address, and the plugin also imports `.html` files and pasted HTML and CSS. It remembers import options per site.
 
 ## Privacy
 
-PageRecast has no server. The extension builds the capture in your browser and the plugin builds layers in Figma, so nothing about the page leaves your computer. The only network requests are the plugin downloading images the page already references, straight from the sites they belong to. There are no accounts, analytics or crash reports. Read the [privacy policy](https://pagerecast.shades.md/privacy/).
+Captures from the extension stay on your computer: the extension builds the capture in your browser and the plugin builds layers in Figma. The plugin's Web tab sends only the address you type to PageRecast's server, which opens the public page, returns the layers and stores nothing; pages on localhost or behind a login go through the extension instead. Otherwise the plugin only downloads images the page already references, straight from the sites they belong to. There are no accounts, analytics or crash reports. Read the [privacy policy](https://pagerecast.shades.md/privacy/).
 
 ## Install
 

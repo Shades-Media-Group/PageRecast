@@ -20,7 +20,7 @@
   },
   "footer": {
     "top": "PageRecast，回到頂端",
-    "tagline": "任何網頁，都能變成可編輯的 Figma 圖層。免費、開源，資料從不離開你的電腦。",
+    "tagline": "任何網頁，都能變成可編輯的 Figma 圖層。免費、開源，不需帳號，也沒有追蹤。",
     "label": "頁尾",
     "product": "產品",
     "project": "專案",
@@ -74,8 +74,8 @@
       "pluginAlt": "PageRecast Figma 外掛在匯入前檢視擷取內容"
     },
     "privacy": {
-      "title": "資料從不離開你的電腦。",
-      "text": "PageRecast 沒有伺服器。擷取內容在你的瀏覽器中產生，並保存在你的裝置上，直到你貼進 Figma。不用帳號，沒有分析工具，沒有限制，也不用付費。"
+      "title": "從設計上保護隱私。",
+      "text": "擴充功能的擷取在你的瀏覽器中產生，並保存在你的電腦上。外掛的「網頁」分頁只會把你輸入的網址傳送到 PageRecast 的伺服器，伺服器開啟這個公開頁面、傳回圖層，不保存任何內容。不需帳號，沒有分析，沒有限制，也不收費。"
     },
     "open": {
       "title": "開放原始碼，開放格式。",
@@ -133,7 +133,7 @@
         },
         "privacy": {
           "q": "我的資料是私密的嗎？",
-          "a": "是的。PageRecast 沒有伺服器、沒有帳號，也沒有分析工具。擷取內容在你的瀏覽器中產生，並保留在你的電腦上。Figma 外掛只會下載頁面本來就在用的圖片，直接從圖片所屬的網站下載。"
+          "a": "是的。沒有帳號，也沒有分析。擴充功能的擷取在你的瀏覽器中產生，並保存在你的電腦上。外掛的「網頁」分頁只會把你輸入的網址傳送到 PageRecast 的伺服器，伺服器開啟這個公開頁面、傳回圖層，不保存任何內容。除此之外，外掛只會從圖片所屬的網站直接下載頁面已經使用的圖片。"
         },
         "firefox": {
           "q": "Firefox 也能用嗎？",
@@ -223,12 +223,12 @@
   },
   "privacy": {
     "title": "隱私權政策 | PageRecast",
-    "description": "PageRecast 不會收集、傳送、出售或分享任何個人資料。一切都在你的電腦上進行。",
+    "description": "PageRecast 不收集、出售或分享任何個人資料。擴充功能的擷取保存在你的電腦上。外掛的「網頁」分頁只會把你輸入的網址傳送到 PageRecast 的伺服器，伺服器開啟這個公開頁面、傳回圖層，不保存任何內容。",
     "heading": "隱私權政策",
-    "updated": "最後更新：2026 年 10 月 11 日",
+    "updated": "最後更新：2026 年 10 月 12 日",
     "intro": "PageRecast 是由 Shades Media Group 製作的 Chrome 與 Firefox 瀏覽器擴充功能，以及 Figma 外掛。本政策涵蓋以上所有產品。",
     "shortTitle": "簡短版本",
-    "short": "PageRecast 不會收集、傳送、出售或分享任何個人資料。一切都在你的電腦上進行。",
+    "short": "PageRecast 不收集、出售或分享任何個人資料。擴充功能的擷取保存在你的電腦上。外掛的「網頁」分頁只會把你輸入的網址傳送到 PageRecast 的伺服器，伺服器開啟這個公開頁面、傳回圖層，不保存任何內容。",
     "chromeTitle": "Chrome 擴充功能會存取什麼",
     "chromePage": "<strong>你選擇擷取的頁面。</strong>當你按下「擷取」時，擴充功能會透過 Chrome 的 <code>debugger</code> 權限，讀取目前分頁、你輸入的網址，或 Figma 外掛經由我們的擷取頁面傳來的網址（只有該頁面能提出要求，而且只在你於該頁面按下「擷取」之後）的版面、樣式、文字與圖片。它只在這次擷取期間連接，結束後即中斷。",
     "chromeTabs": "<strong>分頁標題、網址與圖示</strong>，用來顯示將要擷取哪個頁面。",
@@ -241,9 +241,9 @@
     "pluginImages": "<strong>擷取內容引用的圖片</strong>，直接從圖片所屬的網站下載。",
     "pluginStorage": "<strong>Figma 的外掛儲存空間</strong>，用來記住你的匯入設定。",
     "pluginAgents": "<strong>AI 代理在你電腦上排入佇列的擷取內容</strong>，只在你開啟代理匯入時才會存取。外掛透過你輸入的配對碼，從 <code>127.0.0.1</code> 取得這些內容；那是 PageRecast MCP 伺服器在你自己電腦上執行的伺服器。",
-    "pluginWeb": "外掛的「網頁」分頁會開啟 <code>pagerecast.shades.md/capture/</code>，頁面網址與設定放在連結的 <code>#</code> 之後，瀏覽器從不會把這部分傳送給伺服器。該頁面把它們交給你瀏覽器中的擴充功能，擷取內容會在那裡複製到你的剪貼簿。",
+    "pluginWeb": "在外掛的「網頁」分頁中，「Import page」會把你輸入的網址，連同你選擇的寬度、主題與語言，傳送到 <code>pagerecast.shades.md/api/render</code>。伺服器在 Cloudflare 的瀏覽器服務中不帶 Cookie 地開啟這個公開頁面，把圖層傳回外掛，不保留任何內容：網址既不儲存，也不寫入紀錄。為了公平使用，伺服器會依 IP 位址計算一分鐘內的請求數，這個計數同樣不會保存。localhost 或私人網路上的網址永遠不會被傳送。「Capture in browser」則會開啟 <code>pagerecast.shades.md/capture/</code>，網址與設定放在連結的 <code>#</code> 之後，瀏覽器從不會把這部分傳送給伺服器，由擴充功能在你的電腦上擷取頁面。",
     "dataTitle": "我們收到的資料",
-    "data": "沒有。沒有帳號、分析工具、當機報告，也沒有任何形式的追蹤。",
+    "data": "沒有。沒有帳號、分析、當機報告或任何形式的追蹤。轉譯服務只在開啟頁面期間看到你傳送的網址。",
     "childrenTitle": "兒童",
     "children": "PageRecast 是設計工具，並非以兒童為對象。",
     "changesTitle": "政策變更",

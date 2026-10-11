@@ -20,7 +20,7 @@
   },
   "footer": {
     "top": "PageRecast, başa dön",
-    "tagline": "Her web sayfası, düzenlenebilir Figma katmanları olarak. Ücretsiz, açık kaynak ve bilgisayarından hiç çıkmaz.",
+    "tagline": "Her web sayfası, düzenlenebilir Figma katmanları olarak. Ücretsiz, açık kaynak, hesap yok, izleme yok.",
     "label": "Alt bilgi",
     "product": "Ürün",
     "project": "Proje",
@@ -74,8 +74,8 @@
       "pluginAlt": "PageRecast Figma eklentisi, içe aktarmadan önce yakalamayı gözden geçiriyor"
     },
     "privacy": {
-      "title": "Bilgisayarından hiçbir şey çıkmaz.",
-      "text": "PageRecast sunucusu yok. Yakalamalar tarayıcında oluşturulur ve Figma'ya yapıştırana kadar cihazında kalır. Hesap yok, analitik yok, sınır yok, ücret yok."
+      "title": "Tasarımı gereği gizli.",
+      "text": "Uzantının yakalamaları tarayıcında oluşturulur ve bilgisayarında kalır. Eklentinin Web sekmesi PageRecast sunucusuna yalnızca yazdığın adresi gönderir; sunucu herkese açık sayfayı açar, katmanları geri gönderir ve hiçbir şey saklamaz. Hesap yok, analiz yok, sınır yok, ücret yok."
     },
     "open": {
       "title": "Açık kaynak. Açık format.",
@@ -133,7 +133,7 @@
         },
         "privacy": {
           "q": "Verilerim gizli mi?",
-          "a": "Evet. PageRecast sunucusu, hesap ya da analitik yok. Yakalamalar tarayıcında oluşturulur ve bilgisayarında kalır. Figma eklentisi yalnızca sayfanın zaten kullandığı görselleri, doğrudan ait oldukları sitelerden indirir."
+          "a": "Evet. Hesap ve analiz yok. Uzantının yakalamaları tarayıcında oluşturulur ve bilgisayarında kalır. Eklentinin Web sekmesi PageRecast sunucusuna yalnızca yazdığın adresi gönderir; sunucu herkese açık sayfayı açar, katmanları geri gönderir ve hiçbir şey saklamaz. Bunun dışında eklenti yalnızca sayfanın zaten kullandığı görselleri, ait oldukları sitelerden doğrudan indirir."
         },
         "firefox": {
           "q": "Firefox'ta çalışır mı?",
@@ -223,12 +223,12 @@
   },
   "privacy": {
     "title": "Gizlilik politikası | PageRecast",
-    "description": "PageRecast hiçbir kişisel veriyi toplamaz, iletmez, satmaz ya da paylaşmaz. Her şey bilgisayarında gerçekleşir.",
+    "description": "PageRecast hiçbir kişisel veriyi toplamaz, satmaz veya paylaşmaz. Uzantının yakalamaları bilgisayarında kalır. Eklentinin Web sekmesi PageRecast sunucusuna yalnızca yazdığın adresi gönderir; sunucu herkese açık sayfayı açar, katmanları geri gönderir ve hiçbir şey saklamaz.",
     "heading": "Gizlilik politikası",
-    "updated": "Son güncelleme: 11 Ekim 2026",
+    "updated": "Son güncelleme: 12 Ekim 2026",
     "intro": "PageRecast, Shades Media Group tarafından geliştirilen, Chrome ve Firefox için bir tarayıcı uzantısı ve bir Figma eklentisidir. Bu politika hepsini kapsar.",
     "shortTitle": "Kısaca",
-    "short": "PageRecast hiçbir kişisel veriyi toplamaz, iletmez, satmaz ya da paylaşmaz. Her şey bilgisayarında gerçekleşir.",
+    "short": "PageRecast hiçbir kişisel veriyi toplamaz, satmaz veya paylaşmaz. Uzantının yakalamaları bilgisayarında kalır. Eklentinin Web sekmesi PageRecast sunucusuna yalnızca yazdığın adresi gönderir; sunucu herkese açık sayfayı açar, katmanları geri gönderir ve hiçbir şey saklamaz.",
     "chromeTitle": "Chrome uzantısının eriştikleri",
     "chromePage": "<strong>Yakalamayı seçtiğin sayfa.</strong> Yakala'ya bastığında uzantı, Chrome'un <code>debugger</code> iznini kullanarak geçerli sekmenin, yazdığın bir URL'nin ya da Figma eklentisinin yakalama sayfamız üzerinden gönderdiği bir URL'nin (bunu yalnızca o sayfa isteyebilir, o da ancak sen orada Yakala'ya bastıktan sonra) düzenini, stillerini, metnini ve görsellerini okur. Yalnızca o yakalama için bağlanır ve yakalama bitince ayrılır.",
     "chromeTabs": "<strong>Sekme başlıkları, adresleri ve ikonları</strong>, hangi sayfanın yakalanacağını göstermek için.",
@@ -241,9 +241,9 @@
     "pluginImages": "<strong>Bir yakalamanın başvurduğu görseller</strong>; eklenti bunları doğrudan ait oldukları web sitelerinden indirir.",
     "pluginStorage": "<strong>Figma'nın eklenti depolaması</strong>, içe aktarma ayarlarını hatırlamak için.",
     "pluginAgents": "<strong>Bir yapay zekâ ajanının bilgisayarında sıraya koyduğu yakalamalar</strong>, yalnızca ajan içe aktarmalarını açtığında. Eklenti bunları, PageRecast MCP sunucusunun kendi makinende çalıştırdığı bir sunucu olan <code>127.0.0.1</code> adresinden, girdiğin bir eşleştirme koduyla alır.",
-    "pluginWeb": "Eklentinin Web sekmesi, sayfa adresi ve ayarlar bağlantının <code>#</code> işaretinden sonraki kısmında olacak şekilde <code>pagerecast.shades.md/capture/</code> adresini açar; tarayıcılar bu kısmı asla bir sunucuya göndermez. O sayfa bunları tarayıcındaki uzantıya iletir ve yakalama orada panona kopyalanır.",
+    "pluginWeb": "Eklentinin Web sekmesinde «Import page», yazdığın adresi seçtiğin genişlikler, tema ve dille birlikte <code>pagerecast.shades.md/api/render</code> adresine gönderir. Sunucu bu herkese açık sayfayı Cloudflare'ın tarayıcı hizmetinde çerezsiz açar, katmanlarını eklentiye döndürür ve hiçbir şey saklamaz: adres kaydedilmez ve günlüklere yazılmaz. Hizmetin herkes için adil kalması için istekleri IP adresi başına bir dakika boyunca sayar; bu sayı da saklanmaz. localhost veya özel ağdaki adresler asla gönderilmez. «Capture in browser» ise adresi ve ayarları bağlantının <code>#</code> işaretinden sonraki kısmına koyarak <code>pagerecast.shades.md/capture/</code> sayfasını açar; tarayıcılar bu kısmı asla bir sunucuya göndermez ve uzantı sayfayı bilgisayarında yakalar.",
     "dataTitle": "Aldığımız veriler",
-    "data": "Hiçbiri. Hesap, analitik, çökme raporu ya da herhangi bir izleme yok.",
+    "data": "Hiçbiri. Hesap, analiz, çökme raporu veya herhangi bir izleme yok. İşleme hizmeti gönderdiğin adresi yalnızca sayfayı açarken görür.",
     "childrenTitle": "Çocuklar",
     "children": "PageRecast bir tasarım aracıdır ve çocuklara yönelik değildir.",
     "changesTitle": "Değişiklikler",

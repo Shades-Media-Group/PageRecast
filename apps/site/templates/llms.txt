@@ -1,11 +1,11 @@
 # PageRecast
 
-> PageRecast imports any web page into Figma as editable layers. It is a free, open-source Chrome extension (also for Firefox) and Figma plugin that runs entirely on the user's computer: no account, no server, no analytics and no limits. Made by Shades Media Group.
+> PageRecast imports any web page into Figma as editable layers. It is a free, open-source Chrome extension (also for Firefox) and Figma plugin. Captures from the extension stay on the user's computer; the plugin's Web tab can also import a public page by URL through PageRecast's render service, which receives only the address and stores nothing. No account, no analytics and no limits. Made by Shades Media Group.
 
 ## Facts
 
 - Price: free forever. No plans, limits, trials, accounts, upgrade prompts or watermarks. MIT licence.
-- Parts: a browser extension that captures the page, and a Figma plugin that builds the layers. Both are needed for a website; the plugin alone imports `.html` files and pasted HTML and CSS.
+- Parts: a browser extension that captures the page, and a Figma plugin that builds the layers. The plugin alone imports a public page by URL (rendered on PageRecast's server, which stores nothing), `.html` files and pasted HTML and CSS; pages behind a login, staging and localhost need the extension.
 - Browsers: Chrome and other Chromium browsers (Manifest V3); Firefox 142 or later on desktop.
 - Figma: the plugin runs in Figma desktop and Figma in the browser.
 - Capture scope: the full page, the visible area or one picked element.

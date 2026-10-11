@@ -20,7 +20,7 @@
   },
   "footer": {
     "top": "PageRecast, înapoi sus",
-    "tagline": "Orice pagină web, ca straturi Figma editabile. Gratuit, open source și nimic nu pleacă de pe calculatorul tău.",
+    "tagline": "Orice pagină web, ca straturi Figma editabile. Gratuit, open source, fără cont și fără urmărire.",
     "label": "Subsol",
     "product": "Produs",
     "project": "Proiect",
@@ -74,8 +74,8 @@
       "pluginAlt": "Pluginul Figma PageRecast verificând captura înainte de import"
     },
     "privacy": {
-      "title": "Nimic nu pleacă de pe calculatorul tău.",
-      "text": "Nu există niciun server PageRecast. Capturile sunt create în browser și rămân pe dispozitivul tău până le lipești în Figma. Fără cont, fără analytics, fără limite și fără preț."
+      "title": "Privat prin design.",
+      "text": "Capturile din extensie se fac în browser și rămân pe computerul tău. Fila Web a pluginului trimite doar adresa pe care o scrii către serverul PageRecast, care deschide pagina publică, trimite înapoi straturile și nu păstrează nimic. Fără cont, fără analytics, fără limite și fără preț."
     },
     "open": {
       "title": "Cod deschis. Format deschis.",
@@ -133,7 +133,7 @@
         },
         "privacy": {
           "q": "Datele mele rămân private?",
-          "a": "Da. Nu există server PageRecast, cont sau analytics. Capturile sunt create în browser și rămân pe calculatorul tău. Pluginul Figma descarcă doar imaginile pe care pagina le folosește deja, direct de pe site-urile lor."
+          "a": "Da. Nu există cont și nici analytics. Capturile din extensie se fac în browser și rămân pe computerul tău. Fila Web a pluginului trimite doar adresa pe care o scrii către serverul PageRecast, care deschide pagina publică, trimite înapoi straturile și nu păstrează nimic. În rest, pluginul descarcă doar imaginile pe care pagina le folosește deja, direct de pe site-urile lor."
         },
         "firefox": {
           "q": "Funcționează în Firefox?",
@@ -223,12 +223,12 @@
   },
   "privacy": {
     "title": "Politica de confidențialitate | PageRecast",
-    "description": "PageRecast nu colectează, nu transmite, nu vinde și nu partajează date personale. Totul se întâmplă pe calculatorul tău.",
+    "description": "PageRecast nu colectează, nu vinde și nu partajează date personale. Capturile din extensie rămân pe computerul tău. Fila Web a pluginului trimite doar adresa pe care o scrii către serverul PageRecast, care deschide pagina publică, trimite înapoi straturile și nu păstrează nimic.",
     "heading": "Politica de confidențialitate",
-    "updated": "Ultima actualizare: 11 octombrie 2026",
+    "updated": "Ultima actualizare: 12 octombrie 2026",
     "intro": "PageRecast este o extensie de browser pentru Chrome și Firefox și un plugin Figma, create de Shades Media Group. Această politică se aplică tuturor.",
     "shortTitle": "Pe scurt",
-    "short": "PageRecast nu colectează, nu transmite, nu vinde și nu partajează date personale. Totul se întâmplă pe calculatorul tău.",
+    "short": "PageRecast nu colectează, nu vinde și nu partajează date personale. Capturile din extensie rămân pe computerul tău. Fila Web a pluginului trimite doar adresa pe care o scrii către serverul PageRecast, care deschide pagina publică, trimite înapoi straturile și nu păstrează nimic.",
     "chromeTitle": "La ce are acces extensia Chrome",
     "chromePage": "<strong>Pagina pe care alegi să o capturezi.</strong> Când apeși Captură, extensia citește layout-ul, stilurile, textul și imaginile filei curente, ale unui URL pe care îl tastezi sau ale unui URL trimis de pluginul Figma prin pagina noastră de captură (doar acea pagină poate cere asta și doar după ce apeși Capture acolo), folosind permisiunea <code>debugger</code> din Chrome. Se atașează doar pentru acea captură și se detașează când se termină.",
     "chromeTabs": "<strong>Titlurile, adresele și iconițele filelor</strong>, ca să arate ce pagină va fi capturată.",
@@ -241,9 +241,9 @@
     "pluginImages": "<strong>Imaginile la care face referire o captură</strong>, descărcate direct de pe site-urile cărora le aparțin.",
     "pluginStorage": "<strong>Stocarea pentru pluginuri din Figma</strong>, ca să țină minte setările de import.",
     "pluginAgents": "<strong>Capturile puse în așteptare pe calculatorul tău de un agent AI</strong>, doar când activezi importurile de la agenți. Pluginul le preia de la <code>127.0.0.1</code>, un server de pe propriul tău calculator pornit de serverul MCP PageRecast, folosind un cod de asociere pe care îl introduci.",
-    "pluginWeb": "Fila Web a pluginului deschide <code>pagerecast.shades.md/capture/</code> cu adresa paginii și setările după <code>#</code> din link, o parte pe care browserele nu o trimit niciodată unui server. Acea pagină le transmite extensiei din browserul tău, iar captura este copiată acolo în clipboard.",
+    "pluginWeb": "În fila Web a pluginului, „Importă pagina” trimite adresa pe care o scrii, cu lățimile, tema și limba alese, la <code>pagerecast.shades.md/api/render</code>. Serverul deschide pagina publică în serviciul de browser Cloudflare, fără cookie-uri, trimite straturile înapoi pluginului și nu păstrează nimic: adresa nu este salvată și nici înregistrată în jurnale. Ca serviciul să rămână corect pentru toți, numără cererile pe adresă IP timp de un minut; nici acest număr nu se păstrează. Adresele de pe localhost sau dintr-o rețea privată nu sunt trimise niciodată. „Capturează în browser” deschide în schimb <code>pagerecast.shades.md/capture/</code> cu adresa și setările după <code>#</code> din link, o parte pe care browserele nu o trimit niciodată unui server, iar extensia capturează pagina pe computerul tău.",
     "dataTitle": "Datele pe care le primim",
-    "data": "Niciunele. Nu există conturi, analytics, rapoarte de erori sau urmărire de niciun fel.",
+    "data": "Niciuna. Nu există conturi, analytics, rapoarte de erori sau urmărire de vreun fel. Serviciul de randare vede adresa trimisă doar cât timp deschide pagina.",
     "childrenTitle": "Copii",
     "children": "PageRecast este un instrument de design și nu se adresează copiilor.",
     "changesTitle": "Modificări",

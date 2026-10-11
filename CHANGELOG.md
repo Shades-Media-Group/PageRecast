@@ -6,6 +6,14 @@ All notable changes to PageRecast are recorded here. The format follows
 
 ## [Unreleased]
 
+### Added
+
+- **Import a URL without the extension:** the plugin's Web tab renders public pages on PageRecast's server (Cloudflare Browser Rendering) with the extension's capture engine and opens the review. Only the address and the capture settings are sent; nothing is stored or logged. **Capture in browser** stays for pages behind a login, on staging or on localhost.
+
+### Changed
+
+- The privacy policy describes the render service.
+
 ## [1.4.0] - 2026-10-12
 
 The panels get softer controls and the plugin's Web tab takes widths of

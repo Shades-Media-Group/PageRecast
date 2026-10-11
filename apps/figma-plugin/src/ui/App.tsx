@@ -29,7 +29,13 @@ import {
   type UiToMain,
 } from '../shared/messages'
 import { pageOf, pageTitle } from '../shared/pages'
-import { fontUsage, rememberChoices, type FontChoices, type MissingFont } from '../shared/fonts'
+import {
+  fontLink,
+  fontUsage,
+  rememberChoices,
+  type FontChoices,
+  type MissingFont,
+} from '../shared/fonts'
 import { prepareImages, readFile, readText, renderHtml } from './load'
 
 type Tab = 'paste' | 'file' | 'code'
@@ -52,6 +58,8 @@ type Stage =
       fonts?: { missing: MissingFont[]; families: string[] }
       /** The family picked for each missing font. */
       fontChoices: FontChoices
+      /** "Check again" for newly installed fonts: running, or what it found. */
+      fontCheck?: 'checking' | 'found' | 'same'
     }
   | { kind: 'importing'; label: string; progress: number }
   | { kind: 'done'; report: ImportReport; askRating: boolean }
@@ -208,16 +216,24 @@ export function App() {
         const { missing, families } = message
         const known = new Map(families.map((f) => [f.toLowerCase(), f]))
         const saved = settingsRef.current.fonts
-        // Start from the family remembered for each font, if Figma still has it.
-        const fontChoices = Object.fromEntries(
-          missing.map((m) => [
-            m.requested,
-            known.get(saved[m.requested]?.toLowerCase() ?? '') ?? m.replacement,
-          ]),
-        )
-        setStage((s) =>
-          s.kind === 'ready' ? { ...s, fonts: { missing, families }, fontChoices } : s,
-        )
+        setStage((s) => {
+          if (s.kind !== 'ready') return s
+          // Keep picks made on this screen, then the family remembered for each
+          // font if Figma still has it, then the automatic pick.
+          const pick = (m: MissingFont) =>
+            known.get(s.fontChoices[m.requested]?.toLowerCase() ?? '') ??
+            known.get(saved[m.requested]?.toLowerCase() ?? '') ??
+            m.replacement
+          const fontChoices = Object.fromEntries(missing.map((m) => [m.requested, pick(m)]))
+          // After "Check again": did any of the fonts turn up?
+          const fontCheck =
+            s.fontCheck === 'checking'
+              ? missing.length < (s.fonts?.missing.length ?? 0)
+                ? 'found'
+                : 'same'
+              : undefined
+          return { ...s, fonts: { missing, families }, fontChoices, fontCheck }
+        })
       }
       if (message.type === 'error') setStage({ kind: 'error', message: message.message })
     }
@@ -333,7 +349,23 @@ export function App() {
               <Working label={stage.label} progress={stage.progress} />
             )}
             {stage.kind === 'ready' && (
-              <Review stage={stage} onChange={(patch) => setStage({ ...stage, ...patch })} />
+              <Review
+                stage={stage}
+                onChange={(patch) => {
+                  setStage({ ...stage, ...patch })
+                  // Font picks are kept at once, so reopening the plugin after
+                  // installing a font does not lose them.
+                  if (patch.fontChoices && stage.fonts)
+                    saveSettings({
+                      ...settingsRef.current,
+                      fonts: rememberChoices(
+                        settingsRef.current.fonts,
+                        stage.fonts.missing,
+                        patch.fontChoices,
+                      ),
+                    })
+                }}
+              />
             )}
             {stage.kind === 'done' && <Done report={stage.report} askRating={stage.askRating} />}
           </main>
@@ -345,17 +377,8 @@ export function App() {
                 size="lg"
                 block
                 disabled={stage.selected.size === 0}
-                onClick={() => {
-                  if (stage.fonts)
-                    saveSettings({
-                      ...settingsRef.current,
-                      fonts: rememberChoices(
-                        settingsRef.current.fonts,
-                        stage.fonts.missing,
-                        stage.fontChoices,
-                      ),
-                    })
-                  void runImport(
+                onClick={() =>
+                  runImport(
                     stage.file,
                     stage.selected,
                     stage.options,
@@ -363,7 +386,7 @@ export function App() {
                     stage.update,
                     stage.remember,
                   )
-                }}
+                }
               >
                 {importLabel(stage)}
               </Button>
@@ -744,14 +767,20 @@ function Review({
           </p>
         </Section>
       )}
-      {stage.fonts && stage.fonts.missing.length > 0 && (
+      {stage.fonts && (stage.fonts.missing.length > 0 || stage.fontCheck === 'found') && (
         <FontReplacements
           missing={stage.fonts.missing}
           families={stage.fonts.families}
           choices={stage.fontChoices}
+          check={stage.fontCheck}
+          sources={file.fontSources}
           onChange={(requested, family) =>
             onChange({ fontChoices: { ...stage.fontChoices, [requested]: family } })
           }
+          onCheck={() => {
+            onChange({ fontCheck: 'checking' })
+            send({ type: 'check-fonts', uses: fontUsage(file) })
+          }}
         />
       )}
       <OptionToggles
@@ -776,23 +805,37 @@ function Review({
 }
 
 /**
- * Fonts the capture uses that Figma lacks, each with the family to use
- * instead: the automatic pick, or any family Figma has, searched by typing.
+ * Fonts the capture uses that Figma lacks. Each shows the family the import
+ * will use, the automatic pick unless another is chosen, a way to get the
+ * real font, and "Check again" to look for it once installed.
  */
 function FontReplacements({
   missing,
   families,
   choices,
+  check,
+  sources,
   onChange,
+  onCheck,
 }: {
   missing: MissingFont[]
   families: string[]
   choices: FontChoices
+  check?: 'checking' | 'found' | 'same'
+  sources?: Record<string, string>
   onChange: (requested: string, family: string) => void
+  onCheck: () => void
 }) {
   const known = useMemo(() => new Map(families.map((f) => [f.toLowerCase(), f])), [families])
   return (
-    <Section title="Fonts" aside={<span class="num">{missing.length} not in Figma</span>}>
+    <Section
+      title="Fonts"
+      aside={
+        <button type="button" class="text-button" disabled={check === 'checking'} onClick={onCheck}>
+          {check === 'checking' ? 'Checking' : 'Check again'}
+        </button>
+      }
+    >
       <datalist id="font-families">
         {families.map((family) => (
           <option value={family} />
@@ -800,50 +843,65 @@ function FontReplacements({
       </datalist>
       {missing.map((font) => (
         <div class="font-row">
-          <div class="font-row__name">
-            <span class="truncate">{font.requested}</span>
-            <span class="truncate muted">
-              {font.styles.join(', ')} ·{' '}
-              <span class="num">
-                {font.count.toLocaleString()} {font.count === 1 ? 'use' : 'uses'}
-              </span>
-            </span>
-          </div>
+          <span class="font-row__family truncate">{font.requested}</span>
           <FamilyInput
-            label={`Replace ${font.requested} with`}
+            label={`Use instead of ${font.requested}`}
             value={choices[font.requested] ?? font.replacement}
-            fallback={font.replacement}
+            automatic={font.replacement}
             known={known}
             onChange={(family) => onChange(font.requested, family)}
           />
+          <span class="font-row__meta truncate" title={font.styles.join(', ')}>
+            {font.styles.join(', ')} ·{' '}
+            <span class="num">
+              {font.count.toLocaleString()} {font.count === 1 ? 'use' : 'uses'}
+            </span>
+          </span>
+          <button
+            type="button"
+            class="text-button"
+            aria-label={`Get ${font.requested}`}
+            onClick={() => openUrl(fontLink(font.requested, sources))}
+          >
+            Get font
+          </button>
         </div>
       ))}
-      <p class="hint">Your picks are remembered for the next import.</p>
+      <p class="hint" aria-live="polite">
+        {missing.length === 0
+          ? 'Every font is installed now and imports as itself.'
+          : check === 'same'
+            ? 'Still not found. If you just installed it, close and reopen PageRecast; your picks are kept.'
+            : `${missing.length} ${missing.length === 1 ? 'font is' : 'fonts are'} not in Figma. Get and install ${missing.length === 1 ? 'it' : 'them'}, then check again, or import with the family shown.`}
+      </p>
     </Section>
   )
 }
 
-/** A family name field that suggests installed families and only accepts one of them. */
+/**
+ * A family name field that suggests installed families and only accepts one
+ * of them. The automatic pick says so, so no replacement goes unnoticed.
+ */
 function FamilyInput({
   label,
   value,
-  fallback,
+  automatic,
   known,
   onChange,
 }: {
   label: string
   value: string
-  fallback: string
+  automatic: string
   known: Map<string, string>
   onChange: (family: string) => void
 }) {
-  const [draft, setDraft] = useState(value)
-  useEffect(() => setDraft(value), [value])
+  const [draft, setDraft] = useState<string | null>(null)
   const commit = () => {
+    if (draft === null) return
     // Empty goes back to the automatic pick; an unknown name is undone.
-    const family = draft.trim() ? known.get(draft.trim().toLowerCase()) : fallback
-    if (family) onChange(family)
-    setDraft(family ?? value)
+    const family = draft.trim() ? known.get(draft.trim().toLowerCase()) : automatic
+    if (family && family !== value) onChange(family)
+    setDraft(null)
   }
   return (
     <input
@@ -851,13 +909,18 @@ function FamilyInput({
       list="font-families"
       aria-label={label}
       spellcheck={false}
-      value={draft}
-      onFocus={(e) => e.currentTarget.select()}
+      value={draft ?? (value === automatic ? `${value} (automatic)` : value)}
+      onFocus={(e) => {
+        setDraft(value)
+        const input = e.currentTarget
+        requestAnimationFrame(() => input.select())
+      }}
       onInput={(e) => setDraft(e.currentTarget.value)}
       onChange={commit}
       onBlur={commit}
       onKeyDown={(e) => {
         if (e.key === 'Escape') setDraft(value)
+        if (e.key === 'Enter') commit()
       }}
     />
   )

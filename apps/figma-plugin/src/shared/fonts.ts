@@ -66,6 +66,18 @@ export function styleLabel(weight: number, italic: boolean): string {
 }
 
 /**
+ * Where to get a font: its Google Fonts page when the page loaded it from
+ * Google Fonts, otherwise a web search for a download.
+ */
+export function fontLink(family: string, sources: Record<string, string> = {}): string {
+  const [name, source] =
+    Object.entries(sources).find(([name]) => name.toLowerCase() === family.toLowerCase()) ?? []
+  if (name && source && /^https:\/\/fonts\.(googleapis|gstatic)\.com\//.test(source))
+    return `https://fonts.google.com/specimen/${encodeURIComponent(name).replace(/%20/g, '+')}`
+  return `https://www.google.com/search?q=${encodeURIComponent(`${family} font download`)}`
+}
+
+/**
  * The choices worth remembering after an import: a family the user pointed
  * somewhere other than the automatic replacement. Picking the automatic one
  * again forgets the earlier choice.

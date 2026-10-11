@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import type { RecastFile, TextStyle } from '@pagerecast/scene'
-import { fontUsage, rememberChoices, styleLabel } from './fonts'
+import { fontLink, fontUsage, rememberChoices, styleLabel } from './fonts'
 
 const style = (fontFamily: string[], fontWeight = 400, italic = false): TextStyle => ({
   fontFamily,
@@ -58,6 +58,22 @@ describe('styleLabel', () => {
     expect(styleLabel(400, true)).toBe('Italic')
     expect(styleLabel(600, true)).toBe('Semi Bold Italic')
     expect(styleLabel(650, false)).toBe('Bold')
+  })
+})
+
+describe('fontLink', () => {
+  it('opens Google Fonts for fonts the page loaded from there', () => {
+    const sources = {
+      'Space Grotesk': 'https://fonts.googleapis.com/css2?family=Space+Grotesk',
+      Söhne: 'https://example.com/fonts/soehne.woff2',
+    }
+    expect(fontLink('space grotesk', sources)).toBe(
+      'https://fonts.google.com/specimen/Space+Grotesk',
+    )
+    expect(fontLink('Söhne', sources)).toBe(
+      'https://www.google.com/search?q=S%C3%B6hne%20font%20download',
+    )
+    expect(fontLink('Graphik')).toContain('Graphik%20font%20download')
   })
 })
 

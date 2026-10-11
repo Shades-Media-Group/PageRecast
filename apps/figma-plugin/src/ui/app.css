@@ -229,19 +229,27 @@ body,
 }
 
 /* Fonts Figma lacks: the page's family and its uses, then the replacement field. */
+/*
+ * Two lines per font: the family beside the family the import will use, then
+ * its styles and uses beside "Get font".
+ */
 .font-row {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 152px;
+  grid-template-columns: minmax(0, 1fr) 192px;
+  grid-template-rows: 32px 24px;
   align-items: center;
-  gap: 8px;
-  min-height: 40px;
+  column-gap: 8px;
+  padding: 4px 0;
 }
-.font-row__name {
-  display: grid;
-  min-width: 0;
-  line-height: 16px;
+.font-row__family {
+  color: var(--ink);
+  font-weight: 600;
 }
-.font-row__name .muted {
+.font-row > .text-button {
+  justify-self: end;
+}
+.font-row__meta {
+  color: var(--ink-3);
   font-size: 11px;
 }
 /* The field suggests families; the browser's own arrow gives way to the select chevron. */

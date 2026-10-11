@@ -222,11 +222,11 @@ The plugin makes the requests from its UI iframe (`apps/figma-plugin/src/ui/agen
 
 ### The plugin's network access
 
-`apps/figma-plugin/manifest.json` lists the bridge explicitly next to `"*"`:
+`apps/figma-plugin/manifest.json` allows `"*"`, which covers the bridge. Figma rejects a manifest that lists other domains next to `"*"`, so the bridge is not listed separately:
 
 ```json
 "networkAccess": {
-  "allowedDomains": ["*", "http://localhost:7357", "http://127.0.0.1:7357"],
+  "allowedDomains": ["*"],
   "reasoning": "Captures reference images on the websites they came from; the plugin downloads those images so they appear in the imported design. It also collects captures that a local AI agent queued on this computer (127.0.0.1). Nothing is sent anywhere."
 }
 ```

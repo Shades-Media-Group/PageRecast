@@ -438,7 +438,7 @@ function OptionToggles({
       <Section title="Styles">
         <Toggle
           label="Use the file's styles"
-          hint="Reuse matching variables and styles already here"
+          hint="Reuse matching variables and styles, libraries included"
           checked={options.useLocalStyles}
           onChange={(useLocalStyles) => onChange({ useLocalStyles })}
         />
@@ -635,6 +635,7 @@ function Done({ report, askRating }: { report: ImportReport; askRating: boolean 
     ['New colour variables', report.variables],
     ['New text styles', report.textStyles],
     ['Layers using existing styles', report.reusedStyles],
+    ['Layers using library variables', report.matchedFromLibrary],
   ]
   if (report.rasters) rows.push(['Snapshots of canvas, video and embeds', report.rasters])
   return (

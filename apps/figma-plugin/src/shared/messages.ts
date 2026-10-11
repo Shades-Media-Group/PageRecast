@@ -11,7 +11,7 @@ export interface ImportOptions {
   variables: boolean
   /** Create local text styles for repeated type. */
   textStyles: boolean
-  /** Apply matching local styles and variables already in the file. */
+  /** Apply matching styles and variables already in the file and its enabled libraries. */
   useLocalStyles: boolean
   /** Keep links on text as Figma hyperlinks. */
   hyperlinks: boolean
@@ -78,6 +78,8 @@ export interface ImportReport {
   textStyles: number
   /** Nodes bound to styles or variables that were already in the file. */
   reusedStyles: number
+  /** Nodes bound to colour variables from the file's enabled team libraries. */
+  matchedFromLibrary: number
   substitutions: FontSubstitution[]
   warnings: string[]
   durationMs: number

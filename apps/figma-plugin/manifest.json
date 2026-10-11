@@ -6,6 +6,7 @@
   "ui": "dist/ui.html",
   "editorType": ["figma"],
   "documentAccess": "dynamic-page",
+  "permissions": ["teamlibrary"],
   "networkAccess": {
     "allowedDomains": ["*"],
     "reasoning": "Captures reference images on the websites they came from. The plugin downloads those images so they appear in the imported design. Nothing is sent anywhere."

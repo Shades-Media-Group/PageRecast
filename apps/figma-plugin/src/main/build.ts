@@ -88,6 +88,7 @@ export async function importFile(
     components: 0,
     instances: 0,
     reusedStyles: 0,
+    matchedFromLibrary: 0,
     variables: 0,
     textStyles: 0,
     substitutions: [],
@@ -732,7 +733,11 @@ export async function importFile(
 
   progress({ type: 'progress', phase: 'styles', done: 0, total: 1 })
   // Styles already in the file win; only what is left gets new variables and styles.
-  if (options.useLocalStyles) report.reusedStyles = await applyLocalStyles(colorRefs, textRefs)
+  if (options.useLocalStyles) {
+    const reused = await applyLocalStyles(colorRefs, textRefs)
+    report.reusedStyles = reused.local
+    report.matchedFromLibrary = reused.library
+  }
   if (options.variables) report.variables = createVariables(colorRefs, file, roots)
   if (options.textStyles) report.textStyles = await createTextStyles(textRefs, file)
 

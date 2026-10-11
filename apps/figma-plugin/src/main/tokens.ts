@@ -1,4 +1,5 @@
 import type { Capture, Color, RecastFile, TextStyle } from '@pagerecast/scene'
+import { nearestColor, typeKey, type Candidate } from './match'
 import { hex, solid } from './paints'
 
 export interface ColorRef {
@@ -176,77 +177,128 @@ export async function createTextStyles(refs: TextRef[], file: RecastFile): Promi
   return chosen.length
 }
 
-const textKey = (font: FontName, size: number, lineHeight: number | null) =>
-  `${font.family}|${font.style}|${Math.round(size * 100) / 100}|${lineHeight === null ? 'auto' : Math.round(lineHeight * 100) / 100}`
+const MAX_LIBRARY_VARIABLES = 600
+
+/** A variable's value in its collection's default mode, following aliases. */
+async function resolve(variable: Variable, depth = 0): Promise<VariableValue | undefined> {
+  const collection = await figma.variables.getVariableCollectionByIdAsync(
+    variable.variableCollectionId,
+  )
+  const value = collection ? variable.valuesByMode[collection.defaultModeId] : undefined
+  if (value && typeof value === 'object' && 'type' in value && value.type === 'VARIABLE_ALIAS') {
+    const target = depth < 5 ? await figma.variables.getVariableByIdAsync(value.id) : null
+    return target ? resolve(target, depth + 1) : undefined
+  }
+  return value
+}
+
+async function colorCandidates(variables: Variable[]): Promise<Candidate<Variable>[]> {
+  const out: Candidate<Variable>[] = []
+  for (const variable of variables) {
+    const value = await resolve(variable).catch(() => undefined)
+    if (value && typeof value === 'object' && 'r' in value) {
+      const { r, g, b } = value
+      out.push({ color: { r, g, b, a: 'a' in value ? value.a : 1 }, value: variable })
+    }
+  }
+  return out
+}
+
+/**
+ * Variables of the given types from the team libraries enabled in this file.
+ * Their values are only readable once imported, so they are imported here;
+ * any failure (no libraries, offline, no permission) means no candidates.
+ */
+async function libraryVariables(type: VariableResolvedDataType): Promise<Variable[]> {
+  try {
+    const keys: string[] = []
+    for (const library of await figma.teamLibrary.getAvailableLibraryVariableCollectionsAsync()) {
+      for (const v of await figma.teamLibrary.getVariablesInLibraryCollectionAsync(library.key))
+        if (v.resolvedType === type) keys.push(v.key)
+    }
+    // ponytail: capped so a huge design system cannot stall the import; matching
+    // misses whatever lies past the cap.
+    const imported = await Promise.all(
+      keys
+        .slice(0, MAX_LIBRARY_VARIABLES)
+        .map((key) => figma.variables.importVariableByKeyAsync(key).catch(() => null)),
+    )
+    return imported.filter((v): v is Variable => v !== null)
+  } catch {
+    return []
+  }
+}
+
+export interface Reused {
+  /** Nodes bound to variables or styles of this file. */
+  local: number
+  /** Nodes bound to variables of an enabled team library. */
+  library: number
+}
 
 /**
  * Binds nodes to colour variables, paint styles and text styles that already
- * exist in the file when their values match exactly. Matched refs are removed
- * from the arrays so nothing is created twice. Returns how many nodes it bound.
+ * exist in the file, and then to colour variables of enabled team libraries,
+ * when their values match (colours within one 8-bit step). Matched refs are
+ * removed from the arrays so nothing is created twice.
  */
-export async function applyLocalStyles(colors: ColorRef[], texts: TextRef[]): Promise<number> {
-  let bound = 0
-
-  const variableByColor = new Map<string, Variable>()
-  const collections = await figma.variables.getLocalVariableCollectionsAsync()
-  for (const variable of await figma.variables.getLocalVariablesAsync('COLOR')) {
-    const collection = collections.find((c) => c.id === variable.variableCollectionId)
-    const value = collection ? variable.valuesByMode[collection.defaultModeId] : undefined
-    if (value && typeof value === 'object' && 'r' in value) {
-      const rgba = value as RGBA
-      const key = colorKey({
-        r: rgba.r,
-        g: rgba.g,
-        b: rgba.b,
-        a: typeof rgba.a === 'number' ? rgba.a : 1,
-      })
-      if (!variableByColor.has(key)) variableByColor.set(key, variable)
-    }
+export async function applyLocalStyles(colors: ColorRef[], texts: TextRef[]): Promise<Reused> {
+  const reused: Reused = { local: 0, library: 0 }
+  const bindColor = (ref: ColorRef, variable: Variable) => {
+    ref.node.fills = [figma.variables.setBoundVariableForPaint(solid(ref.color), 'color', variable)]
   }
-  const styleByColor = new Map<string, PaintStyle>()
+
+  const variables = await colorCandidates(await figma.variables.getLocalVariablesAsync('COLOR'))
+  const styles: Candidate<PaintStyle>[] = []
   for (const style of await figma.getLocalPaintStylesAsync()) {
     const [paint] = style.paints
-    if (style.paints.length === 1 && paint?.type === 'SOLID') {
-      const key = colorKey({ ...paint.color, a: paint.opacity ?? 1 })
-      if (!styleByColor.has(key)) styleByColor.set(key, style)
-    }
+    if (style.paints.length === 1 && paint?.type === 'SOLID')
+      styles.push({ color: { ...paint.color, a: paint.opacity ?? 1 }, value: style })
   }
-  const remainingColors: ColorRef[] = []
+  let remaining: ColorRef[] = []
   for (const ref of colors) {
-    const key = colorKey(ref.color)
-    const variable = variableByColor.get(key)
-    const style = styleByColor.get(key)
-    if (variable) {
-      ref.node.fills = [
-        figma.variables.setBoundVariableForPaint(solid(ref.color), 'color', variable),
-      ]
-      bound++
-    } else if (style) {
-      await ref.node.setFillStyleIdAsync(style.id)
-      bound++
-    } else {
-      remainingColors.push(ref)
+    const variable = nearestColor(ref.color, variables)
+    const style = variable ? undefined : nearestColor(ref.color, styles)
+    if (variable) bindColor(ref, variable)
+    else if (style) await ref.node.setFillStyleIdAsync(style.id)
+    else {
+      remaining.push(ref)
+      continue
     }
+    reused.local++
   }
-  colors.splice(0, colors.length, ...remainingColors)
+  if (remaining.length) {
+    const library = await colorCandidates(await libraryVariables('COLOR'))
+    remaining = remaining.filter((ref) => {
+      const variable = nearestColor(ref.color, library)
+      if (variable) {
+        bindColor(ref, variable)
+        reused.library++
+      }
+      return !variable
+    })
+  }
+  colors.splice(0, colors.length, ...remaining)
 
   const textByKey = new Map<string, TextStyle_>()
   for (const style of await figma.getLocalTextStylesAsync()) {
     const lh = style.lineHeight.unit === 'PIXELS' ? style.lineHeight.value : null
-    textByKey.set(textKey(style.fontName, style.fontSize, lh), style)
+    textByKey.set(typeKey(style.fontName.family, style.fontName.style, style.fontSize, lh), style)
   }
   const remainingTexts: TextRef[] = []
   for (const ref of texts) {
-    const style = textByKey.get(textKey(ref.font, ref.style.fontSize, ref.style.lineHeight))
+    const style = textByKey.get(
+      typeKey(ref.font.family, ref.font.style, ref.style.fontSize, ref.style.lineHeight),
+    )
     if (style) {
       await ref.node.setTextStyleIdAsync(style.id)
-      bound++
+      reused.local++
     } else {
       remainingTexts.push(ref)
     }
   }
   texts.splice(0, texts.length, ...remainingTexts)
-  return bound
+  return reused
 }
 
 // Figma's TextStyle type clashes with the scene's; alias it locally.

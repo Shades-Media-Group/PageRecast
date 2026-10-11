@@ -11,6 +11,8 @@ Two surfaces share one design system:
 - **Chrome extension side panel** (Chromium browsers, Manifest V3), about 360–480 px wide, docked next to the page being captured.
 - **Figma plugin window** inside Figma desktop and Figma in the browser, a fixed iframe of about 360 × 600 px that Figma frames and lets the user resize.
 
+The website, pagerecast.shades.md, is written in English (the default, at `/`), French (`/fr/`), Romanian (`/ro/`), Russian (`/ru/`), Spanish (`/es/`) and Simplified Chinese (`/zh/`). Its language menu also offers twenty more languages through Google's machine translation, marked as such. The extension and plugin are in English.
+
 ## Stack
 
 Delegated by Cristian: TypeScript, Preact, Vite, Tailwind v4 tokens and Vitest, in a Yarn 1 workspace. This mirrors the Shades Media Group projects lms and nails-by-alynna.

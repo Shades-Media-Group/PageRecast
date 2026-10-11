@@ -24,6 +24,16 @@
 </p>
 
 <p align="center">
+  The website in
+  <a href="https://pagerecast.shades.md/">English</a> ·
+  <a href="https://pagerecast.shades.md/fr/">Français</a> ·
+  <a href="https://pagerecast.shades.md/ro/">Română</a> ·
+  <a href="https://pagerecast.shades.md/ru/">Русский</a> ·
+  <a href="https://pagerecast.shades.md/es/">Español</a> ·
+  <a href="https://pagerecast.shades.md/zh/">中文</a>
+</p>
+
+<p align="center">
   <a href="https://chromewebstore.google.com/detail/iidlcnlnejbmdihmbfiojpikhgaggkel"><b>Add to Chrome</b></a> ·
   <a href="https://www.figma.com/community/plugin/1690893819753299295"><b>Get the Figma plugin</b></a> ·
   <a href="https://github.com/Shades-Media-Group/PageRecast/releases/latest"><b>Latest release</b></a>

@@ -27,6 +27,8 @@ import {
   Icon,
   IconButton,
   InterfaceLanguage,
+  InterfaceTheme,
+  applyAppearance,
   Logo,
   Message,
   Progress,
@@ -178,6 +180,7 @@ export function App() {
   const [loaded, setLoaded] = useState(false)
   // The interface language: chosen in settings, else the browser's. Set before rendering.
   setLocale(resolveLocale(settings.interfaceLanguage))
+  applyAppearance(settings.appearance)
   /** The site whose remembered area, widths and theme are applied. */
   const [siteHost, setSiteHost] = useState<string | null>()
   const [pending, setPending] = useState<PendingCapture | null>(null)
@@ -504,7 +507,7 @@ export function App() {
             onClick={() => chrome.tabs.create({ url: DOCS_URL })}
           />
           <IconButton
-            icon="sliders"
+            icon="settings"
             label={t('panel.settings')}
             aria-pressed={settings.editing}
             onClick={() => update({ editing: !settings.editing })}
@@ -765,6 +768,10 @@ export function App() {
               <InterfaceLanguage
                 value={settings.interfaceLanguage}
                 onChange={(interfaceLanguage) => update({ interfaceLanguage })}
+              />
+              <InterfaceTheme
+                value={settings.appearance}
+                onChange={(appearance) => update({ appearance })}
               />
             </Section>
           </>

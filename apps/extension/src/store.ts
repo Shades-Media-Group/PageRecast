@@ -1,9 +1,12 @@
 import type { LocaleChoice } from '@pagerecast/i18n'
+import type { Appearance } from '@pagerecast/ui'
 import type { Scope, Theme } from '@pagerecast/scene'
 
 export interface Settings {
   /** The panel's own language; '' follows the browser. Not the page's language below. */
   interfaceLanguage: LocaleChoice
+  /** The panel's own theme: light unless dark or automatic is chosen. */
+  appearance: Appearance
   scope: Scope
   widths: number[]
   customWidths: number[]
@@ -35,6 +38,7 @@ export const PRESET_WIDTHS = [
 
 export const DEFAULT_SETTINGS: Settings = {
   interfaceLanguage: '',
+  appearance: 'light',
   scope: 'page',
   widths: [1440],
   customWidths: [],

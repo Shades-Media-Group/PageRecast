@@ -8,6 +8,15 @@ All notable changes to PageRecast are recorded here. The format follows
 
 ### Added
 
+- **Interface theme** in the settings of the extension and the plugin: light, dark, or automatic to follow the browser or Figma.
+
+### Changed
+
+- Both panels open in the light theme until you choose another.
+- The settings button is a gear.
+
+### Added
+
 - **Website languages:** Italian, Turkish, Hindi, Japanese and Traditional Chinese, for eleven in all.
 - **Display and accessibility panel on the website:** a 20 px dot in the corner opens it. Readers choose light, dark or the system theme, and can turn on larger text, more contrast, reduced motion, underlined links and easier reading.
   - Choices stay in the browser.

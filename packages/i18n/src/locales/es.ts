@@ -28,6 +28,8 @@ export const es: Messages = {
   'language.interface': 'Idioma de la interfaz',
   'language.page': 'Idioma de la página',
   'language.automatic': 'Automático',
+  'appearance.label': 'Tema de la interfaz',
+  'appearance.auto': 'Automático',
 
   'theme.light': 'Claro',
   'theme.dark': 'Oscuro',

@@ -28,6 +28,8 @@ import {
   Icon,
   IconButton,
   InterfaceLanguage,
+  InterfaceTheme,
+  applyAppearance,
   Logo,
   Message,
   Progress,
@@ -147,6 +149,7 @@ export function App() {
   const [agent, setAgent] = useState<AgentState>({ kind: 'off' })
   // The interface language: chosen in settings, else Figma's. Set before rendering.
   setLocale(resolveLocale(settings.interfaceLanguage))
+  applyAppearance(settings.appearance)
 
   const saveSettings = (next: Settings) => {
     setSettings(next)
@@ -366,7 +369,7 @@ export function App() {
           />
           <IconButton icon="help" label={t('common.help')} onClick={() => openUrl(DOCS_URL)} />
           <IconButton
-            icon="sliders"
+            icon="settings"
             label={t('plugin.settings')}
             aria-pressed={view === 'settings'}
             onClick={() => setView(view === 'settings' ? 'main' : 'settings')}
@@ -1204,6 +1207,10 @@ function SettingsView({
         <InterfaceLanguage
           value={settings.interfaceLanguage as LocaleChoice}
           onChange={(interfaceLanguage) => onChange({ ...settings, interfaceLanguage })}
+        />
+        <InterfaceTheme
+          value={settings.appearance}
+          onChange={(appearance) => onChange({ ...settings, appearance })}
         />
       </Section>
       <RememberedFonts

@@ -312,6 +312,38 @@ export function InterfaceLanguage({
   )
 }
 
+/** The panel's own theme. Light is the default; "auto" follows the system or Figma. */
+export type Appearance = 'light' | 'dark' | 'auto'
+
+/** Applies an appearance to the page; tokens.css reads `data-theme`. */
+export function applyAppearance(value: Appearance) {
+  document.documentElement.dataset.theme = value
+}
+
+export function InterfaceTheme({
+  value,
+  onChange,
+}: {
+  value: Appearance
+  onChange: (value: Appearance) => void
+}) {
+  return (
+    <div class="pr-prop pr-prop--wide">
+      <span>{t('appearance.label')}</span>
+      <Segmented
+        label={t('appearance.label')}
+        value={value}
+        onChange={onChange}
+        options={[
+          { value: 'light', label: t('theme.light') },
+          { value: 'dark', label: t('theme.dark') },
+          { value: 'auto', label: t('appearance.auto') },
+        ]}
+      />
+    </div>
+  )
+}
+
 /**
  * The frames of a capture, each a crop of the top of its own screenshot, at
  * their true relative widths on one baseline and captioned with width and

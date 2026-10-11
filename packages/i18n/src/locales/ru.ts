@@ -39,6 +39,8 @@ export const ru: Messages = {
   'language.interface': 'Язык интерфейса',
   'language.page': 'Язык страницы',
   'language.automatic': 'Автоматически',
+  'appearance.label': 'Тема интерфейса',
+  'appearance.auto': 'Авто',
 
   'theme.light': 'Светлая',
   'theme.dark': 'Тёмная',

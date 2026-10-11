@@ -33,6 +33,8 @@ export const ro: Messages = {
   'language.interface': 'Limba interfeței',
   'language.page': 'Limba paginii',
   'language.automatic': 'Automat',
+  'appearance.label': 'Tema interfeței',
+  'appearance.auto': 'Automată',
 
   'theme.light': 'Luminoasă',
   'theme.dark': 'Întunecată',

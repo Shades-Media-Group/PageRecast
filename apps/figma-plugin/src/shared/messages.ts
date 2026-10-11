@@ -44,6 +44,8 @@ export const DEFAULT_OPTIONS: ImportOptions = {
 export interface Settings {
   /** The plugin window's language, such as `ro`; '' follows Figma's (the browser's) language. */
   interfaceLanguage: string
+  /** The plugin window's theme: light unless dark or automatic is chosen. */
+  appearance: 'light' | 'dark' | 'auto'
   defaults: ImportOptions
   domains: Record<string, ImportOptions>
   /** Show the review screen before importing. Holding ⌘ or Ctrl shows it anyway. */
@@ -69,6 +71,7 @@ export interface WebCapture {
 
 export const DEFAULT_SETTINGS: Settings = {
   interfaceLanguage: '',
+  appearance: 'light',
   defaults: DEFAULT_OPTIONS,
   domains: {},
   review: true,

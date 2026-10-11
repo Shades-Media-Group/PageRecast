@@ -29,6 +29,8 @@ export const zhCN: Messages = {
   'language.interface': '界面语言',
   'language.page': '页面语言',
   'language.automatic': '自动',
+  'appearance.label': '界面主题',
+  'appearance.auto': '自动',
 
   'theme.light': '浅色',
   'theme.dark': '深色',

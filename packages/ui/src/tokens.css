@@ -1,6 +1,7 @@
 /*
  * PageRecast design tokens: Shades Media Group's ink, paper and red, set for
- * dense inspector panels. Light is the default. Dark follows the system in
+ * dense inspector panels. Light is the default. `data-theme` on <html> picks
+ * the appearance chosen in settings: "dark", or "auto" to follow the system in
  * Chrome and Figma's theme in the plugin (Figma adds `figma-dark` to <html>).
  */
 
@@ -92,7 +93,7 @@
 }
 
 @media (prefers-color-scheme: dark) {
-  :root:not(.figma-light) {
+  :root[data-theme='auto']:not(.figma-light) {
     color-scheme: dark;
     --bg: #0e0e10;
     --stage: #08080a;
@@ -111,7 +112,8 @@
   }
 }
 
-:root.figma-dark {
+:root[data-theme='dark'],
+:root[data-theme='auto'].figma-dark {
   color-scheme: dark;
   --bg: #0e0e10;
   --stage: #08080a;

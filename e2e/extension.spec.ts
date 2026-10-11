@@ -21,11 +21,19 @@ test.describe.configure({ mode: 'serial' })
 // Set PR_SHOTS to a folder to keep screenshots of the panel for design review.
 async function shot(panel: Page, name: string) {
   if (!process.env.PR_SHOTS) return
+  // The panel opens light; the dark shot uses the automatic theme in a dark browser.
+  const theme = await panel.evaluate(() => document.documentElement.dataset.theme)
   for (const scheme of ['light', 'dark'] as const) {
     await panel.emulateMedia({ colorScheme: scheme })
+    await panel.evaluate(
+      (t) => (document.documentElement.dataset.theme = t),
+      scheme === 'dark' ? 'auto' : theme,
+    )
+    await panel.waitForTimeout(250)
     await panel.screenshot({ path: `${process.env.PR_SHOTS}/extension-${name}-${scheme}.png` })
   }
   await panel.emulateMedia({ colorScheme: 'light' })
+  await panel.evaluate((t) => (document.documentElement.dataset.theme = t), theme)
 }
 
 async function openPanel() {

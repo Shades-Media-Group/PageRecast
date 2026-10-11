@@ -35,6 +35,8 @@ export const en = {
   'language.interface': 'Interface language',
   'language.page': 'Page language',
   'language.automatic': 'Automatic',
+  'appearance.label': 'Interface theme',
+  'appearance.auto': 'Automatic',
 
   'theme.light': 'Light',
   'theme.dark': 'Dark',

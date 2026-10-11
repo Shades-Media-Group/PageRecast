@@ -4,7 +4,7 @@ import { fileURLToPath } from 'node:url'
 import { encodeFile, SCENE_FORMAT, SCENE_VERSION, type RecastFile } from '@pagerecast/scene'
 import { captureLink } from '@pagerecast/capture'
 import { DICTIONARIES } from '@pagerecast/i18n'
-import { DEFAULT_SETTINGS } from '../apps/figma-plugin/src/shared/messages'
+import { DEFAULT_SETTINGS, type Settings } from '../apps/figma-plugin/src/shared/messages'
 import { startBridge, type Bridge } from '../packages/mcp/src/bridge'
 
 const root = fileURLToPath(new URL('..', import.meta.url))
@@ -18,7 +18,12 @@ test.beforeAll(() => {
 })
 
 /** The plugin UI as Figma frames it: 400 × 620, settings from the main thread. */
-async function open(page: Page, scheme: 'light' | 'dark' = 'light', settings = DEFAULT_SETTINGS) {
+async function open(
+  page: Page,
+  scheme: 'light' | 'dark' = 'light',
+  // Dark runs follow Figma's theme, which takes the automatic appearance.
+  settings: Settings = { ...DEFAULT_SETTINGS, appearance: scheme === 'dark' ? 'auto' : 'light' },
+) {
   const errors: string[] = []
   page.on('pageerror', (e) => errors.push(e.message))
   page.on('console', (m) => m.type() === 'error' && errors.push(m.text()))
@@ -51,6 +56,28 @@ async function shot(page: Page, name: string) {
   if (process.env.PR_SHOTS)
     await page.screenshot({ path: `${process.env.PR_SHOTS}/plugin-${name}.png` })
 }
+
+test('opens light in dark Figma, and settings switch it to dark', async ({ page }) => {
+  const background = () =>
+    page.evaluate(() => getComputedStyle(document.body).getPropertyValue('--bg').trim())
+  const errors = await open(page, 'dark', DEFAULT_SETTINGS)
+  const light = await background()
+  expect(await page.evaluate(() => document.documentElement.dataset.theme)).toBe('light')
+
+  await page.getByRole('button', { name: 'Settings' }).click()
+  await page
+    .getByRole('group', { name: 'Interface theme' })
+    .getByRole('button', { name: 'Dark' })
+    .click()
+  expect(await background()).not.toBe(light)
+  await page.waitForTimeout(300) // switches ease into their dark colours
+  await shot(page, 'settings-theme-dark')
+  const saved = (await sent(page)).filter((m) => m.type === 'settings').at(-1) as unknown as {
+    settings: { appearance: string }
+  }
+  expect(saved.settings.appearance).toBe('dark')
+  expect(errors).toEqual([])
+})
 
 test('every tab renders in light and dark without errors', async ({ page }) => {
   for (const scheme of ['light', 'dark'] as const) {

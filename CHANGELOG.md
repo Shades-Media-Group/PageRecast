@@ -6,6 +6,20 @@ All notable changes to PageRecast are recorded here. The format follows
 
 ## [Unreleased]
 
+## [1.2.0] - 2026-10-11
+
+PageRecast now speaks English, French, Romanian, Russian, Spanish and Chinese.
+
+### Added
+
+- **Six languages** in the extension and the Figma plugin. The interface follows your browser or Figma language, or pick one under Interface language in settings.
+- **Localised store listings:** the extension's name, summary and shortcuts appear in your language.
+
+### Changed
+
+- Russian uses Inter for Cyrillic, and Chinese uses the system CJK font, so every language renders in a matching typeface.
+- Labels and buttons make room for longer translations.
+
 ## [1.1.1] - 2026-10-11
 
 ### Fixed
@@ -70,7 +84,8 @@ plugin that rebuilds them as editable layers. Free, open source and local.
 - Remember import options per site, with defaults for new sites.
 - Place a locked screenshot beside each frame for comparison.
 
-[Unreleased]: https://github.com/Shades-Media-Group/PageRecast/compare/v1.1.1...HEAD
+[Unreleased]: https://github.com/Shades-Media-Group/PageRecast/compare/v1.2.0...HEAD
+[1.2.0]: https://github.com/Shades-Media-Group/PageRecast/compare/v1.1.1...v1.2.0
 [1.1.1]: https://github.com/Shades-Media-Group/PageRecast/compare/v1.1.0...v1.1.1
 [1.1.0]: https://github.com/Shades-Media-Group/PageRecast/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/Shades-Media-Group/PageRecast/releases/tag/v1.0.0

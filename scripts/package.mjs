@@ -1,5 +1,5 @@
-// Packs the built apps into the zips that go to the Chrome Web Store, the
-// Figma Community and GitHub Releases. Run `yarn build` first.
+// Packs the built apps into the zips that go to the Chrome Web Store,
+// addons.mozilla.org, the Figma Community and GitHub Releases. Run `yarn build` first.
 import { execFileSync } from 'node:child_process'
 import { existsSync, mkdirSync, readFileSync, rmSync } from 'node:fs'
 import { join } from 'node:path'
@@ -9,7 +9,11 @@ const root = fileURLToPath(new URL('..', import.meta.url))
 const { version } = JSON.parse(readFileSync(join(root, 'package.json'), 'utf8'))
 const out = join(root, 'release')
 
-for (const required of ['apps/extension/dist/manifest.json', 'apps/figma-plugin/dist/code.js']) {
+for (const required of [
+  'apps/extension/dist/manifest.json',
+  'apps/extension/dist-firefox/manifest.json',
+  'apps/figma-plugin/dist/code.js',
+]) {
   if (!existsSync(join(root, required))) {
     console.error(`Missing ${required}. Run "yarn build" first.`)
     process.exit(1)
@@ -26,6 +30,7 @@ const zip = (name, cwd, files) => {
 }
 
 zip(`pagerecast-chrome-extension-${version}.zip`, join(root, 'apps/extension/dist'), ['.'])
+zip(`pagerecast-firefox-extension-${version}.zip`, join(root, 'apps/extension/dist-firefox'), ['.'])
 zip(`pagerecast-figma-plugin-${version}.zip`, join(root, 'apps/figma-plugin'), [
   'manifest.json',
   'dist',

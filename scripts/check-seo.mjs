@@ -9,7 +9,19 @@ import { join, relative, sep } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const SITE = 'https://pagerecast.shades.md'
-const LANGS = { en: 'en', fr: 'fr', ro: 'ro', ru: 'ru', es: 'es', zh: 'zh-Hans' }
+const LANGS = {
+  en: 'en',
+  fr: 'fr',
+  ro: 'ro',
+  ru: 'ru',
+  es: 'es',
+  it: 'it',
+  tr: 'tr',
+  hi: 'hi',
+  ja: 'ja',
+  zh: 'zh-Hans',
+  'zh-hant': 'zh-Hant',
+}
 const HREFLANGS = [...Object.values(LANGS), 'x-default'].sort()
 // Kept out of every public file; spelled in pieces so this file doesn't name it either.
 const BANNED = [new RegExp(['html', 'to', 'design'].join('\\.'), 'i')]
@@ -71,7 +83,7 @@ function checkJsonLd(where, html, path) {
       if (node[field] === undefined || node[field] === '' || node[field]?.length === 0)
         fail(where, `${node['@type']} has no ${field}`)
   }
-  const isHome = /^\/([a-z]{2}\/)?$/.test(path)
+  const isHome = /^\/([a-z]{2}(-hant)?\/)?$/.test(path)
   const expected = isHome
     ? ['Organization', 'WebSite', 'WebPage', 'SoftwareApplication', 'HowTo', 'FAQPage']
     : ['Organization', 'WebSite', 'WebPage', 'BreadcrumbList']
@@ -137,8 +149,8 @@ for (const file of pages) {
   if (meta(html, 'property', 'og:url')[0] !== `${SITE}${path}`)
     fail(where, 'og:url is not this page')
   if (!meta(html, 'property', 'og:locale')[0]) fail(where, 'no og:locale')
-  if (meta(html, 'property', 'og:locale:alternate').length !== 5)
-    fail(where, 'og:locale:alternate does not list the other five languages')
+  if (meta(html, 'property', 'og:locale:alternate').length !== Object.keys(LANGS).length - 1)
+    fail(where, 'og:locale:alternate does not list every other language')
   if (!meta(html, 'property', 'og:image')[0]) fail(where, 'no og:image')
   if (!meta(html, 'name', 'twitter:card')[0]) fail(where, 'no twitter:card')
 

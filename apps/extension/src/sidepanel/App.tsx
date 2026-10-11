@@ -32,9 +32,12 @@ import {
   LANGUAGES,
   listHistory,
   loadSettings,
+  loadSite,
   PRESET_WIDTHS,
   removeHistory,
   saveSettings,
+  saveSite,
+  SITE_KEYS,
   type PendingCapture,
   type Settings,
 } from '../store'
@@ -124,6 +127,8 @@ const plural = (n: number, word: string) => `${n.toLocaleString()} ${word}${n ==
 export function App() {
   const [settings, setSettings] = useState<Settings>(DEFAULT_SETTINGS)
   const [loaded, setLoaded] = useState(false)
+  /** The site whose remembered area, widths and theme are applied. */
+  const [siteHost, setSiteHost] = useState<string | null>()
   const [pending, setPending] = useState<PendingCapture | null>(null)
   const [tab, setTab] = useState<Tab | null>(null)
   const [status, setStatus] = useState<Status>({ kind: 'idle' })
@@ -163,6 +168,27 @@ export function App() {
     }
   }, [refreshTab])
 
+  const host = tab?.capturable ? hostOf(tab.url) : null
+
+  // Each site keeps the area, widths and theme last used on it; new sites start from the last used.
+  useEffect(() => {
+    if (!loaded) return
+    let live = true
+    void Promise.all([loadSettings(), host ? loadSite(host) : {}]).then(([global, site]) => {
+      if (!live) return
+      setSettings((s) => {
+        const next = { ...s, scope: global.scope, widths: global.widths, theme: global.theme }
+        Object.assign(next, site)
+        const known = [...PRESET_WIDTHS.map((p) => p.width), ...s.customWidths]
+        return { ...next, widths: next.widths.filter((w) => known.includes(w)) }
+      })
+      setSiteHost(host)
+    })
+    return () => {
+      live = false
+    }
+  }, [loaded, host])
+
   // Captures asked for from the right-click menu or the shortcut, for this window only.
   useEffect(() => {
     let windowId: number | undefined
@@ -191,6 +217,8 @@ export function App() {
     setSettings(next)
     if (!('editing' in patch)) setLatest(null)
     void saveSettings(next)
+    if (host && SITE_KEYS.some((key) => key in patch))
+      void saveSite(host, { scope: next.scope, widths: next.widths, theme: next.theme })
   }
 
   const toggleWidth = (width: number) => {
@@ -282,6 +310,12 @@ export function App() {
       const next = { ...settings, seenDebuggerNote: true, editing: false }
       setSettings(next)
       void saveSettings(next)
+      if (host && !targetUrl)
+        void saveSite(host, {
+          scope: settings.scope,
+          widths: settings.widths,
+          theme: settings.theme,
+        })
       setLatest(entry.id)
       setUrl('')
       setStatus({ kind: 'idle' })
@@ -325,7 +359,7 @@ export function App() {
   }
 
   useEffect(() => {
-    if (!pending || busy || !loaded || tab?.id !== pending.tabId) return
+    if (!pending || busy || !loaded || siteHost !== host || tab?.id !== pending.tabId) return
     setPending(null)
     // "Capture this page" keeps a saved visible-area choice; picking always picks.
     const scope =

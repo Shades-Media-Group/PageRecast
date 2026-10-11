@@ -68,6 +68,20 @@ export function saveSettings(settings: Settings) {
   return chrome.storage.local.set({ settings })
 }
 
+/** Area, widths and theme are remembered per site; everything else is global. */
+export type SitePrefs = Pick<Settings, 'scope' | 'widths' | 'theme'>
+export const SITE_KEYS = ['scope', 'widths', 'theme'] as const
+
+export async function loadSite(host: string): Promise<Partial<SitePrefs>> {
+  const { sites } = await chrome.storage.local.get('sites')
+  return (sites as Record<string, SitePrefs> | undefined)?.[host] ?? {}
+}
+
+export async function saveSite(host: string, prefs: SitePrefs) {
+  const { sites } = await chrome.storage.local.get('sites')
+  await chrome.storage.local.set({ sites: { ...(sites as object | undefined), [host]: prefs } })
+}
+
 /** A capture asked for from the right-click menu or a shortcut, waiting for the panel. */
 export interface PendingCapture {
   scope: 'page' | 'element'

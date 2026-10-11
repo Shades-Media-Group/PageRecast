@@ -70,6 +70,8 @@
 
   --focus: 0 0 0 1px var(--bg), 0 0 0 3px rgba(224, 0, 10, 0.5);
   --lift: 0 1px 2px rgba(10, 10, 11, 0.06), 0 6px 16px -6px rgba(10, 10, 11, 0.18);
+  /* The primary pill sits on a soft shadow of its own red; on dark it is a plain shadow. */
+  --primary-lift: 0 1px 2px rgba(120, 0, 5, 0.18), 0 6px 14px -8px rgba(224, 0, 10, 0.55);
 
   --row: 32px;
   --pad: 16px;
@@ -109,6 +111,7 @@
     --warning: #f5b04a;
     --error: #ff6b70;
     --lift: 0 1px 2px rgba(0, 0, 0, 0.5), 0 8px 20px -8px rgba(0, 0, 0, 0.8);
+    --primary-lift: 0 1px 2px rgba(0, 0, 0, 0.5), 0 6px 14px -8px rgba(0, 0, 0, 0.8);
   }
 }
 
@@ -129,6 +132,7 @@
   --warning: #f5b04a;
   --error: #ff6b70;
   --lift: 0 1px 2px rgba(0, 0, 0, 0.5), 0 8px 20px -8px rgba(0, 0, 0, 0.8);
+  --primary-lift: 0 1px 2px rgba(0, 0, 0, 0.5), 0 6px 14px -8px rgba(0, 0, 0, 0.8);
 }
 
 *,

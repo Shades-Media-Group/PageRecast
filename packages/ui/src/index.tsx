@@ -180,11 +180,53 @@ export function Segmented<T extends string>({
   return (
     <div class="pr-segmented" role="group" aria-label={label}>
       {options.map((o) => (
-        <button type="button" aria-pressed={o.value === value} onClick={() => onChange(o.value)}>
+        <button
+          type="button"
+          aria-pressed={o.value === value}
+          title={o.label}
+          onClick={() => onChange(o.value)}
+        >
           {o.icon && <Icon name={o.icon} size={14} />}
-          {o.label}
+          <span class="truncate">{o.label}</span>
         </button>
       ))}
+    </div>
+  )
+}
+
+export interface Chip {
+  label: ComponentChildren
+  /** The chip's accessible name and tooltip, when the label alone is not enough. */
+  title?: string
+  pressed: boolean
+  onClick: () => void
+}
+
+/** Several choices at once: pill chips, the chosen ones in ink. */
+export function Chips({
+  label,
+  items,
+  children,
+}: {
+  label: string
+  items: Chip[]
+  /** More controls after the chips, such as a way to remove one. */
+  children?: ComponentChildren
+}) {
+  return (
+    <div class="pr-chips" role="group" aria-label={label}>
+      {items.map((item) => (
+        <button
+          type="button"
+          class="pr-chip"
+          aria-pressed={item.pressed}
+          title={item.title}
+          onClick={item.onClick}
+        >
+          {item.label}
+        </button>
+      ))}
+      {children}
     </div>
   )
 }
@@ -393,5 +435,33 @@ export function FrameLineup({
         </div>
       ))}
     </div>
+  )
+}
+
+/**
+ * Reset all preferences: off while nothing differs from the defaults, and
+ * two clicks, so one stray click never wipes a setup.
+ */
+export function ResetPreferences({ changed, onReset }: { changed: boolean; onReset: () => void }) {
+  const [confirming, setConfirming] = useState(false)
+  return (
+    <Section>
+      <div class="reset">
+        <p class="hint">{t('reset.saved')}</p>
+        <button
+          type="button"
+          class="text-button text-button--danger"
+          disabled={!changed}
+          onClick={() => {
+            if (!confirming) return setConfirming(true)
+            setConfirming(false)
+            onReset()
+          }}
+          onBlur={() => setConfirming(false)}
+        >
+          {confirming ? t('reset.confirm') : t('reset.label')}
+        </button>
+      </div>
+    </Section>
   )
 }

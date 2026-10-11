@@ -49,6 +49,8 @@ export interface WalkOptions {
   maxNodes?: number
   /** Record hover, focus and active looks of interactive elements. Off by default. */
   states?: boolean
+  /** Page scope only: cut the capture off at this height, in CSS pixels. */
+  maxHeight?: number
 }
 
 export interface WalkResult {
@@ -201,7 +203,12 @@ export function walk(doc: Document, options: WalkOptions): WalkResult {
   const pageWidth = overflows ? docEl.clientWidth : win.innerWidth
   const pageHeight = Math.max(docEl.scrollHeight, doc.body?.scrollHeight ?? 0, win.innerHeight)
 
-  let origin = { x: 0, y: 0, width: pageWidth, height: pageHeight }
+  // Very long pages can be cut off; everything starting below the cut is left out.
+  const cut =
+    options.scope === 'page' && options.maxHeight && options.maxHeight < pageHeight
+      ? options.maxHeight
+      : null
+  let origin = { x: 0, y: 0, width: pageWidth, height: cut ?? pageHeight }
   if (options.scope === 'viewport')
     origin = { x: scrollX, y: scrollY, width: win.innerWidth, height: win.innerHeight }
   if (options.scope === 'element' && options.target) {
@@ -295,7 +302,7 @@ export function walk(doc: Document, options: WalkOptions): WalkResult {
   }
 
   function intersects(box: Box): boolean {
-    if (options.scope === 'page') return true
+    if (options.scope === 'page') return cut === null || box.y < cut
     return (
       box.x < origin.width &&
       box.y < origin.height &&
@@ -1192,6 +1199,15 @@ export function walk(doc: Document, options: WalkOptions): WalkResult {
     }
   }
   const rootFrame = root as FrameNode
+  if (cut !== null) {
+    const below = (node: SceneNode): boolean => node.y >= cut
+    const prune = (frame: FrameNode) => {
+      frame.children = frame.children.filter((child) => !below(child))
+      for (const child of frame.children) if (child.type === 'frame') prune(child)
+    }
+    prune(rootFrame)
+    rasters.splice(0, rasters.length, ...rasters.filter((r) => r.y < cut))
+  }
   rootFrame.x = 0
   rootFrame.y = 0
   rootFrame.width = origin.width

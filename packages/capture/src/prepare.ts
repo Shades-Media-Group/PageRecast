@@ -1,8 +1,10 @@
-import { parseContent } from './css'
+import { parseContent, splitTopLevel } from './css'
 
 export interface PrepareOptions {
   hideOverlays: boolean
   freezeAnimations: boolean
+  /** CSS selectors, comma separated, of elements to leave out of the capture. */
+  hide?: string
 }
 
 const CONSENT_SELECTORS = [
@@ -79,8 +81,15 @@ export function prepare(doc: Document, options: PrepareOptions): () => void {
   doc.head.appendChild(style)
   undo.push(() => style.remove())
 
+  const hidden = new Set<HTMLElement>()
+  for (const selector of splitTopLevel(options.hide ?? '')) {
+    try {
+      for (const el of Array.from(doc.querySelectorAll<HTMLElement>(selector))) hidden.add(el)
+    } catch {
+      // Not a valid selector: the panel already says so; the rest still apply.
+    }
+  }
   if (options.hideOverlays) {
-    const hidden = new Set<HTMLElement>()
     for (const selector of CONSENT_SELECTORS) {
       for (const el of Array.from(doc.querySelectorAll<HTMLElement>(selector))) hidden.add(el)
     }
@@ -93,12 +102,6 @@ export function prepare(doc: Document, options: PrepareOptions): () => void {
         hidden.add(el)
       }
     }
-    for (const el of hidden) {
-      const previous = el.style.getPropertyValue('display')
-      const priority = el.style.getPropertyPriority('display')
-      el.style.setProperty('display', 'none', 'important')
-      undo.push(() => el.style.setProperty('display', previous, priority))
-    }
     // Consent dialogs often lock scrolling on the page behind them.
     for (const el of [doc.documentElement, doc.body]) {
       if (win.getComputedStyle(el).overflowY === 'hidden') {
@@ -107,6 +110,13 @@ export function prepare(doc: Document, options: PrepareOptions): () => void {
         undo.push(() => (el.style.overflow = previous))
       }
     }
+  }
+
+  for (const el of hidden) {
+    const previous = el.style.getPropertyValue('display')
+    const priority = el.style.getPropertyPriority('display')
+    el.style.setProperty('display', 'none', 'important')
+    undo.push(() => el.style.setProperty('display', previous, priority))
   }
 
   undo.push(materializePseudoElements(doc))

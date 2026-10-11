@@ -166,3 +166,36 @@ test('records interaction states only when asked', async ({ page }) => {
   // The page is left as it was.
   expect(await page.locator('[data-pr-state], style[data-pagerecast-states]').count()).toBe(0)
 })
+
+test('leaves out hidden selectors and cuts the page at a height', async ({ page }) => {
+  await page.goto(fixture('kitchen-sink.html'))
+  await page.addScriptTag({ content: bundle })
+  const result = await page.evaluate(() => {
+    const api = window.__pagerecast!
+    const restore = api.prepare(document, {
+      hideOverlays: false,
+      freezeAnimations: true,
+      hide: '.badge, ::nonsense, .gradient-text',
+    })
+    try {
+      return api.walk(document, { scope: 'page', maxHeight: 500 })
+    } finally {
+      restore()
+    }
+  })
+  const nodes = all(result.root)
+  const text = nodes
+    .filter((n): n is TextNode => n.type === 'text')
+    .map((t) => t.runs.map((r) => r.text).join(''))
+  // An invalid selector in the list does not stop the others.
+  expect(text.some((t) => t.startsWith('Pseudo element'))).toBe(false)
+  expect(text).not.toContain('Gradient headline')
+  expect(text).toContain('Hello bold world')
+  // Nothing starts below the cut, and the frame stops there.
+  expect(result.height).toBe(500)
+  expect(result.root.height).toBe(500)
+  expect(nodes.every((n) => n.y < 500)).toBe(true)
+  expect(text).not.toContain('Revealed on scroll')
+  // The page is put back.
+  expect(await page.locator('.badge').isVisible()).toBe(true)
+})

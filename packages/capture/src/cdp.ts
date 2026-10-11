@@ -25,6 +25,12 @@ export interface CdpCaptureOptions {
   language: string
   /** Desktop viewport height; defaults to the window's current height. */
   height?: number
+  /** CSS selectors, comma separated, of elements to leave out. */
+  hide?: string
+  /** Milliseconds to wait at each width before reading the page. */
+  delay?: number
+  /** Full-page captures stop at this height in CSS pixels. */
+  maxHeight?: number
   /** The capture bundle's source. */
   bundle: string
   version: string
@@ -222,17 +228,21 @@ export async function captureOverCdp(
         report('loading lazy content')
         await evaluate(cdp, 'window.__pagerecast.preload(document)', true)
       }
+      if (options.delay) {
+        report('waiting for the page')
+        await wait(options.delay)
+      }
       report('reading layout')
       await evaluate(
         cdp,
         `(() => { const api = window.__pagerecast; api.restore?.(); api.restore = api.prepare(document, ${JSON.stringify(
-          { hideOverlays: options.hideOverlays, freezeAnimations: true },
+          { hideOverlays: options.hideOverlays, freezeAnimations: true, hide: options.hide },
         )}); window.scrollTo(0, 0) })()`,
       )
       await wait(60)
       const walk = await evaluate<WalkResult>(
         cdp,
-        `window.__pagerecast.walk(document, { scope: ${JSON.stringify(options.scope)}, target: document.querySelector('[data-pagerecast-target]') })`,
+        `window.__pagerecast.walk(document, { scope: ${JSON.stringify(options.scope)}, target: document.querySelector('[data-pagerecast-target]'), maxHeight: ${options.maxHeight ?? 0} })`,
       )
 
       report('saving images')

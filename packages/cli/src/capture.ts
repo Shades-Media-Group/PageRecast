@@ -7,7 +7,16 @@ declare const __VERSION__: string
 
 export type CaptureSettings = Pick<
   CdpCaptureOptions,
-  'scope' | 'widths' | 'themes' | 'hideOverlays' | 'preload' | 'screenshot' | 'language'
+  | 'scope'
+  | 'widths'
+  | 'themes'
+  | 'hideOverlays'
+  | 'preload'
+  | 'screenshot'
+  | 'language'
+  | 'hide'
+  | 'delay'
+  | 'maxHeight'
 > & { browser?: string }
 
 // The window the page opens in; desktop widths keep its height.

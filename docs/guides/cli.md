@@ -29,6 +29,9 @@ Each width and theme becomes one capture in the file, with a screenshot referenc
 - `--scope page` or `viewport`: the whole page or the first screen. Picking an element needs the extension.
 - `--language de-DE`: reloads the page once with that browser language.
 - `--no-preload`, `--no-hide-overlays`, `--no-screenshot`: turn off scrolling for lazy content, hiding consent banners and the screenshot reference.
+- `--hide ".chat-widget, .promo-bar"`: leave out every element matching these CSS selectors, such as chat bubbles or promotion bars.
+- `--wait 2000`: wait this many milliseconds at each width before reading the page, for content that arrives late.
+- `--max-height 10000`: cut full-page captures off at this height, for very long pages.
 
 The command checks the file with the same decoder the plugin uses before writing it. Import it by dropping it on the plugin window.
 

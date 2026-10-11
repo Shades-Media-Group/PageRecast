@@ -26,6 +26,9 @@ Capture options
   --no-preload             Skip scrolling through the page to load lazy content
   --no-hide-overlays       Keep cookie and consent banners (hidden by default)
   --no-screenshot          Leave out the screenshot reference
+  --hide ".chat, .promo"   Leave out elements matching these CSS selectors
+  --wait 2000              Wait this many milliseconds at each width before reading the page
+  --max-height 10000       Cut full-page captures off at this height in pixels
   --browser <path>         Chrome or Chromium to run (default: Playwright's Chromium, then Chrome)
 
   -h, --help               Show this help
@@ -50,6 +53,9 @@ const { values, positionals } = (() => {
         'hide-overlays': { type: 'boolean', default: true },
         screenshot: { type: 'boolean', default: true },
         browser: { type: 'string' },
+        hide: { type: 'string', default: '' },
+        wait: { type: 'string', default: '0' },
+        'max-height': { type: 'string', default: '0' },
         help: { type: 'boolean', short: 'h' },
         version: { type: 'boolean', short: 'v' },
       },
@@ -77,7 +83,16 @@ function settings(defaultTheme: 'light' | 'both'): CaptureSettings {
   if (!themes) throw new UsageError('--theme is light, dark or both.')
   if (values.scope !== 'page' && values.scope !== 'viewport')
     throw new UsageError('--scope is page or viewport.')
+  const delay = Number(values.wait)
+  if (!Number.isInteger(delay) || delay < 0 || delay > 60_000)
+    throw new UsageError('--wait takes milliseconds from 0 to 60000, such as 2000.')
+  const maxHeight = Number(values['max-height'])
+  if (!Number.isInteger(maxHeight) || maxHeight < 0)
+    throw new UsageError('--max-height takes a whole number of pixels, such as 10000.')
   return {
+    hide: values.hide,
+    delay,
+    maxHeight,
     widths: [...new Set(widths)],
     themes,
     scope: values.scope,

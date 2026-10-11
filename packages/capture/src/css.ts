@@ -1,4 +1,4 @@
-import type { Color, GradientStop, Paint, Shadow } from '@pagerecast/scene'
+import type { Color, GradientStop, ImagePosition, Paint, Shadow } from '@pagerecast/scene'
 
 /** Splits on `separator` only outside parentheses and quotes. */
 export function splitTopLevel(value: string, separator = ','): string[] {
@@ -313,4 +313,44 @@ export function parseContent(value: string): string | null {
       .replace(/\\(.)/g, '$1')
   }
   return text
+}
+
+const POSITION_KEYWORDS: Record<string, number> = {
+  left: 0,
+  top: 0,
+  center: 0.5,
+  right: 1,
+  bottom: 1,
+}
+
+/**
+ * One axis of `object-position` or `background-position` as a fraction of the
+ * free space (box minus drawn image): `50%` is 0.5, `0` is 0. Pixel offsets
+ * need the free space; without it (or for `calc()`) the axis stays centred.
+ */
+function positionAxis(token: string | undefined, free: number | null): number {
+  if (!token) return 0.5
+  const value = token.trim().toLowerCase()
+  if (value in POSITION_KEYWORDS) return POSITION_KEYWORDS[value]!
+  const percent = /^(-?[\d.]+)%$/.exec(value)
+  if (percent) return Number(percent[1]) / 100
+  const px = /^(-?[\d.]+)px$/.exec(value)
+  if (px && free) return Number(px[1]) / free
+  return 0.5
+}
+
+/**
+ * Where an image sits in its box, from computed `x` and `y` position values,
+ * or undefined when it is centred (the default the importer already draws).
+ * `free` is the box size minus the drawn image size per axis, when known.
+ */
+export function parseImagePosition(
+  x: string,
+  y: string,
+  free: [number | null, number | null] = [null, null],
+): ImagePosition | undefined {
+  const position: ImagePosition = [positionAxis(x, free[0]), positionAxis(y, free[1])]
+  const round = (v: number) => Math.round(v * 10000) / 10000 || 0
+  if (position.every((v) => Math.abs(v - 0.5) < 0.0005)) return undefined
+  return [round(position[0]), round(position[1])]
 }

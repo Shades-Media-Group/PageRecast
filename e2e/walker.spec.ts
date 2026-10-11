@@ -83,6 +83,12 @@ test('captures the kitchen sink faithfully', async ({ page }) => {
   // Images, SVGs with resolved currentColor, and inputs.
   const image = nodes.find((n) => n.type === 'image')!
   expect(image).toMatchObject({ width: 40, height: 40, name: 'Image "Red pixel"' })
+  expect(image).not.toHaveProperty('position')
+  // object-position and background-position keep the visible crop.
+  const cropped = nodes.find((n) => n.type === 'image' && n.name.includes('Cropped'))
+  expect(cropped).toMatchObject({ fit: 'fill', position: [0.5, 0] })
+  const cover = nodes.find((n) => n.type === 'frame' && n.html === 'div.cover') as FrameNode
+  expect(cover.fills.at(-1)).toMatchObject({ type: 'image', fit: 'fill', position: [0.5, 1] })
   const svg = nodes.find((n) => n.type === 'svg')!
   const markup = (result.assets[(svg as { asset: string }).asset] as { markup: string }).markup
   expect(markup).toContain('rgb(0, 128, 255)')

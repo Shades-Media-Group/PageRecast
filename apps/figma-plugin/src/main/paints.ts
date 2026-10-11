@@ -1,6 +1,14 @@
-import type { BlendMode as SceneBlend, Color, ImageFit, Paint, Shadow } from '@pagerecast/scene'
+import type {
+  BlendMode as SceneBlend,
+  Color,
+  ImageFit,
+  ImagePosition,
+  Paint,
+  Shadow,
+} from '@pagerecast/scene'
 import {
   angularGradientTransform,
+  imageCropTransform,
   linearGradientTransform,
   radialGradientTransform,
 } from './geometry'
@@ -23,12 +31,36 @@ export function imagePaint(hash: string, fit: ImageFit, opacity = 1): ImagePaint
   return { type: 'IMAGE', imageHash: hash, scaleMode: SCALE[fit], opacity }
 }
 
+/** Pixel sizes of images that need them for cropping, keyed by asset id. */
+export type ImageSizes = Map<string, { width: number; height: number }>
+
+/**
+ * An image paint that keeps the page's crop: a cover or contain image with an
+ * off-centre position becomes a CROP paint showing the same part of the image.
+ * Centred images keep FILL and FIT, which already match.
+ */
+export function placedImage(
+  hash: string,
+  fit: ImageFit,
+  box: { width: number; height: number },
+  position?: ImagePosition,
+  size?: { width: number; height: number },
+  opacity = 1,
+): ImagePaint {
+  if (!position || !size || (fit !== 'fill' && fit !== 'fit')) return imagePaint(hash, fit, opacity)
+  return {
+    ...imagePaint(hash, 'crop', opacity),
+    imageTransform: imageCropTransform(fit, box, size, position),
+  }
+}
+
 /** Converts scene paints; image paints need their hash from `images`. */
 export function toPaints(
   paints: Paint[],
   width: number,
   height: number,
   images: Map<string, string>,
+  sizes?: ImageSizes,
 ): Paint_[] {
   const out: Paint_[] = []
   for (const paint of paints) {
@@ -59,7 +91,17 @@ export function toPaints(
         break
       case 'image': {
         const hash = images.get(paint.asset)
-        if (hash) out.push(imagePaint(hash, paint.fit, paint.opacity ?? 1))
+        if (hash)
+          out.push(
+            placedImage(
+              hash,
+              paint.fit,
+              { width, height },
+              paint.position,
+              sizes?.get(paint.asset),
+              paint.opacity ?? 1,
+            ),
+          )
         break
       }
     }

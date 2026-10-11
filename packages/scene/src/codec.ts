@@ -89,7 +89,7 @@ export function validate(value: unknown): RecastFile {
     throw new SceneError('This capture is empty.')
   }
   if (!file.assets || typeof file.assets !== 'object') file.assets = {}
-  for (const capture of file.captures) if (capture?.root) checkStates(capture.root)
+  for (const capture of file.captures) if (capture?.root) checkNode(capture.root)
   return file as RecastFile
 }
 
@@ -107,9 +107,25 @@ function validOverride(o: unknown): boolean {
   )
 }
 
-/** Drops malformed `states` instead of failing the import: the layers still build. */
-function checkStates(node: SceneNode) {
+const validPosition = (p: unknown) =>
+  Array.isArray(p) && p.length === 2 && p.every((v) => Number.isFinite(v))
+
+/** Drops a malformed image `position`; the image is then centred, as before the field existed. */
+function checkPosition(holder: { position?: unknown } | undefined) {
+  if (holder && holder.position !== undefined && !validPosition(holder.position))
+    delete holder.position
+}
+
+/**
+ * Drops malformed optional fields (`states`, image `position`) instead of
+ * failing the import: the layers still build.
+ */
+function checkNode(node: SceneNode) {
+  if (node.type === 'image') checkPosition(node)
+  if (node.type === 'text' && node.paint?.type === 'image') checkPosition(node.paint)
   if (node.type !== 'frame') return
+  if (Array.isArray(node.fills))
+    for (const paint of node.fills) if (paint?.type === 'image') checkPosition(paint)
   const states: unknown = node.states
   if (
     states !== undefined &&
@@ -122,5 +138,5 @@ function checkStates(node: SceneNode) {
     )
   )
     delete node.states
-  if (Array.isArray(node.children)) node.children.forEach(checkStates)
+  if (Array.isArray(node.children)) node.children.forEach(checkNode)
 }

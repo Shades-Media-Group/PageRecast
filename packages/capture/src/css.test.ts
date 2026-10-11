@@ -6,6 +6,7 @@ import {
   parseColor,
   parseContent,
   parseGradient,
+  parseImagePosition,
   parseShadows,
   parseTransform,
   parseUrl,
@@ -142,5 +143,21 @@ describe('small parsers', () => {
     expect(parseContent('"\\201C"')).toBe('\u201C')
     expect(parseContent('none')).toBeNull()
     expect(parseContent('""')).toBe('')
+  })
+})
+
+describe('parseImagePosition', () => {
+  it('reads percentages and keywords, and leaves the centre out', () => {
+    expect(parseImagePosition('50%', '0%')).toEqual([0.5, 0])
+    expect(parseImagePosition('right', 'bottom')).toEqual([1, 1])
+    expect(parseImagePosition('50%', '50%')).toBeUndefined()
+    expect(parseImagePosition('center', 'center')).toBeUndefined()
+  })
+
+  it('turns pixel offsets into a share of the free space', () => {
+    // A 400 px image in a 300 px box leaves -100 px: -20px is 20 % of the way.
+    expect(parseImagePosition('-20px', '0px', [-100, 0])).toEqual([0.2, 0.5])
+    // Unknown free space keeps the axis centred.
+    expect(parseImagePosition('10px', '0%', [null, null])).toEqual([0.5, 0])
   })
 })

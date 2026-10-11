@@ -88,4 +88,37 @@ describe('scene codec', () => {
     expect(kept!.states).toEqual(button.states)
     expect(dropped!.states).toBeUndefined()
   })
+
+  it('keeps valid image positions and drops malformed ones', async () => {
+    const image = (id: string, position: unknown) => ({
+      type: 'image' as const,
+      id,
+      key: `html/img${id}`,
+      name: 'Image',
+      tag: 'img',
+      x: 0,
+      y: 0,
+      width: 10,
+      height: 10,
+      asset: 'a1',
+      fit: 'fill' as const,
+      position: position as [number, number],
+    })
+    const withImages = structuredClone(file)
+    withImages.captures[0]!.root.fills = [
+      {
+        type: 'image',
+        asset: 'a1',
+        fit: 'fill',
+        position: ['top', 0] as unknown as [number, number],
+      },
+    ]
+    withImages.captures[0]!.root.children = [image('1', [0.5, 0]), image('2', [1])]
+    const decoded = await decode(JSON.stringify(withImages))
+    const root = decoded.captures[0]!.root
+    const [kept, dropped] = root.children as ReturnType<typeof image>[]
+    expect(kept!.position).toEqual([0.5, 0])
+    expect(dropped!.position).toBeUndefined()
+    expect(root.fills[0]).toEqual({ type: 'image', asset: 'a1', fit: 'fill' })
+  })
 })

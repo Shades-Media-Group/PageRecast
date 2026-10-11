@@ -78,6 +78,37 @@ export function angularGradientTransform(angle: number, center: [number, number]
 }
 
 /**
+ * The `imageTransform` of a CROP image paint that shows an image the way CSS
+ * draws it with `object-fit: cover` (`fill`) or `contain` (`fit`) and an
+ * `object-position` of `position` (fractions of the free space).
+ *
+ * Figma's crop transform maps the layer's normalised (0–1) space into the
+ * image's normalised space: its scale is the share of the image the layer
+ * shows, its offset where that window starts.
+ */
+export function imageCropTransform(
+  fit: 'fill' | 'fit',
+  box: { width: number; height: number },
+  image: { width: number; height: number },
+  position: [number, number],
+): Affine {
+  const bw = Math.max(box.width, 1e-6)
+  const bh = Math.max(box.height, 1e-6)
+  const iw = Math.max(image.width, 1e-6)
+  const ih = Math.max(image.height, 1e-6)
+  const scale = fit === 'fill' ? Math.max(bw / iw, bh / ih) : Math.min(bw / iw, bh / ih)
+  const dw = iw * scale
+  const dh = ih * scale
+  // Where CSS puts the image's top-left corner inside the box.
+  const left = (bw - dw) * position[0]
+  const top = (bh - dh) * position[1]
+  return [
+    [bw / dw, 0, -left / dw],
+    [0, bh / dh, -top / dh],
+  ]
+}
+
+/**
  * The relative transform for a node of size w×h rotated clockwise by `degrees`
  * around the centre of the box at (x, y).
  */

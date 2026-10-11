@@ -63,12 +63,19 @@ export interface GradientStop {
 
 export type ImageFit = 'fill' | 'fit' | 'crop' | 'tile'
 
+/**
+ * Where a `fill` (cover) or `fit` (contain) image sits in its box, as CSS
+ * percentages over 1: `[0.5, 0]` is `object-position: 50% 0`. Absent means
+ * centred, `[0.5, 0.5]`.
+ */
+export type ImagePosition = [number, number]
+
 export type Paint =
   | { type: 'solid'; color: Color }
   | { type: 'linear'; angle: number; stops: GradientStop[] }
   | { type: 'radial'; stops: GradientStop[]; center: [number, number]; radius: [number, number] }
   | { type: 'conic'; angle: number; stops: GradientStop[]; center: [number, number] }
-  | { type: 'image'; asset: string; fit: ImageFit; opacity?: number }
+  | { type: 'image'; asset: string; fit: ImageFit; opacity?: number; position?: ImagePosition }
 
 export interface Shadow {
   inset: boolean
@@ -235,6 +242,8 @@ export interface ImageNode extends BaseNode {
   type: 'image'
   asset: string
   fit: ImageFit
+  /** From `object-position`; absent when centred. */
+  position?: ImagePosition
   radius?: [number, number, number, number]
 }
 

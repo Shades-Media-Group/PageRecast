@@ -20,6 +20,7 @@ import {
   parseBlur,
   parseColor,
   parseGradient,
+  parseImagePosition,
   parseShadows,
   parseTransform,
   parseUrl,
@@ -422,6 +423,8 @@ export function walk(doc: Document, options: WalkOptions): WalkResult {
     if (image && image !== 'none') {
       const sizes = splitTopLevel(cs.backgroundSize)
       const repeats = splitTopLevel(cs.backgroundRepeat)
+      const xs = splitTopLevel(cs.backgroundPositionX)
+      const ys = splitTopLevel(cs.backgroundPositionY)
       const layers = splitTopLevel(image)
       // CSS lists the top layer first; scene paints go bottom to top.
       for (let i = layers.length - 1; i >= 0; i--) {
@@ -444,7 +447,13 @@ export function walk(doc: Document, options: WalkOptions): WalkResult {
                 ? 'fill'
                 : 'tile'
         const asset = assetFor(url, () => ({ kind: 'image', url }))
-        paints.push({ type: 'image', asset, fit })
+        // ponytail: percentages and keywords only; pixel offsets need the image's
+        // natural size, which a background does not expose here, so they stay centred.
+        const position =
+          size === 'cover' || size === 'contain'
+            ? parseImagePosition(xs[i] ?? xs[0] ?? '0%', ys[i] ?? ys[0] ?? '0%')
+            : undefined
+        paints.push({ type: 'image', asset, fit, ...(position ? { position } : {}) })
       }
     }
     return paints
@@ -849,7 +858,27 @@ export function walk(doc: Document, options: WalkOptions): WalkResult {
           cs.objectFit === 'contain' || cs.objectFit === 'scale-down' ? 'fit' : 'fill'
         const asset = assetFor(url, () => ({ kind: 'image', url }))
         const radius = radiusOf(cs, box)
-        out.push({ ...base, ...box, type: 'image', asset, fit, ...(radius ? { radius } : {}) })
+        // object-position only moves images that are scaled to cover or fit the box.
+        let position: ReturnType<typeof parseImagePosition>
+        if (cs.objectFit === 'cover' || fit === 'fit') {
+          const sx = box.width / img.naturalWidth
+          const sy = box.height / img.naturalHeight
+          const scale = fit === 'fit' ? Math.min(sx, sy) : Math.max(sx, sy)
+          const [px, py] = splitTopLevel(cs.objectPosition, ' ')
+          position = parseImagePosition(px ?? '50%', py ?? '50%', [
+            box.width - img.naturalWidth * scale,
+            box.height - img.naturalHeight * scale,
+          ])
+        }
+        out.push({
+          ...base,
+          ...box,
+          type: 'image',
+          asset,
+          fit,
+          ...(position ? { position } : {}),
+          ...(radius ? { radius } : {}),
+        })
       }
       return order
     }

@@ -19,7 +19,16 @@ import {
 import { FontResolver } from './fonts'
 import { rotatedTransform } from './geometry'
 import { pageGroups } from '../shared/pages'
-import { hex, imagePaint, solid, toBlend, toEffects, toPaints } from './paints'
+import {
+  hex,
+  imagePaint,
+  placedImage,
+  solid,
+  toBlend,
+  toEffects,
+  toPaints,
+  type ImageSizes,
+} from './paints'
 import { differences, findPatterns, type Difference, type Pattern } from './patterns'
 import { withState } from './states'
 import { findImported, mark, replace, usedElsewhere, type Imported } from './update'
@@ -70,6 +79,15 @@ function countNodes(node: Scene): number {
   return 1 + (node.type === 'frame' ? node.children.reduce((sum, c) => sum + countNodes(c), 0) : 0)
 }
 
+/** Asset ids of images drawn off-centre, which need their pixel size to crop. */
+function* positionedImages(node: Scene): Generator<string> {
+  if (node.type === 'image' && node.position) yield node.asset
+  const paints =
+    node.type === 'frame' ? node.fills : node.type === 'text' && node.paint ? [node.paint] : []
+  for (const paint of paints) if (paint.type === 'image' && paint.position) yield paint.asset
+  if (node.type === 'frame') for (const child of node.children) yield* positionedImages(child)
+}
+
 function* textStyles(node: Scene): Generator<TextStyle> {
   if (node.type === 'text') for (const run of node.runs) yield run.style
   if (node.type === 'frame') for (const child of node.children) yield* textStyles(child)
@@ -112,6 +130,17 @@ export async function importFile(
       report.warnings.push(`An image could not be decoded (${id}).`)
     }
   }
+
+  // Off-centre images are cropped like the page, which needs their pixel size.
+  const sizes: ImageSizes = new Map()
+  const positioned = new Set(file.captures.flatMap((c) => [...positionedImages(c.root)]))
+  await Promise.all(
+    [...positioned].map(async (id) => {
+      const hash = hashes.get(id)
+      const size = hash ? await figma.getImageByHash(hash)?.getSizeAsync() : undefined
+      if (size) sizes.set(id, size)
+    }),
+  )
 
   // Fonts: resolve every style used, then load them all in parallel.
   progress({ type: 'progress', phase: 'fonts', done: 0, total: 1 })
@@ -207,7 +236,7 @@ export async function importFile(
     text.textDecoration = DECORATION[base.decoration]
     text.textAlignHorizontal = ALIGN[scene.align]
     text.fills = scene.paint
-      ? toPaints([scene.paint], scene.width, scene.height, hashes)
+      ? toPaints([scene.paint], scene.width, scene.height, hashes, sizes)
       : [solid(base.color)]
 
     // Per-run overrides, only where a run differs from the base style.
@@ -485,7 +514,7 @@ export async function importFile(
         size(rect, scene.width, scene.height)
         const hash = hashes.get(scene.asset)
         rect.fills = hash
-          ? [imagePaint(hash, scene.fit)]
+          ? [placedImage(hash, scene.fit, scene, scene.position, sizes.get(scene.asset))]
           : [solid({ r: 0.9, g: 0.9, b: 0.9, a: 1 })]
         if (!hash)
           report.warnings.push(
@@ -525,7 +554,7 @@ export async function importFile(
         parent.appendChild(frame)
         frame.name = nameOf(scene)
         size(frame, scene.width, scene.height)
-        frame.fills = toPaints(scene.fills, scene.width, scene.height, hashes)
+        frame.fills = toPaints(scene.fills, scene.width, scene.height, hashes, sizes)
         frame.clipsContent = scene.clips
         if (scene.radius)
           [
@@ -727,10 +756,12 @@ export async function importFile(
           )
       } else if (diff.asset !== undefined && 'fills' in node) {
         const hash = hashes.get(diff.asset)
-        const fit = diff.node.type === 'image' ? diff.node.fit : 'fill'
-        node.fills = hash ? [imagePaint(hash, fit)] : [solid({ r: 0.9, g: 0.9, b: 0.9, a: 1 })]
+        const image = diff.node.type === 'image' ? diff.node : undefined
+        node.fills = hash
+          ? [placedImage(hash, image?.fit ?? 'fill', node, image?.position, sizes.get(diff.asset))]
+          : [solid({ r: 0.9, g: 0.9, b: 0.9, a: 1 })]
       } else if (diff.fills && 'fills' in node) {
-        node.fills = toPaints(diff.fills, node.width, node.height, hashes)
+        node.fills = toPaints(diff.fills, node.width, node.height, hashes, sizes)
       }
     } catch {
       report.warnings.push(`An instance could not take its own content (${node.name}).`)

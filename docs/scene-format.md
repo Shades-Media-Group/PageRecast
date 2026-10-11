@@ -41,11 +41,13 @@ Coordinates are CSS pixels relative to the capture's top-left. Colours are sRGB 
 | -------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `frame`  | `fills`, `stroke`, `radius` (TL, TR, BR, BL), `shadows`, `blur`, `backdropBlur`, `clips`, `position`, `layout` (flex), `grow`, `alignSelf`, `children` in paint order |
 | `text`   | `runs` (text plus a full style each), `style` (the first run's), `align`, `lines`, `shadows`, `paint` for gradient text                                               |
-| `image`  | `asset`, `fit` (`fill`, `fit`, `crop`, `tile`), `radius`                                                                                                              |
+| `image`  | `asset`, `fit` (`fill`, `fit`, `crop`, `tile`), `position`, `radius`                                                                                                  |
 | `svg`    | `asset` pointing to SVG markup with styles resolved                                                                                                                   |
 | `raster` | `asset` with a snapshot, and `reason`: canvas, video, iframe, icon font or form control                                                                               |
 
 Paints are `solid`, `linear` (CSS angle), `radial` (normalised centre and radii), `conic` (start angle and centre) or `image`.
+
+`position` is optional on `image` nodes and `image` paints. It records where a `fill` (CSS `cover`) or `fit` (CSS `contain`) image sits in its box, as CSS percentages over 1: `[0.5, 0]` is `object-position: 50% 0` (or `background-position: top` on a `cover` background). It is left out when the image is centred, `[0.5, 0.5]`, and a reader that ignores it draws the image centred. The plugin crops off-centre images so the same part of the image shows as on the page.
 
 ## Interaction states
 

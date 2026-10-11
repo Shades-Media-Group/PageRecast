@@ -3,6 +3,7 @@ import {
   angularGradientTransform,
   apply,
   closestStyle,
+  imageCropTransform,
   baseFamily,
   familyCandidates,
   invert,
@@ -107,5 +108,42 @@ describe('baseFamily', () => {
       'Inter Variable',
       'Inter',
     ])
+  })
+})
+
+describe('image crop transform', () => {
+  const box = { width: 100, height: 100 }
+  const wide = { width: 200, height: 100 }
+  const tall = { width: 100, height: 400 }
+
+  it('shows the middle half of a wide image when centred', () => {
+    const t = imageCropTransform('fill', box, wide, [0.5, 0.5])
+    close(apply(t, 0, 0), [0.25, 0])
+    close(apply(t, 1, 1), [0.75, 1])
+  })
+
+  it('pins a tall image to its top for object-position: 50% 0', () => {
+    const t = imageCropTransform('fill', box, tall, [0.5, 0])
+    close(apply(t, 0, 0), [0, 0])
+    close(apply(t, 1, 1), [1, 0.25])
+  })
+
+  it('pins it to the bottom and the right at 100%', () => {
+    close(apply(imageCropTransform('fill', box, tall, [0, 1]), 0, 0), [0, 0.75])
+    close(apply(imageCropTransform('fill', box, wide, [1, 0]), 1, 1), [1, 1])
+  })
+
+  it('places a contained image against the top-left corner', () => {
+    // 200×100 fits a 100×100 box at 100×50; at [0, 0] it fills the top half,
+    // so the layer spans twice the image height.
+    const t = imageCropTransform('fit', box, wide, [0, 0])
+    close(apply(t, 0, 0), [0, 0])
+    close(apply(t, 1, 0.5), [1, 1])
+  })
+
+  it('is the identity when the image has the box proportions', () => {
+    const t = imageCropTransform('fill', box, { width: 300, height: 300 }, [0, 1])
+    close(apply(t, 0, 0), [0, 0])
+    close(apply(t, 1, 1), [1, 1])
   })
 })

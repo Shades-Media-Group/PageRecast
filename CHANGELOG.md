@@ -6,21 +6,25 @@ All notable changes to PageRecast are recorded here. The format follows
 
 ## [Unreleased]
 
+## [1.3.0] - 2026-10-11
+
+The extension and the plugin now open in a light theme, with a theme choice in
+settings. The website speaks eleven languages.
+
 ### Added
 
 - **Interface theme** in the settings of the extension and the plugin: light, dark, or automatic to follow the browser or Figma.
+- **Website in eleven languages:** English, French, Romanian, Russian, Spanish, Italian, Turkish, Hindi, Japanese, and Simplified and Traditional Chinese, with a FAQ, a sitemap and `llms.txt`.
 
 ### Changed
 
 - Both panels open in the light theme until you choose another.
 - The settings button is a gear.
 
-### Added
+### Fixed
 
-- **Website languages:** Italian, Turkish, Hindi, Japanese and Traditional Chinese, for eleven in all.
-- **Display and accessibility panel on the website:** a 20 px dot in the corner opens it. Readers choose light, dark or the system theme, and can turn on larger text, more contrast, reduced motion, underlined links and easier reading.
-  - Choices stay in the browser.
-  - A one-time notice says the site sets no cookies.
+- The website's layers demo follows its theme and moves smoothly on phones.
+- Long Romanian and Russian words no longer widen the website on small phones.
 
 ## [1.2.0] - 2026-10-11
 
@@ -100,7 +104,8 @@ plugin that rebuilds them as editable layers. Free, open source and local.
 - Remember import options per site, with defaults for new sites.
 - Place a locked screenshot beside each frame for comparison.
 
-[Unreleased]: https://github.com/Shades-Media-Group/PageRecast/compare/v1.2.0...HEAD
+[Unreleased]: https://github.com/Shades-Media-Group/PageRecast/compare/v1.3.0...HEAD
+[1.3.0]: https://github.com/Shades-Media-Group/PageRecast/compare/v1.2.0...v1.3.0
 [1.2.0]: https://github.com/Shades-Media-Group/PageRecast/compare/v1.1.1...v1.2.0
 [1.1.1]: https://github.com/Shades-Media-Group/PageRecast/compare/v1.1.0...v1.1.1
 [1.1.0]: https://github.com/Shades-Media-Group/PageRecast/compare/v1.0.0...v1.1.0

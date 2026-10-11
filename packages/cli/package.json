@@ -1,6 +1,6 @@
 {
   "name": "pagerecast",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Capture any web page as a .recast file for Figma, and extract its design tokens, from the command line or from code. Free, open source and local-only.",
   "license": "MIT",
   "author": "Shades Media Group (https://shades.md)",

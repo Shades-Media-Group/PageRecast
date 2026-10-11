@@ -6,14 +6,43 @@ All notable changes to PageRecast are recorded here. The format follows
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-10-11
+
+PageRecast now captures interaction states, builds components and design
+systems in Figma, runs in Firefox, and works from the command line and from AI
+agents. Still free, open source and local.
+
 ### Added
 
-- `pagerecast-mcp`, an MCP server for AI agents (Claude Code, Claude Desktop, Codex CLI, Cursor and others) with the tools `capture_page`, `page_design_tokens`, `recast_info` and `send_to_figma`, and the `.recast` specification as a resource. It runs locally over stdio.
-- A local bridge on `127.0.0.1` that holds captures for the Figma plugin, guarded by a per-session pairing code, with its protocol documented for the plugin.
-- The `pagerecast` package is now also a library with types: `capture`, `encode`, `decode`, `tokens` and `info`.
-- `PAGERECAST_BROWSER` picks the Chrome or Chromium the command line, the library and the MCP server run.
-- The Chrome extension captures a URL sent from the Figma plugin: `pagerecast.shades.md/capture/` passes it on after you press Capture, and the result is copied for pasting in Figma. It needs no new permission.
-- The Figma plugin's tabs are now Web, Extension, File, Code, MCP and API. Web imports a page by URL through the extension; Extension holds the install link and paste; MCP has agent setup and **Listen for agent imports**, which pairs with the local bridge and imports what agents send; API has the library and command-line snippets. `⌘V` imports a capture on every tab, even with a field focused.
+- **Figma plugin:** tabs for Web, Extension, File, Code, MCP and API. Import a page by URL through the extension, or let agents send captures over a local bridge.
+- **Interaction states:** hover, focus and active styles become component variants.
+- **Components:** repeated cards, rows and buttons become one component with instances.
+- **Your library first:** colours, text styles, spacing and radii match the variables and styles already in the file or its team libraries before anything new is created.
+- **Spacing and radius variables**, bound to Auto Layout gaps, paddings and corner radii.
+- **Update an earlier import** in place instead of adding a copy.
+- **Missing fonts:** see every font Figma lacks before importing, choose its replacement, get the font and check again.
+- **Every option per import**, with an option to remember it for the site.
+- **More files:** several at once, zipped site folders, `.mhtml` pages and `.eml` emails.
+- **Extension:** right-click capture, `Alt+Shift+C`, per-site settings, a tray to copy several captures as one, a list of URLs in one go, hide by CSS selector, wait before capture and a maximum page height.
+- **Firefox** version of the extension.
+- **Real thumbnails** of every captured width in the extension, and a large frame preview in the plugin.
+- **Command line and library:** `pagerecast capture`, `tokens` and `info`, and the same as a typed API.
+- **Design tokens** as W3C JSON, CSS variables or a `DESIGN.md` for coding agents.
+- **`pagerecast-mcp`:** an MCP server for Claude Code, Claude Desktop, Codex CLI and Cursor.
+- A one-time rating request after the fifth import, a gallery of ready captures, and a privacy page on the website.
+
+### Fixed
+
+- Frames keep their size when Auto Layout is applied.
+- WebP and AVIF images import instead of showing placeholders.
+- Light and dark colours import on Figma plans that allow one mode per collection.
+- Variable web fonts such as "Inter Variable" match the installed family.
+- Off-centre image crops are kept.
+
+### Changed
+
+- Listing names now say what PageRecast does: "Website to Figma, HTML to design" and "Import websites to Figma (HTML, CSS, web to design)".
+- The panels follow one grid, with header actions instead of a toolbar.
 
 ## [1.0.0] - 2026-10-11
 
@@ -35,5 +64,6 @@ plugin that rebuilds them as editable layers. Free, open source and local.
 - Remember import options per site, with defaults for new sites.
 - Place a locked screenshot beside each frame for comparison.
 
-[Unreleased]: https://github.com/Shades-Media-Group/PageRecast/compare/v1.0.0...HEAD
+[Unreleased]: https://github.com/Shades-Media-Group/PageRecast/compare/v1.1.0...HEAD
+[1.1.0]: https://github.com/Shades-Media-Group/PageRecast/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/Shades-Media-Group/PageRecast/releases/tag/v1.0.0

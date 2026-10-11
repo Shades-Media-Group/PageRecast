@@ -1,0 +1,390 @@
+{
+  "language": "Limba",
+  "moreLanguages": "Alte limbi",
+  "machine": "Traducere automată de Google",
+  "preferred": {
+    "button": "Adaugă la sursele preferate<span class='visually-hidden'> în Google</span>",
+    "mention": "Găsește PageRecast mai des în căutarea Google: <a data-link='preferred' target='_blank'>adaugă-l la sursele preferate</a>."
+  },
+  "nav": {
+    "label": "Principal",
+    "home": "Acasă",
+    "homeLabel": "PageRecast, pagina principală",
+    "widths": "Lățimi",
+    "layers": "Straturi",
+    "privacy": "Confidențialitate",
+    "gallery": "Galerie",
+    "guides": "Ghiduri",
+    "cta": "Instalează"
+  },
+  "footer": {
+    "top": "PageRecast, înapoi sus",
+    "tagline": "Orice pagină web, ca straturi Figma editabile. Gratuit, open source și nimic nu pleacă de pe calculatorul tău.",
+    "label": "Subsol",
+    "product": "Produs",
+    "project": "Proiect",
+    "trust": "Încredere",
+    "sample": "Pagina de test",
+    "changelog": "Istoricul schimbărilor",
+    "releases": "Versiuni",
+    "issues": "Raportează o problemă",
+    "security": "Securitate",
+    "license": "Licența MIT",
+    "format": "Formatul .recast",
+    "credit": "Gratuit și open source. Creat de <a data-link='shades'>Shades Media Group</a>.",
+    "version": "Versiunea"
+  },
+  "home": {
+    "title": "Importă orice site web în Figma, gratuit | PageRecast",
+    "description": "Transformă orice site web în straturi Figma editabile, gratuit. O extensie Chrome și un plugin Figma care capturează pagini, inclusiv cele cu autentificare.",
+    "hero": {
+      "title": "Reconstruiește orice pagină web.",
+      "lead": "Capturează ce îți arată browserul. Lipește în Figma ca straturi pe care le poți edita, fiecare dintre ele.",
+      "chrome": "Adaugă în Chrome, gratuit",
+      "figma": "Instalează pluginul Figma",
+      "note": "Gratuit pentru totdeauna. Funcționează și după autentificare.",
+      "sample": "Încearcă pe pagina de test"
+    },
+    "explode": {
+      "label": "Această pagină desfăcută în straturile ei Figma",
+      "layers": "straturi",
+      "texts": "texte",
+      "images": "imagini",
+      "caption": "Această pagină, capturată la 1440 px și importată așa cum este."
+    },
+    "widths": {
+      "title": "Orice lățime.<br />Ambele teme.<br />O singură captură.",
+      "text": "Alege desktop, tabletă, mobil sau orice lățime între 240 și 3840, în modul luminos, întunecat sau ambele. Fiecare ajunge în Figma ca un frame separat, iar cele două teme devin variabile de culoare cu un mod Light și un mod Dark.",
+      "width": "Lățime",
+      "theme": "Temă",
+      "light": "Luminos",
+      "dark": "Întunecat"
+    },
+    "layers": {
+      "title": "Straturi reale, nu o imagine.",
+      "text": "Textul rămâne text, cu fonturile lui. Iconițele devin vectori, culorile devin variabile, iar layout-urile flex devin Auto Layout oriunde rezultatul cade exact unde l-a pus pagina. Fiecare font care a trebuit înlocuit apare în listă.",
+      "alt": "Secțiunea de instalare a acestei pagini, cu patru dintre straturile ei Figma marcate",
+      "caption": "Citit de PageRecast din această pagină. Acestea sunt straturile pe care le construiește."
+    },
+    "behind": {
+      "title": "După autentificare. Pe staging. Pe localhost.",
+      "text": "Extensia capturează exact ce îți arată browserul, deci paginile la care lucrezi cu adevărat ajung în Figma: dashboarduri, previzualizări, un meniu lăsat deschis, un formular completat pe jumătate.",
+      "extensionAlt": "Panoul lateral PageRecast după capturarea unei pagini",
+      "pluginAlt": "Pluginul Figma PageRecast verificând captura înainte de import"
+    },
+    "privacy": {
+      "title": "Nimic nu pleacă de pe calculatorul tău.",
+      "text": "Nu există niciun server PageRecast. Capturile sunt create în browser și rămân pe dispozitivul tău până le lipești în Figma. Fără cont, fără analytics, fără limite și fără preț."
+    },
+    "open": {
+      "title": "Cod deschis. Format deschis.",
+      "text": "PageRecast are licență MIT, iar capturile sunt fișiere <code>.recast</code>: JSON comprimat cu gzip, cu o schemă documentată pe care o poți citi, scrie și folosi mai departe.",
+      "github": "Vezi pe GitHub",
+      "format": "Citește formatul",
+      "codeLabel": "Un fragment dintr-un fișier .recast"
+    },
+    "faq": {
+      "title": "Întrebări și răspunsuri.",
+      "lead": "Ce se întreabă înainte de primul site importat în Figma. Ghidurile acoperă restul.",
+      "howto": {
+        "q": "Cum import un site web în Figma?",
+        "name": "Importă un site web în Figma cu PageRecast",
+        "intro": "Instalează extensia Chrome și pluginul Figma, apoi:",
+        "steps": {
+          "capture": {
+            "name": "Capturează pagina",
+            "text": "Deschide pagina în Chrome, deschide panoul lateral PageRecast, alege lățimile și temele și apasă Capture."
+          },
+          "copy": {
+            "name": "Copiaz-o pentru Figma",
+            "text": "Apasă Copy for Figma sau salvează un fișier .recast ca să-l trimiți ori să-l deschizi mai târziu."
+          },
+          "paste": {
+            "name": "Lipește-o în Figma",
+            "text": "Pornește pluginul PageRecast, lipește cu ⌘ V sau Ctrl V, verifică frame-urile și apasă Import."
+          }
+        }
+      },
+      "items": {
+        "free": {
+          "q": "PageRecast e cu adevărat gratuit?",
+          "a": "Da. Nu există abonamente, limite, perioade de probă, conturi sau watermark și nu vor exista niciodată. PageRecast este open source, cu licență MIT."
+        },
+        "login": {
+          "q": "Funcționează pe pagini care cer autentificare?",
+          "a": "Da. Extensia capturează ce îți arată browserul, așa că dashboardurile, panourile de administrare și tot ce vezi după autentificare se importă ca orice pagină publică."
+        },
+        "localhost": {
+          "q": "Pot importa localhost sau un site de staging?",
+          "a": "Da. Orice pagină care se deschide în Chrome poate fi capturată, inclusiv <code>localhost</code>, staging și deploy-uri de previzualizare, fără tunel și fără URL public."
+        },
+        "what": {
+          "q": "Ce importă PageRecast în Figma?",
+          "a": "Frame-uri cu fundaluri, borduri, colțuri rotunjite, umbre și blur; text cu fonturile și stilurile lui; imagini; iconițe SVG ca vectori editabili; variabile de culoare cu moduri Light și Dark; stiluri de text; și o captură de ecran blocată lângă fiecare frame, pentru comparație."
+        },
+        "fonts": {
+          "q": "Ce se întâmplă cu fonturile paginii?",
+          "a": "PageRecast folosește orice font pe care îl are Figma, instalat pe calculator sau din Google Fonts. Un font pe care Figma nu îl are este înlocuit cu cel mai apropiat, iar fiecare înlocuire apare în listă înainte și după import."
+        },
+        "autolayout": {
+          "q": "Folosește Auto Layout?",
+          "a": "Da, oriunde se potrivește. Layout-urile flex devin Auto Layout când fiecare element ajunge la cel mult 1,5 px de locul în care l-a pus pagina. Restul își păstrează poziția exactă, ca importul să arate mereu ca pagina."
+        },
+        "privacy": {
+          "q": "Datele mele rămân private?",
+          "a": "Da. Nu există server PageRecast, cont sau analytics. Capturile sunt create în browser și rămân pe calculatorul tău. Pluginul Figma descarcă doar imaginile pe care pagina le folosește deja, direct de pe site-urile lor."
+        },
+        "firefox": {
+          "q": "Funcționează în Firefox?",
+          "a": "Da. PageRecast pentru Firefox face aceleași capturi pentru același plugin Figma. Capturează pagina în tema și limba pe care le afișează în acel moment, așa că schimbă-le mai întâi."
+        },
+        "agents": {
+          "q": "Pot agenții AI să folosească PageRecast?",
+          "a": "Da. Serverul MCP PageRecast le permite agenților precum Claude Code, Codex și Cursor să captureze pagini, să citească design tokens și să trimită capturi în Figma. Rulează tot pe calculatorul tău: <code>npx -y pagerecast-mcp</code>."
+        },
+        "screenshot": {
+          "q": "Prin ce diferă de o captură de ecran?",
+          "a": "O captură de ecran e o singură imagine plată. PageRecast reconstruiește pagina în straturi: text pe care îl poți edita, vectori pe care îi poți recolora, frame-uri pe care le poți redimensiona și culori ca variabile. Captura de ecran vine doar ca referință blocată."
+        }
+      }
+    },
+    "install": {
+      "title": "Două părți. Două minute.",
+      "chrome": "Extensia Chrome",
+      "chromeText": "Capturează pagina, la orice lățime, în modul luminos și întunecat.",
+      "chromeButton": "Adaugă în Chrome",
+      "figma": "Pluginul Figma",
+      "figmaText": "Construiește straturile, cu Auto Layout, variabile și stiluri.",
+      "figmaButton": "Instalează pluginul",
+      "guides": "Ghiduri",
+      "guidesText": "Instalează-le pe amândouă, capturează o pagină, lipește-o. Începi în două minute.",
+      "guidesLink": "Citește ghidurile"
+    },
+    "runtime": {
+      "devices": {
+        "390": "Mobil",
+        "768": "Tabletă",
+        "1280": "Laptop",
+        "1440": "Desktop"
+      },
+      "light": "Luminos",
+      "dark": "Întunecat",
+      "viewerAlt": {
+        "light": "Pagina de test capturată la {width} px în modul luminos",
+        "dark": "Pagina de test capturată la {width} px în modul întunecat"
+      },
+      "viewerCaption": "{theme} · un frame în Figma",
+      "notes": {
+        "Vector": {
+          "title": "Vector",
+          "detail": "5 forme din SVG-ul paginii, încă editabile"
+        },
+        "Text": { "title": "Text", "detail": "Hanken Grotesk · 650 · 26 px" },
+        "Auto Layout": {
+          "title": "Auto Layout",
+          "detail": "Orizontal · spațiu 10 · padding 20 · complet rotunjit"
+        },
+        "Colour variable": {
+          "title": "Variabilă de culoare",
+          "detail": "Light #3D3D40 · Dark #C3C3C9"
+        }
+      }
+    }
+  },
+  "gallery": {
+    "title": "Capturi de site-uri gata de deschis în Figma | Galerie PageRecast",
+    "description": "Fișiere .recast gratuite cu pagini web reale, gata de importat în Figma ca straturi editabile. Descarcă unul și trage-l peste pluginul PageRecast.",
+    "heading": "Galerie",
+    "intro": "Capturi gata de deschis în Figma chiar acum. Descarcă un fișier, deschide PageRecast în Figma și trage-l peste plugin. Fiecare are trei lățimi, în modul luminos și întunecat.",
+    "download": "Descarcă .recast",
+    "view": "Vezi pagina",
+    "sample": {
+      "name": "Pagina de test",
+      "text": "Tipografie, culoare, layout, suprafețe, vectori, imagini, controale și un tabel.",
+      "alt": "Pagina de test PageRecast, capturată la 1440 px",
+      "facts": "6 frame-uri · 1.842 de straturi · 4,1 MB"
+    },
+    "site": {
+      "name": "Site-ul PageRecast",
+      "text": "O pagină de marketing reală, cu navigare fixă, capturi ale produsului și un subsol lung.",
+      "alt": "Site-ul PageRecast, capturat la 1440 px",
+      "facts": "6 frame-uri · 1.206 straturi · 4,9 MB"
+    },
+    "share": {
+      "title": "Trimite o captură echipei tale",
+      "step1": "În extensie, apasă butonul de descărcare de lângă Copy for Figma.",
+      "step2": "Trimite fișierul <code>.recast</code> ca pe orice alt fișier.",
+      "step3": "Colegul tău îl trage peste PageRecast în Figma. Nu trebuie instalat nimic în afară de plugin."
+    }
+  },
+  "privacy": {
+    "title": "Politica de confidențialitate | PageRecast",
+    "description": "PageRecast nu colectează, nu transmite, nu vinde și nu partajează date personale. Totul se întâmplă pe calculatorul tău.",
+    "heading": "Politica de confidențialitate",
+    "updated": "Ultima actualizare: 11 octombrie 2026",
+    "intro": "PageRecast este o extensie de browser pentru Chrome și Firefox și un plugin Figma, create de Shades Media Group. Această politică se aplică tuturor.",
+    "shortTitle": "Pe scurt",
+    "short": "PageRecast nu colectează, nu transmite, nu vinde și nu partajează date personale. Totul se întâmplă pe calculatorul tău.",
+    "chromeTitle": "La ce are acces extensia Chrome",
+    "chromePage": "<strong>Pagina pe care alegi să o capturezi.</strong> Când apeși Capture, extensia citește layout-ul, stilurile, textul și imaginile filei curente, ale unui URL pe care îl tastezi sau ale unui URL trimis de pluginul Figma prin pagina noastră de captură (doar acea pagină poate cere asta și doar după ce apeși Capture acolo), folosind permisiunea <code>debugger</code> din Chrome. Se atașează doar pentru acea captură și se detașează când se termină.",
+    "chromeTabs": "<strong>Titlurile, adresele și iconițele filelor</strong>, ca să arate ce pagină va fi capturată.",
+    "chromeStorage": "<strong>Stocarea locală de pe dispozitivul tău</strong>, pentru setări și capturile recente. Poți șterge orice captură din panou; dezinstalarea extensiei le șterge pe toate.",
+    "chromeNetwork": "Extensia nu trimite nicio cerere către serverele noastre. Imaginile dintr-o captură sunt citite din cache-ul browserului sau încărcate la fel cum le încarcă pagina.",
+    "firefoxTitle": "Extensia Firefox",
+    "firefox": "Versiunea pentru Firefox accesează aceleași lucruri, dar citește pagina cu permisiunile <code>tabs</code> și <code>scripting</code> din Firefox și cu acces la toate site-urile (<code>&lt;all_urls&gt;</code>), în loc de permisiunea <code>debugger</code>. Folosește acest acces doar pe fila pe care o capturezi, ca să citească pagina, să facă o captură de ecran și să încarce imaginile. Ca în Chrome, nimic nu pleacă de pe dispozitivul tău.",
+    "pluginTitle": "La ce are acces pluginul Figma",
+    "pluginCapture": "<strong>Captura pe care o lipești sau o deschizi</strong>, ca să creeze straturi în fișierul Figma curent.",
+    "pluginImages": "<strong>Imaginile la care face referire o captură</strong>, descărcate direct de pe site-urile cărora le aparțin.",
+    "pluginStorage": "<strong>Stocarea pentru pluginuri din Figma</strong>, ca să țină minte setările de import.",
+    "pluginAgents": "<strong>Capturile puse în așteptare pe calculatorul tău de un agent AI</strong>, doar când activezi importurile de la agenți. Pluginul le preia de la <code>127.0.0.1</code>, un server de pe propriul tău calculator pornit de serverul MCP PageRecast, folosind un cod de asociere pe care îl introduci.",
+    "pluginWeb": "Fila Web a pluginului deschide <code>pagerecast.shades.md/capture/</code> cu adresa paginii și setările după <code>#</code> din link, o parte pe care browserele nu o trimit niciodată unui server. Acea pagină le transmite extensiei din browserul tău, iar captura este copiată acolo în clipboard.",
+    "dataTitle": "Datele pe care le primim",
+    "data": "Niciunele. Nu există conturi, analytics, rapoarte de erori sau urmărire de niciun fel.",
+    "childrenTitle": "Copii",
+    "children": "PageRecast este un instrument de design și nu se adresează copiilor.",
+    "changesTitle": "Modificări",
+    "changes": "Modificările acestei politici sunt publicate pe această pagină și notate în <a data-link='changelog'>istoricul schimbărilor</a>.",
+    "contactTitle": "Contact"
+  },
+  "capture": {
+    "title": "Capturează o pagină pentru Figma | PageRecast",
+    "description": "Extensia PageRecast capturează o pagină aleasă în pluginul Figma și o copiază pentru Figma.",
+    "heading": "Captură pentru Figma",
+    "reading": "Se citește linkul…",
+    "start": "Capturează",
+    "status": "Pagina se deschide într-o filă nouă cât timp PageRecast o capturează, apoi se închide.",
+    "copy": "Copiază pentru Figma",
+    "installTitle": "Instalează mai întâi extensia",
+    "installText": "Nu s-a întâmplat nimic pentru că extensia PageRecast nu este instalată în acest browser sau este dezactivată. Importul după URL trece prin ea: capturează pagina chiar aici, pe calculatorul tău.",
+    "installButton": "Adaugă în Chrome",
+    "installAfter": "După instalare, reîncarcă această pagină. Firefox și Safari nu pot deschide încă linkuri de captură.",
+    "note": "Pagina pe care o capturezi este citită de extensia din acest browser. Nimic nu este trimis către PageRecast sau altcuiva.",
+    "runtime": {
+      "invalid": "Acest link de captură este incomplet. Începe din nou din fila Web a pluginului PageRecast din Figma.",
+      "target": "{host} la {widths} px, {theme}{language}.",
+      "and": " și ",
+      "language": ", în {language}",
+      "themes": { "light": "luminos", "dark": "întunecat", "both": "luminos și întunecat" },
+      "starting": "Se pornește…",
+      "failed": "{message} Apasă Capturează ca să încerci din nou.",
+      "again": "Capturează din nou",
+      "frames": { "one": "{n} frame", "few": "{n} frame-uri", "other": "{n} de frame-uri" },
+      "thePage": "pagina",
+      "copied": "Copiat, lipește în Figma. {frames} din {title}.",
+      "ready": "Captură gata: {frames}. Copiaz-o, apoi lipește în Figma."
+    }
+  },
+  "sample": {
+    "title": "Pagină de test pentru importul site-urilor în Figma | PageRecast",
+    "description": "O pagină făcută pentru a fi importată în Figma cu PageRecast: tipografie, culoare, Auto Layout, suprafețe, vectori, imagini și formulare, în modul luminos și întunecat.",
+    "sections": "Secțiuni",
+    "install": "Instalează PageRecast",
+    "heading": "O pagină făcută<br />ca să fie <em>reconstruită.</em>",
+    "intro": "Fiecare secțiune de mai jos folosește ceva ce PageRecast transformă într-o funcție Figma. Capturează pagina la câteva lățimi, în modul luminos și întunecat, lipește-o în Figma și compară-le.",
+    "step1": "Deschide panoul lateral PageRecast",
+    "step2": "Alege lățimile și ambele teme, apoi Capture",
+    "step3": "Lipește în pluginul PageRecast din Figma",
+    "type": {
+      "title": "Tipografie",
+      "text": "Două familii, nouă grosimi, o axă de mărime optică și stiluri amestecate în text.",
+      "becomes": "Straturi de text și stiluri de text",
+      "inter": "Sans variabil, mărime optică de la 14 la 32",
+      "hanken": "Sans variabil, grosimi de la 100 la 900",
+      "display": "Display 64",
+      "titleSample": "Titlu 40 cursiv",
+      "headline": "Subtitlu 24 în sans",
+      "body": "Corpul 17 păstrează <strong>porțiunile îngroșate</strong>, <em>porțiunile cursive</em>, <a href='#type'>linkurile</a>, <code>codul inline</code> și <mark>cuvintele evidențiate</mark> într-un singur strat de text, cu rândurile rupte exact unde le-a rupt browserul.",
+      "weights": "Grosimile Hanken Grotesk"
+    },
+    "colour": {
+      "title": "Culoare",
+      "text": "Opt tokenuri care se schimbă între modul luminos și cel întunecat. Capturează ambele teme.",
+      "becomes": "Variabile de culoare cu moduri Light și Dark"
+    },
+    "layout": {
+      "title": "Layout",
+      "text": "Rânduri, coloane, spații, padding, încadrare și aliniere, toate din flexbox.",
+      "becomes": "Auto Layout, verificat element cu element",
+      "frames": "Frame-uri",
+      "framesText": "Orice cutie cu fundal, bordură, colțuri rotunjite sau decupare devine un frame.",
+      "fill": "Fundal",
+      "stroke": "Contur",
+      "clip": "Decupare",
+      "autoText": "Păstrat doar unde fiecare element ajunge la cel mult 1,5 px de pagină.",
+      "gap": "Spațiu 12",
+      "padding": "Padding 24",
+      "wrap": "Încadrare",
+      "styles": "Stiluri de text",
+      "stylesText": "Textul repetat devine un stil pe care îl schimbi într-un singur loc.",
+      "display": "Display",
+      "titleChip": "Titlu",
+      "body": "Corp",
+      "alignment": "Aliniere",
+      "start": "Început",
+      "grow": "Umple",
+      "end": "Sfârșit"
+    },
+    "surfaces": {
+      "title": "Suprafețe",
+      "text": "Gradiente, umbre, blur, borduri și colțuri setate unul câte unul.",
+      "becomes": "Fundaluri, contururi și efecte",
+      "linear": "Liniar",
+      "radial": "Radial",
+      "angular": "Unghiular",
+      "shadow": "Umbră",
+      "blur": "Blur de fundal",
+      "dashed": "Întrerupt",
+      "corners": "Colțuri",
+      "inset": "Umbră interioară"
+    },
+    "media": {
+      "title": "Vectori și imagini",
+      "text": "SVG-ul inline rămâne vector. Imaginile își păstrează decuparea și încadrarea.",
+      "becomes": "Straturi vectoriale și fundaluri cu imagine",
+      "artLabel": "Ilustrație vectorială",
+      "shapes": "Forme suprapuse",
+      "svg": "SVG, 7 forme",
+      "photoAlt": "Afiș abstract în roșu, roz și negru",
+      "jpeg": "JPEG, încadrat cover",
+      "icons": "Iconițe"
+    },
+    "controls": {
+      "title": "Controale",
+      "text": "Câmpurile de formular sunt capturate așa cum sunt acum: completate, bifate sau alese.",
+      "becomes": "Frame-uri și text, în starea lor curentă",
+      "address": "Adresa paginii",
+      "width": "Lățime",
+      "desktop": "Desktop · 1440",
+      "tablet": "Tabletă · 768",
+      "mobile": "Mobil · 390",
+      "theme": "Temă",
+      "light": "Luminos",
+      "dark": "Întunecat",
+      "both": "Ambele",
+      "banners": "Ascunde bannerele de cookie",
+      "lazy": "Încarcă întâi imaginile amânate",
+      "scrollbar": "Păstrează bara de derulare",
+      "capture": "Capturează",
+      "cancel": "Anulează"
+    },
+    "table": {
+      "title": "Tabele",
+      "text": "Rândurile și celulele își păstrează bordurile, alinierea și cifrele.",
+      "becomes": "Frame-uri imbricate cu cifre tabulare",
+      "frame": "Frame",
+      "width": "Lățime",
+      "sizedFor": "Gândit pentru",
+      "theme": "Temă",
+      "desktop": "Desktop",
+      "desktopFor": "Laptopuri și monitoare",
+      "tablet": "Tabletă",
+      "tabletFor": "Tablete ținute vertical",
+      "mobile": "Mobil",
+      "mobileFor": "Majoritatea telefoanelor actuale",
+      "light": "Luminos",
+      "dark": "Întunecat"
+    },
+    "end": "Această pagină face parte din PageRecast, gratuit și open source.",
+    "get": "Instalează PageRecast"
+  }
+}

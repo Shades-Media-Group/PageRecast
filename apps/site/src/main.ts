@@ -1,4 +1,6 @@
 import '@fontsource-variable/hanken-grotesk/wght.css'
+// Cyrillic only in practice: Hanken Grotesk covers Latin first.
+import '@fontsource-variable/inter/wght.css'
 import './common.css'
 import './site.css'
 import logo from '../../../assets/brand/logo.svg?raw'
@@ -48,6 +50,26 @@ interface Demo {
     notes: { box: [number, number, number, number]; title: string; detail: string }[]
   }
 }
+
+// The language menu closes like a menu: on Escape and on a click outside it.
+for (const menu of document.querySelectorAll<HTMLDetailsElement>('details.lang')) {
+  document.addEventListener('click', (event) => {
+    if (!menu.contains(event.target as Node)) menu.open = false
+  })
+  menu.addEventListener('keydown', (event) => {
+    if (event.key !== 'Escape' || !menu.open) return
+    menu.open = false
+    menu.querySelector('summary')?.focus()
+  })
+}
+// Switching language keeps your place, and the capture link on /capture/.
+const keepHash = () => {
+  for (const a of document.querySelectorAll<HTMLAnchorElement>('a[hreflang]')) {
+    if (a.host === location.host) a.hash = location.hash
+  }
+}
+keepHash()
+addEventListener('hashchange', keepHash)
 
 // Reveal chapters as they scroll into view.
 document.documentElement.classList.add('js')

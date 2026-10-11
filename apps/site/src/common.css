@@ -74,3 +74,44 @@
     --pref-angle: 450deg;
   }
 }
+
+/* Footer languages: the six written ones inline, Google's behind "More languages". */
+.langs {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 8px 20px;
+  font-size: 14px;
+}
+.langs ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 16px;
+  padding: 0;
+  list-style: none;
+}
+.langs a,
+.langs summary {
+  color: var(--ink-2);
+  text-decoration: none;
+  cursor: pointer;
+}
+.langs a:hover,
+.langs summary:hover {
+  color: var(--ink);
+}
+.langs a[aria-current] {
+  color: var(--ink);
+  font-weight: 600;
+}
+.langs details[open] {
+  flex-basis: 100%;
+}
+.langs details p {
+  margin-top: 10px;
+  color: var(--ink-3);
+  font-size: 13px;
+}
+.langs details ul {
+  margin-top: 8px;
+}

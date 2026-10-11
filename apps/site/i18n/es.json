@@ -1,0 +1,390 @@
+{
+  "language": "Idioma",
+  "moreLanguages": "Más idiomas",
+  "machine": "Traducción automática de Google",
+  "preferred": {
+    "button": "Añadir a fuentes preferidas<span class='visually-hidden'> en Google</span>",
+    "mention": "Encuentra PageRecast más a menudo en la Búsqueda de Google: <a data-link='preferred' target='_blank'>añádelo a tus fuentes preferidas</a>."
+  },
+  "nav": {
+    "label": "Principal",
+    "home": "Inicio",
+    "homeLabel": "Inicio de PageRecast",
+    "widths": "Anchos",
+    "layers": "Capas",
+    "privacy": "Privacidad",
+    "gallery": "Galería",
+    "guides": "Guías",
+    "cta": "Instalar gratis"
+  },
+  "footer": {
+    "top": "PageRecast, volver arriba",
+    "tagline": "Cualquier página web, como capas editables de Figma. Gratis, de código abierto y nada sale de tu ordenador.",
+    "label": "Pie de página",
+    "product": "Producto",
+    "project": "Proyecto",
+    "trust": "Confianza",
+    "sample": "Página de prueba",
+    "changelog": "Registro de cambios",
+    "releases": "Versiones",
+    "issues": "Informar de un problema",
+    "security": "Seguridad",
+    "license": "Licencia MIT",
+    "format": "El formato .recast",
+    "credit": "Gratis y de código abierto. Creado por <a data-link='shades'>Shades Media Group</a>.",
+    "version": "Versión"
+  },
+  "home": {
+    "title": "Importa cualquier sitio web a Figma gratis | PageRecast",
+    "description": "Convierte cualquier sitio web en capas editables de Figma, gratis. Una extensión de Chrome y un plugin de Figma que capturan páginas, incluso tras un inicio de sesión.",
+    "hero": {
+      "title": "Rehaz cualquier página web.",
+      "lead": "Captura lo que muestra tu navegador. Pégalo en Figma como capas que puedes editar, todas y cada una.",
+      "chrome": "Añadir a Chrome, gratis",
+      "figma": "Obtener el plugin de Figma",
+      "note": "Gratis para siempre. Funciona tras un inicio de sesión.",
+      "sample": "Pruébalo en la página de prueba"
+    },
+    "explode": {
+      "label": "Esta página separándose en sus capas de Figma",
+      "layers": "capas",
+      "texts": "textos",
+      "images": "imágenes",
+      "caption": "Esta página, capturada a 1440 px e importada tal cual."
+    },
+    "widths": {
+      "title": "Cada ancho.<br />Los dos temas.<br />Una captura.",
+      "text": "Elige escritorio, tableta, móvil o cualquier ancho entre 240 y 3840, en claro, oscuro o ambos. Cada uno llega a Figma como su propio marco, y los dos temas se convierten en variables de color con un modo Light y otro Dark.",
+      "width": "Ancho",
+      "theme": "Tema",
+      "light": "Claro",
+      "dark": "Oscuro"
+    },
+    "layers": {
+      "title": "Capas reales, no una imagen.",
+      "text": "El texto sigue siendo texto, con sus propias fuentes. Los iconos se convierten en vectores, los colores en variables y los diseños flex en Auto Layout siempre que el resultado quede exactamente donde lo puso la página. Cada fuente que hubo que sustituir aparece en la lista.",
+      "alt": "La sección de instalación de esta página, con cuatro de sus capas de Figma marcadas",
+      "caption": "Leído de esta página por PageRecast. Estas son las capas que construye."
+    },
+    "behind": {
+      "title": "Tras un inicio de sesión. En staging. En localhost.",
+      "text": "La extensión captura exactamente lo que muestra tu navegador, así que las páginas en las que de verdad trabajas son las que llevas a Figma: paneles, vistas previas, un menú abierto, un formulario a medio rellenar.",
+      "extensionAlt": "El panel lateral de PageRecast tras capturar una página",
+      "pluginAlt": "El plugin de Figma de PageRecast revisando la captura antes de importarla"
+    },
+    "privacy": {
+      "title": "Nada sale de tu ordenador.",
+      "text": "No hay ningún servidor de PageRecast. Las capturas se crean en tu navegador y se quedan en tu dispositivo hasta que las pegas en Figma. Sin cuenta, sin analítica, sin límites y sin precio."
+    },
+    "open": {
+      "title": "Código abierto. Formato abierto.",
+      "text": "PageRecast tiene licencia MIT, y las capturas son archivos <code>.recast</code>: JSON comprimido con gzip y un esquema documentado que puedes leer, escribir y reutilizar.",
+      "github": "Ver en GitHub",
+      "format": "Leer el formato",
+      "codeLabel": "Un fragmento de un archivo .recast"
+    },
+    "faq": {
+      "title": "Preguntas, respondidas.",
+      "lead": "Lo que se pregunta antes de llevar el primer sitio web a Figma. Las guías cubren todo lo demás.",
+      "howto": {
+        "q": "¿Cómo importo un sitio web a Figma?",
+        "name": "Importar un sitio web a Figma con PageRecast",
+        "intro": "Instala la extensión de Chrome y el plugin de Figma y, después:",
+        "steps": {
+          "capture": {
+            "name": "Captura la página",
+            "text": "Abre la página en Chrome, abre el panel lateral de PageRecast, elige los anchos y los temas y pulsa Capture."
+          },
+          "copy": {
+            "name": "Cópiala para Figma",
+            "text": "Pulsa Copy for Figma o guarda un archivo .recast para compartirlo o abrirlo más tarde."
+          },
+          "paste": {
+            "name": "Pégala en Figma",
+            "text": "Abre el plugin de PageRecast, pega con ⌘ V o Ctrl V, revisa los marcos y pulsa Import."
+          }
+        }
+      },
+      "items": {
+        "free": {
+          "q": "¿PageRecast es gratis de verdad?",
+          "a": "Sí. No hay planes, límites, pruebas, cuentas ni marcas de agua, y nunca los habrá. PageRecast es de código abierto con licencia MIT."
+        },
+        "login": {
+          "q": "¿Funciona en páginas tras un inicio de sesión?",
+          "a": "Sí. La extensión captura lo que muestra tu navegador, así que los paneles, las áreas de administración y todo aquello en lo que has iniciado sesión se importan como cualquier página pública."
+        },
+        "localhost": {
+          "q": "¿Puedo importar localhost o un sitio de staging?",
+          "a": "Sí. Se puede capturar cualquier página que se abra en Chrome, incluidos <code>localhost</code>, staging y los despliegues de vista previa, sin túneles ni URL públicas."
+        },
+        "what": {
+          "q": "¿Qué importa PageRecast a Figma?",
+          "a": "Marcos con sus rellenos, bordes, esquinas, sombras y desenfoques; texto con sus fuentes y estilos; imágenes; iconos SVG como vectores editables; variables de color con modos Light y Dark; estilos de texto; y una captura de pantalla bloqueada junto a cada marco para comparar."
+        },
+        "fonts": {
+          "q": "¿Qué pasa con las fuentes de la página?",
+          "a": "PageRecast usa todas las fuentes que tiene Figma, instaladas en tu ordenador o de Google Fonts. Una fuente que Figma no tiene se sustituye por la más parecida, y cada sustitución aparece en la lista antes y después de importar."
+        },
+        "autolayout": {
+          "q": "¿Usa Auto Layout?",
+          "a": "Sí, donde encaja. Los diseños flex se convierten en Auto Layout cuando cada elemento queda a menos de 1,5 px de donde lo puso la página. El resto conserva su posición exacta, así que la importación siempre se parece a la página."
+        },
+        "privacy": {
+          "q": "¿Mis datos son privados?",
+          "a": "Sí. No hay servidor de PageRecast, ni cuenta, ni analítica. Las capturas se crean en tu navegador y se quedan en tu ordenador. El plugin de Figma solo descarga las imágenes que la página ya usa, directamente de los sitios a los que pertenecen."
+        },
+        "firefox": {
+          "q": "¿Funciona en Firefox?",
+          "a": "Sí. PageRecast para Firefox hace las mismas capturas para el mismo plugin de Figma. Captura la página en el tema y el idioma que muestra en ese momento, así que cámbialos antes."
+        },
+        "agents": {
+          "q": "¿Pueden los agentes de IA usar PageRecast?",
+          "a": "Sí. El servidor MCP de PageRecast permite que agentes como Claude Code, Codex y Cursor capturen páginas, lean sus design tokens y envíen capturas a Figma. También se ejecuta en tu ordenador: <code>npx -y pagerecast-mcp</code>."
+        },
+        "screenshot": {
+          "q": "¿En qué se diferencia de una captura de pantalla?",
+          "a": "Una captura de pantalla es una sola imagen plana. PageRecast reconstruye la página en capas: texto que puedes editar, vectores que puedes recolorear, marcos que puedes redimensionar y colores como variables. La captura de pantalla solo se incluye como referencia bloqueada."
+        }
+      }
+    },
+    "install": {
+      "title": "Dos piezas. Dos minutos.",
+      "chrome": "Extensión de Chrome",
+      "chromeText": "Captura la página, en cada ancho, en claro y en oscuro.",
+      "chromeButton": "Añadir a Chrome",
+      "figma": "Plugin de Figma",
+      "figmaText": "Construye las capas, con Auto Layout, variables y estilos.",
+      "figmaButton": "Obtener el plugin",
+      "guides": "Guías",
+      "guidesText": "Instala los dos, captura una página y pégala. Empieza en dos minutos.",
+      "guidesLink": "Leer las guías"
+    },
+    "runtime": {
+      "devices": {
+        "390": "Móvil",
+        "768": "Tableta",
+        "1280": "Portátil",
+        "1440": "Escritorio"
+      },
+      "light": "Claro",
+      "dark": "Oscuro",
+      "viewerAlt": {
+        "light": "La página de prueba capturada a {width} px en modo claro",
+        "dark": "La página de prueba capturada a {width} px en modo oscuro"
+      },
+      "viewerCaption": "{theme} · un marco en Figma",
+      "notes": {
+        "Vector": {
+          "title": "Vector",
+          "detail": "5 formas del SVG de la página, todavía editables"
+        },
+        "Text": { "title": "Texto", "detail": "Hanken Grotesk · 650 · 26 px" },
+        "Auto Layout": {
+          "title": "Auto Layout",
+          "detail": "Horizontal · espacio 10 · relleno 20 · totalmente redondeado"
+        },
+        "Colour variable": {
+          "title": "Variable de color",
+          "detail": "Light #3D3D40 · Dark #C3C3C9"
+        }
+      }
+    }
+  },
+  "gallery": {
+    "title": "Capturas de sitios web para abrir en Figma | Galería PageRecast",
+    "description": "Archivos .recast gratuitos de páginas web reales, listos para importar a Figma como capas editables. Descarga uno y suéltalo sobre el plugin PageRecast.",
+    "heading": "Galería",
+    "intro": "Capturas listas para abrir en Figma ahora mismo. Descarga un archivo, abre PageRecast en Figma y suéltalo sobre el plugin. Cada una tiene tres anchos, en claro y en oscuro.",
+    "download": "Descargar .recast",
+    "view": "Ver la página",
+    "sample": {
+      "name": "Página de prueba",
+      "text": "Tipografía, color, diseño, superficies, vectores, imágenes, controles y una tabla.",
+      "alt": "La página de prueba de PageRecast, capturada a 1440 px",
+      "facts": "6 marcos · 1842 capas · 4,1 MB"
+    },
+    "site": {
+      "name": "Sitio web de PageRecast",
+      "text": "Una página de marketing real con navegación fija, capturas del producto y un pie de página largo.",
+      "alt": "El sitio web de PageRecast, capturado a 1440 px",
+      "facts": "6 marcos · 1206 capas · 4,9 MB"
+    },
+    "share": {
+      "title": "Comparte una captura con tu equipo",
+      "step1": "En la extensión, pulsa el botón de descarga junto a Copy for Figma.",
+      "step2": "Envía el archivo <code>.recast</code> como cualquier otro archivo.",
+      "step3": "Tu compañero lo suelta sobre PageRecast en Figma. No hay que instalar nada más que el plugin."
+    }
+  },
+  "privacy": {
+    "title": "Política de privacidad | PageRecast",
+    "description": "PageRecast no recopila, transmite, vende ni comparte ningún dato personal. Todo ocurre en tu ordenador.",
+    "heading": "Política de privacidad",
+    "updated": "Última actualización: 11 de octubre de 2026",
+    "intro": "PageRecast es una extensión de navegador para Chrome y Firefox y un plugin de Figma, creados por Shades Media Group. Esta política se aplica a todos ellos.",
+    "shortTitle": "En resumen",
+    "short": "PageRecast no recopila, transmite, vende ni comparte ningún dato personal. Todo ocurre en tu ordenador.",
+    "chromeTitle": "A qué accede la extensión de Chrome",
+    "chromePage": "<strong>La página que eliges capturar.</strong> Cuando pulsas Capture, la extensión lee el diseño, los estilos, el texto y las imágenes de la pestaña actual, de una URL que escribes o de una URL que el plugin de Figma envió a través de nuestra página de captura (solo esa página puede pedirlo, y solo después de que pulses Capture en ella), mediante el permiso <code>debugger</code> de Chrome. Se conecta solo para esa captura y se desconecta cuando termina.",
+    "chromeTabs": "<strong>Títulos, direcciones e iconos de las pestañas</strong>, para mostrar qué página se va a capturar.",
+    "chromeStorage": "<strong>El almacenamiento local de tu dispositivo</strong>, para guardar tus ajustes y capturas recientes. Puedes borrar cualquier captura desde el panel; al quitar la extensión se borran todas.",
+    "chromeNetwork": "La extensión no hace peticiones a ningún servidor nuestro. Las imágenes de una captura se leen de la caché del navegador o se cargan igual que las carga la página.",
+    "firefoxTitle": "La extensión de Firefox",
+    "firefox": "La versión de Firefox accede a lo mismo, pero lee la página con los permisos <code>tabs</code> y <code>scripting</code> de Firefox y acceso a todos los sitios web (<code>&lt;all_urls&gt;</code>) en lugar del permiso <code>debugger</code>. Solo usa ese acceso en la pestaña que capturas, para leer la página, hacer su captura de pantalla y cargar sus imágenes. Como en Chrome, nada sale de tu dispositivo.",
+    "pluginTitle": "A qué accede el plugin de Figma",
+    "pluginCapture": "<strong>La captura que pegas o abres</strong>, para crear capas en el archivo de Figma actual.",
+    "pluginImages": "<strong>Las imágenes a las que hace referencia una captura</strong>, que descarga directamente de los sitios web a los que pertenecen.",
+    "pluginStorage": "<strong>El almacenamiento de plugins de Figma</strong>, para recordar tus ajustes de importación.",
+    "pluginAgents": "<strong>Las capturas que un agente de IA puso en cola en tu ordenador</strong>, solo cuando activas las importaciones de agentes. El plugin las recoge de <code>127.0.0.1</code>, un servidor en tu propia máquina que ejecuta el servidor MCP de PageRecast, con un código de emparejamiento que introduces tú.",
+    "pluginWeb": "La pestaña Web del plugin abre <code>pagerecast.shades.md/capture/</code> con la dirección de la página y los ajustes después del <code>#</code> del enlace, una parte que los navegadores nunca envían a un servidor. Esa página los pasa a la extensión de tu navegador, y la captura se copia allí en tu portapapeles.",
+    "dataTitle": "Datos que recibimos",
+    "data": "Ninguno. No hay cuentas, analítica, informes de errores ni seguimiento de ningún tipo.",
+    "childrenTitle": "Menores",
+    "children": "PageRecast es una herramienta de diseño y no está dirigida a menores.",
+    "changesTitle": "Cambios",
+    "changes": "Los cambios en esta política se publican en esta página y se anotan en el <a data-link='changelog'>registro de cambios</a>.",
+    "contactTitle": "Contacto"
+  },
+  "capture": {
+    "title": "Capturar una página para Figma | PageRecast",
+    "description": "La extensión PageRecast captura una página que elegiste en el plugin de Figma y la copia para Figma.",
+    "heading": "Captura para Figma",
+    "reading": "Leyendo el enlace…",
+    "start": "Capturar",
+    "status": "La página se abre en una pestaña nueva mientras PageRecast la captura y después se cierra.",
+    "copy": "Copiar para Figma",
+    "installTitle": "Instala primero la extensión",
+    "installText": "No ha pasado nada porque la extensión PageRecast no está instalada en este navegador o está desactivada. La importación por URL pasa por ella: captura la página aquí mismo, en tu ordenador.",
+    "installButton": "Añadir a Chrome",
+    "installAfter": "Después de instalarla, recarga esta página. Firefox y Safari todavía no admiten enlaces de captura.",
+    "note": "La página que capturas la lee la extensión de este navegador. No se envía nada a PageRecast ni a nadie más.",
+    "runtime": {
+      "invalid": "Este enlace de captura está incompleto. Vuelve a empezar desde la pestaña Web del plugin PageRecast en Figma.",
+      "target": "{host} a {widths} px, {theme}{language}.",
+      "and": " y ",
+      "language": ", en {language}",
+      "themes": { "light": "claro", "dark": "oscuro", "both": "claro y oscuro" },
+      "starting": "Empezando…",
+      "failed": "{message} Pulsa Capturar para intentarlo de nuevo.",
+      "again": "Capturar de nuevo",
+      "frames": { "one": "{n} marco", "other": "{n} marcos" },
+      "thePage": "la página",
+      "copied": "Copiado, pégalo en Figma. {frames} de {title}.",
+      "ready": "Captura lista: {frames}. Cópiala y pégala en Figma."
+    }
+  },
+  "sample": {
+    "title": "Página de prueba para importar webs a Figma | PageRecast",
+    "description": "Una página hecha para importarla a Figma con PageRecast: tipografía, color, Auto Layout, superficies, vectores, imágenes y formularios, en claro y en oscuro.",
+    "sections": "Secciones",
+    "install": "Instalar PageRecast",
+    "heading": "Una página hecha<br />para <em>rehacerse.</em>",
+    "intro": "Cada sección de abajo usa algo que PageRecast convierte en una función de Figma. Captura esta página en varios anchos, en claro y en oscuro, pégala en Figma y compara las dos.",
+    "step1": "Abre el panel lateral de PageRecast",
+    "step2": "Elige anchos y los dos temas y pulsa Capture",
+    "step3": "Pega en el plugin PageRecast de Figma",
+    "type": {
+      "title": "Tipografía",
+      "text": "Dos familias, nueve pesos, un eje de tamaño óptico y estilos mezclados en línea.",
+      "becomes": "Capas de texto y estilos de texto",
+      "inter": "Sans variable, tamaño óptico de 14 a 32",
+      "hanken": "Sans variable, pesos de 100 a 900",
+      "display": "Display 64",
+      "titleSample": "Título 40 en cursiva",
+      "headline": "Titular 24 en sans",
+      "body": "El cuerpo 17 mantiene las <strong>negritas</strong>, las <em>cursivas</em>, los <a href='#type'>enlaces</a>, el <code>código en línea</code> y las <mark>palabras resaltadas</mark> en una sola capa de texto, con los saltos de línea justo donde los puso el navegador.",
+      "weights": "Pesos de Hanken Grotesk"
+    },
+    "colour": {
+      "title": "Color",
+      "text": "Ocho tokens que cambian entre claro y oscuro. Captura los dos temas.",
+      "becomes": "Variables de color con modos Light y Dark"
+    },
+    "layout": {
+      "title": "Diseño",
+      "text": "Filas, columnas, espacios, relleno, ajuste de línea y alineación, todo con flexbox.",
+      "becomes": "Auto Layout, comprobado elemento por elemento",
+      "frames": "Marcos",
+      "framesText": "Cada caja con relleno, borde, esquinas o recorte se convierte en un marco.",
+      "fill": "Relleno",
+      "stroke": "Trazo",
+      "clip": "Recorte",
+      "autoText": "Se mantiene solo cuando cada elemento queda a menos de 1,5 px de la página.",
+      "gap": "Espacio 12",
+      "padding": "Relleno 24",
+      "wrap": "Ajuste",
+      "styles": "Estilos de texto",
+      "stylesText": "El texto repetido se convierte en un estilo que cambias en un solo sitio.",
+      "display": "Display",
+      "titleChip": "Título",
+      "body": "Cuerpo",
+      "alignment": "Alineación",
+      "start": "Inicio",
+      "grow": "Llenar",
+      "end": "Final"
+    },
+    "surfaces": {
+      "title": "Superficies",
+      "text": "Degradados, sombras, desenfoques, bordes y esquinas definidos uno a uno.",
+      "becomes": "Rellenos, trazos y efectos",
+      "linear": "Lineal",
+      "radial": "Radial",
+      "angular": "Angular",
+      "shadow": "Sombra",
+      "blur": "Desenfoque de fondo",
+      "dashed": "Discontinuo",
+      "corners": "Esquinas",
+      "inset": "Sombra interior"
+    },
+    "media": {
+      "title": "Vectores e imágenes",
+      "text": "El SVG en línea sigue siendo vectorial. Las imágenes conservan su recorte y su ajuste.",
+      "becomes": "Capas vectoriales y rellenos de imagen",
+      "artLabel": "Ilustración vectorial",
+      "shapes": "Formas superpuestas",
+      "svg": "SVG, 7 formas",
+      "photoAlt": "Cartel abstracto en rojo, rosa y negro",
+      "jpeg": "JPEG, ajuste cover",
+      "icons": "Iconos"
+    },
+    "controls": {
+      "title": "Controles",
+      "text": "Los campos de formulario se capturan tal como están ahora: escritos, marcados o elegidos.",
+      "becomes": "Marcos y texto, en su estado actual",
+      "address": "Dirección de la página",
+      "width": "Ancho",
+      "desktop": "Escritorio · 1440",
+      "tablet": "Tableta · 768",
+      "mobile": "Móvil · 390",
+      "theme": "Tema",
+      "light": "Claro",
+      "dark": "Oscuro",
+      "both": "Ambos",
+      "banners": "Ocultar avisos de cookies",
+      "lazy": "Cargar antes las imágenes diferidas",
+      "scrollbar": "Mantener la barra de desplazamiento",
+      "capture": "Capturar",
+      "cancel": "Cancelar"
+    },
+    "table": {
+      "title": "Tablas",
+      "text": "Las filas y celdas conservan sus bordes, su alineación y sus cifras.",
+      "becomes": "Marcos anidados con cifras tabulares",
+      "frame": "Marco",
+      "width": "Ancho",
+      "sizedFor": "Pensado para",
+      "theme": "Tema",
+      "desktop": "Escritorio",
+      "desktopFor": "Portátiles y monitores de escritorio",
+      "tablet": "Tableta",
+      "tabletFor": "Tabletas en vertical",
+      "mobile": "Móvil",
+      "mobileFor": "La mayoría de los teléfonos actuales",
+      "light": "Claro",
+      "dark": "Oscuro"
+    },
+    "end": "Esta página forma parte de PageRecast, gratis y de código abierto.",
+    "get": "Obtener PageRecast"
+  }
+}

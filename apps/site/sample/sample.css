@@ -13,7 +13,10 @@
   --sunk: #f1efe9;
   --line: #e3e1db;
   --display: 'Inter Variable', system-ui, sans-serif;
-  --sans: 'Hanken Grotesk Variable', system-ui, sans-serif;
+  /* Hanken Grotesk has no Russian; Inter carries Cyrillic, the system fonts carry Chinese. */
+  --sans:
+    'Hanken Grotesk Variable', 'Inter Variable', 'PingFang SC', 'Hiragino Sans GB',
+    'Microsoft YaHei', 'Noto Sans CJK SC', 'Noto Sans SC', system-ui, sans-serif;
   --gutter: clamp(20px, 4vw, 56px);
   --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
   color-scheme: light dark;

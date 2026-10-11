@@ -16,8 +16,44 @@ import { LINKS } from './src/links'
 const root = fileURLToPath(new URL('.', import.meta.url))
 export const SITE = 'https://pagerecast.shades.md'
 
-export const LOCALES = [{ code: 'en', lang: 'en', og: 'en_US', name: 'English' }] as const
+/** The languages the site is written in. English is the default, at the root. */
+export const LOCALES = [
+  { code: 'en', lang: 'en', og: 'en_US', name: 'English' },
+  { code: 'fr', lang: 'fr', og: 'fr_FR', name: 'Français' },
+  { code: 'ro', lang: 'ro', og: 'ro_RO', name: 'Română' },
+  { code: 'ru', lang: 'ru', og: 'ru_RU', name: 'Русский' },
+  { code: 'es', lang: 'es', og: 'es_ES', name: 'Español' },
+  { code: 'zh', lang: 'zh-Hans', og: 'zh_CN', name: '中文' },
+] as const
 type Locale = (typeof LOCALES)[number]
+
+/**
+ * More languages, machine-translated from the English page by Google's
+ * translation proxy: a plain link, no script, and nofollow so the copies stay
+ * out of search results. [language, Google's code, name].
+ */
+const MACHINE = [
+  ['de', 'de', 'Deutsch'],
+  ['it', 'it', 'Italiano'],
+  ['pt', 'pt', 'Português'],
+  ['pl', 'pl', 'Polski'],
+  ['uk', 'uk', 'Українська'],
+  ['tr', 'tr', 'Türkçe'],
+  ['nl', 'nl', 'Nederlands'],
+  ['ja', 'ja', '日本語'],
+  ['ko', 'ko', '한국어'],
+  ['ar', 'ar', 'العربية'],
+  ['hi', 'hi', 'हिन्दी'],
+  ['id', 'id', 'Bahasa Indonesia'],
+  ['vi', 'vi', 'Tiếng Việt'],
+  ['th', 'th', 'ไทย'],
+  ['cs', 'cs', 'Čeština'],
+  ['sv', 'sv', 'Svenska'],
+  ['he', 'iw', 'עברית'],
+  ['el', 'el', 'Ελληνικά'],
+  ['hu', 'hu', 'Magyar'],
+  ['bg', 'bg', 'Български'],
+] as const
 
 export const PAGES = [
   { id: 'home', path: '' },
@@ -33,6 +69,9 @@ type Dict = { [key: string]: string | Dict }
 /** Path of a page in a language: /gallery/, /fr/gallery/. */
 export const pathOf = (locale: Locale, page: Page) =>
   `/${locale.code === 'en' ? '' : `${locale.code}/`}${page.path}`
+
+const translated = (page: Page, code: string) =>
+  `https://pagerecast-shades-md.translate.goog/${page.path}?_x_tr_sl=en&amp;_x_tr_tl=${code}&amp;_x_tr_hl=${code}&amp;_x_tr_pto=wapp`
 
 const dictionary = (code: string): Dict =>
   JSON.parse(readFileSync(join(root, 'i18n', `${code}.json`), 'utf8')) as Dict
@@ -70,6 +109,41 @@ function questions(dict: Dict) {
   ]
 }
 
+/** Every language's links to this page: the six written ones, then Google's. */
+function languages(locale: Locale, page: Page) {
+  const own = LOCALES.map(
+    (l) =>
+      `<li><a href="${pathOf(l, page)}" hreflang="${l.lang}" lang="${l.lang}"${l === locale ? ' aria-current="page"' : ''}>${l.name}</a></li>`,
+  ).join('')
+  const machine = MACHINE.map(
+    ([lang, code, name]) =>
+      `<li><a href="${translated(page, code)}" hreflang="${lang}" lang="${lang}" rel="nofollow">${name}</a></li>`,
+  ).join('')
+  return { own, machine }
+}
+
+const PLURALS = new Set(['zero', 'one', 'two', 'few', 'many'])
+const keys = (node: Dict, prefix = ''): string[] =>
+  Object.entries(node).flatMap(([key, value]) =>
+    typeof value === 'object'
+      ? keys(value, `${prefix}${key}.`)
+      : PLURALS.has(key)
+        ? []
+        : [prefix + key],
+  )
+
+/** Every dictionary has exactly the English keys; plural forms vary by language. */
+function checkDictionaries() {
+  const english = keys(dictionary('en'))
+  for (const { code } of LOCALES) {
+    const own = keys(dictionary(code))
+    const missing = english.filter((key) => !own.includes(key))
+    const extra = own.filter((key) => !english.includes(key))
+    if (missing.length || extra.length)
+      throw new Error(`i18n/${code}.json: missing ${missing.join(', ')}; extra ${extra.join(', ')}`)
+  }
+}
+
 function render(locale: Locale, page: Page): string {
   const dict = dictionary(locale.code)
   const base = pathOf(locale, PAGES[0])
@@ -88,8 +162,28 @@ function render(locale: Locale, page: Page): string {
       ]
         .filter(Boolean)
         .join('\n    '),
-    langs: () => '',
-    langlist: () => '',
+    langs: () => {
+      const { own, machine } = languages(locale, page)
+      return `<details class="lang">
+        <summary><span class="visually-hidden">${t('language')}: </span>${locale.name}</summary>
+        <div class="lang-menu">
+          <ul>${own}</ul>
+          <p class="lang-more">${t('moreLanguages')}<span>${t('machine')}</span></p>
+          <ul class="lang-machine">${machine}</ul>
+        </div>
+      </details>`
+    },
+    langlist: () => {
+      const { own, machine } = languages(locale, page)
+      return `<nav class="langs" aria-label="${html(t('language'))}">
+        <ul>${own}</ul>
+        <details>
+          <summary>${t('moreLanguages')}</summary>
+          <p>${t('machine')}</p>
+          <ul>${machine}</ul>
+        </details>
+      </nav>`
+    },
     // Google's own button, as a plain link: no Google script, no cookie.
     preferred: () =>
       `<a class="pref" data-link="preferred" target="_blank">${GOOGLE_G}<span>${t('preferred.button')}</span></a>`,
@@ -124,6 +218,7 @@ function render(locale: Locale, page: Page): string {
 
 /** Writes every page in every language and returns them as Rollup inputs. */
 function generate(): Record<string, string> {
+  checkDictionaries()
   const inputs: Record<string, string> = {}
   for (const locale of LOCALES) {
     for (const page of PAGES) {

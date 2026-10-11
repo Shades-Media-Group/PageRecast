@@ -107,6 +107,16 @@ async function encode(
  * Turns every image asset into bytes Figma accepts. Oversized images are
  * scaled down; screenshots are cut into strips so they keep full detail.
  */
+/** PNG, JPEG or GIF, by their first bytes: the formats Figma can decode. */
+export function figmaReadable(bytes: Uint8Array): boolean {
+  const [a, b, c] = bytes
+  return (
+    (a === 0x89 && b === 0x50 && c === 0x4e) ||
+    (a === 0xff && b === 0xd8 && c === 0xff) ||
+    (a === 0x47 && b === 0x49 && c === 0x46)
+  )
+}
+
 export async function prepareImages(
   file: RecastFile,
   onProgress: (done: number, total: number) => void,
@@ -163,7 +173,12 @@ export async function prepareImages(
             Math.round(height * scale),
           )
         } else {
-          images[id] = new Uint8Array(await blob.arrayBuffer())
+          const bytes = new Uint8Array(await blob.arrayBuffer())
+          // Figma decodes only PNG, JPEG and GIF; WebP, AVIF and the rest are
+          // re-encoded here, where the browser can read them.
+          images[id] = figmaReadable(bytes)
+            ? bytes
+            : await encode(bitmap, 0, 0, width, height, width, height)
         }
         bitmap.close()
       } catch {

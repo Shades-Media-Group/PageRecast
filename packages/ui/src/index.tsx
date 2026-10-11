@@ -220,6 +220,7 @@ export function Chips({
           type="button"
           class="pr-chip"
           aria-pressed={item.pressed}
+          aria-label={item.title}
           title={item.title}
           onClick={item.onClick}
         >
@@ -227,6 +228,121 @@ export function Chips({
         </button>
       ))}
       {children}
+    </div>
+  )
+}
+
+export interface WidthPreset {
+  width: number
+  icon: IconName
+  /** The device's name, such as "Desktop", for the tooltip and screen readers. */
+  name: string
+}
+
+const MIN_WIDTH = 240
+const MAX_WIDTH = 3840
+
+/**
+ * Capture widths: the presets and the user's own widths as pill chips on one
+ * row, then a field to add a width. Custom widths stay listed when unticked,
+ * so they can be picked again later, and each one can be removed.
+ */
+export function WidthPicker({
+  presets,
+  widths,
+  custom,
+  onChange,
+}: {
+  presets: WidthPreset[]
+  widths: number[]
+  custom: number[]
+  onChange: (next: { widths: number[]; custom: number[] }) => void
+}) {
+  const [draft, setDraft] = useState('')
+  const sorted = (list: number[]) => [...list].sort((a, b) => b - a)
+  const toggle = (width: number) =>
+    onChange({
+      custom,
+      widths: widths.includes(width)
+        ? widths.filter((w) => w !== width)
+        : sorted([...widths, width]),
+    })
+  const add = () => {
+    const width = Math.round(Number(draft))
+    if (!width || width < MIN_WIDTH || width > MAX_WIDTH) return
+    setDraft('')
+    const known = custom.includes(width) || presets.some((p) => p.width === width)
+    onChange({
+      custom: known ? custom : [...custom, width],
+      widths: widths.includes(width) ? widths : sorted([...widths, width]),
+    })
+  }
+  const remove = (width: number) =>
+    onChange({
+      custom: custom.filter((w) => w !== width),
+      widths: widths.filter((w) => w !== width),
+    })
+  return (
+    <div class="pr-widths">
+      <Chips
+        label={t('common.widths')}
+        items={presets.map((p) => ({
+          label: (
+            <>
+              <Icon name={p.icon} size={14} />
+              <span class="num">{p.width}</span>
+            </>
+          ),
+          title: `${p.name} ${p.width}`,
+          pressed: widths.includes(p.width),
+          onClick: () => toggle(p.width),
+        }))}
+      >
+        {custom.map((width) => (
+          <span class="pr-chip pr-chip--removable" data-pressed={widths.includes(width)}>
+            <button
+              type="button"
+              class="pr-chip__toggle"
+              aria-pressed={widths.includes(width)}
+              aria-label={`${t('device.custom')} ${width}`}
+              title={`${t('device.custom')} ${width}`}
+              onClick={() => toggle(width)}
+            >
+              <Icon name="width" size={14} />
+              <span class="num">{width}</span>
+            </button>
+            <button
+              type="button"
+              class="pr-chip__remove"
+              aria-label={t('panel.removeWidth', { width: String(width) })}
+              title={t('panel.removeWidth', { width: String(width) })}
+              onClick={() => remove(width)}
+            >
+              <Icon name="close" size={12} />
+            </button>
+          </span>
+        ))}
+      </Chips>
+      <form
+        class="pr-field pr-widths__add"
+        onSubmit={(e) => {
+          e.preventDefault()
+          add()
+        }}
+      >
+        <Icon name="width" size={16} />
+        <input
+          class="pr-input"
+          type="number"
+          min={MIN_WIDTH}
+          max={MAX_WIDTH}
+          placeholder={t('panel.widthPlaceholder')}
+          aria-label={t('panel.widthLabel')}
+          value={draft}
+          onInput={(e) => setDraft(e.currentTarget.value)}
+        />
+        <IconButton type="submit" icon="plus" label={t('panel.addWidth')} disabled={!draft} />
+      </form>
     </div>
   )
 }

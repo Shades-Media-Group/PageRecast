@@ -661,6 +661,10 @@ select.pr-input {
 .pr-chip .num {
   color: var(--ink-3);
 }
+/* Icon and width: the width is the label, so it keeps the chip's colour. */
+.pr-chip .pr-icon + .num {
+  color: inherit;
+}
 .pr-chip[aria-pressed='true'] {
   border-color: var(--ink);
   background: var(--ink);
@@ -669,6 +673,52 @@ select.pr-input {
 .pr-chip[aria-pressed='true'] .num {
   color: inherit;
   opacity: 0.72;
+}
+.pr-chip[aria-pressed='true'] .pr-icon + .num {
+  opacity: 1;
+}
+
+/* A custom width: the pill toggles it, the small cross inside removes it. */
+.pr-chip--removable {
+  gap: 0;
+  padding: 0 2px 0 0;
+}
+.pr-chip--removable button {
+  display: inline-flex;
+  align-items: center;
+  height: 100%;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+.pr-chip__toggle {
+  gap: 4px;
+  padding: 0 4px 0 10px;
+}
+.pr-chip__remove {
+  justify-content: center;
+  width: 22px;
+  border-radius: 999px;
+  opacity: 0.6;
+}
+.pr-chip__remove:hover {
+  opacity: 1;
+}
+.pr-chip--removable[data-pressed='true'] {
+  border-color: var(--ink);
+  background: var(--ink);
+  color: var(--bg);
+}
+.pr-chip--removable[data-pressed='true'] .num {
+  color: inherit;
+  opacity: 1;
+}
+.pr-widths {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
 }
 
 /* Reset all preferences: what is saved, then the two-step reset. */

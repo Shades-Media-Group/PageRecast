@@ -168,6 +168,14 @@ test('the Web tab hands the URL and settings to the extension through a capture 
 
   await page.getByRole('button', { name: 'Edit' }).click()
   await page.getByRole('button', { name: 'Mobile 390' }).click()
+  // A width of one's own is added as a pill, ticked, and kept with the settings.
+  await page.getByLabel('Custom width in pixels').fill('1024')
+  await page.getByRole('button', { name: 'Add width' }).click()
+  await expect(page.getByRole('button', { name: 'Custom 1024' })).toHaveAttribute(
+    'aria-pressed',
+    'true',
+  )
+  await shot(page, 'web-custom-width')
   await page.getByRole('button', { name: 'Both' }).click()
   await page.getByLabel('Language').fill('de-DE')
   await page.getByLabel('Page URL').fill('example.com/pricing')
@@ -179,7 +187,7 @@ test('the Web tab hands the URL and settings to the extension through a capture 
     .toBe(
       captureLink({
         url: 'https://example.com/pricing',
-        widths: [1440, 390],
+        widths: [1440, 1024, 390],
         theme: 'both',
         language: 'de-DE',
       }),
@@ -189,7 +197,12 @@ test('the Web tab hands the URL and settings to the extension through a capture 
   const saved = (await sent(page)).filter((m) => m.type === 'settings').at(-1) as unknown as {
     settings: typeof DEFAULT_SETTINGS
   }
-  expect(saved.settings.web).toEqual({ widths: [1440, 390], theme: 'both', language: 'de-DE' })
+  expect(saved.settings.web).toEqual({
+    widths: [1440, 1024, 390],
+    customWidths: [1024],
+    theme: 'both',
+    language: 'de-DE',
+  })
 })
 
 test('a capture pasted into a field imports instead of filling it', async ({ page }) => {

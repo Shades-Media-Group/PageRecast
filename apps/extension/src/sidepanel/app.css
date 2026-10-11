@@ -55,17 +55,6 @@ body,
 }
 
 /* Widths: a pill chip each; a custom width has its own way out beside it. */
-.custom-width {
-  display: inline-flex;
-  align-items: center;
-}
-.custom-width .pr-icon-button {
-  width: 24px;
-  height: 24px;
-}
-.add-width {
-  margin-top: 8px;
-}
 
 /* The latest capture: its frames on the stage, then the facts in one line. */
 .result {

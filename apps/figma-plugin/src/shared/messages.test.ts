@@ -66,13 +66,23 @@ describe('migrateSettings', () => {
       appearance: 'sepia',
       defaults: { variables: 'yes' },
       fonts: { Söhne: 'Inter', Broken: 3 },
-      web: { widths: [1440, 'wide', 99999, 390], theme: 'night', language: 'de-DE' },
+      web: {
+        widths: [1440, 'wide', 99999, 390],
+        customWidths: [1024, 12],
+        theme: 'night',
+        language: 'de-DE',
+      },
       agent: { listen: 'on', code: 'AAAA-BBBB-CCCC-DDDD' },
     })
     expect(settings.appearance).toBe('light')
     expect(settings.defaults).toEqual(DEFAULT_OPTIONS)
     expect(settings.fonts).toEqual({ Söhne: 'Inter' })
-    expect(settings.web).toEqual({ widths: [1440, 390], theme: 'light', language: 'de-DE' })
+    expect(settings.web).toEqual({
+      widths: [1440, 390],
+      customWidths: [1024],
+      theme: 'light',
+      language: 'de-DE',
+    })
     expect(settings.agent).toEqual({ listen: false, code: 'AAAA-BBBB-CCCC-DDDD' })
   })
 })

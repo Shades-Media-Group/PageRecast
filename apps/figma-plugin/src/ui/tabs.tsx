@@ -2,7 +2,17 @@
 import { useState } from 'preact/hooks'
 import { captureLink, webUrl } from '@pagerecast/capture'
 import { deviceName, rich, t, type MessageKey } from '@pagerecast/i18n'
-import { Button, Chips, Icon, Message, REPO_URL, Section, Segmented, Toggle } from '@pagerecast/ui'
+import {
+  Button,
+  WidthPicker,
+  Icon,
+  Message,
+  REPO_URL,
+  Section,
+  Segmented,
+  Toggle,
+  type IconName,
+} from '@pagerecast/ui'
 import type { WebCapture } from '../shared/messages'
 import { cleanCode, type AgentState } from './agent'
 
@@ -83,11 +93,11 @@ function DocLink({
   )
 }
 
-const WIDTHS: { width: number; device: MessageKey }[] = [
-  { width: 1440, device: 'device.desktop' },
-  { width: 1280, device: 'device.laptop' },
-  { width: 768, device: 'device.tablet' },
-  { width: 390, device: 'device.mobile' },
+const WIDTHS: { width: number; device: MessageKey; icon: IconName }[] = [
+  { width: 1440, device: 'device.desktop', icon: 'desktop' },
+  { width: 1280, device: 'device.laptop', icon: 'laptop' },
+  { width: 768, device: 'device.tablet', icon: 'tablet' },
+  { width: 390, device: 'device.mobile', icon: 'mobile' },
 ]
 const THEMES = { light: 'theme.light', dark: 'theme.dark', both: 'theme.lightAndDark' } as const
 
@@ -120,13 +130,6 @@ export function WebTab({
     open(captureLink({ url, widths: web.widths, theme: web.theme, language }))
     setSent(new URL(url).host)
   }
-  const toggleWidth = (width: number) =>
-    onChange({
-      ...web,
-      widths: web.widths.includes(width)
-        ? web.widths.filter((w) => w !== width)
-        : [...web.widths, width].sort((a, b) => b - a),
-    })
 
   return (
     <>
@@ -185,17 +188,13 @@ export function WebTab({
           <>
             <div class="pr-prop">
               <span>{t('common.widths')}</span>
-              <Chips
-                label={t('common.widths')}
-                items={WIDTHS.map((p) => ({
-                  label: (
-                    <>
-                      {t(p.device)} <span class="num">{p.width}</span>
-                    </>
-                  ),
-                  pressed: web.widths.includes(p.width),
-                  onClick: () => toggleWidth(p.width),
-                }))}
+              <WidthPicker
+                presets={WIDTHS.map((p) => ({ width: p.width, icon: p.icon, name: t(p.device) }))}
+                widths={web.widths}
+                custom={web.customWidths}
+                onChange={({ widths, custom }) =>
+                  onChange({ ...web, widths, customWidths: custom })
+                }
               />
             </div>
             <div class="pr-prop">

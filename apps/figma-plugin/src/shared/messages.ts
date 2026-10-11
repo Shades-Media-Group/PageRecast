@@ -64,6 +64,8 @@ export interface Settings {
 
 export interface WebCapture {
   widths: number[]
+  /** Widths the user added, kept listed even while unticked. */
+  customWidths: number[]
   theme: 'light' | 'dark' | 'both'
   /** BCP 47 tag such as `de-DE`; empty keeps the browser's language. */
   language: string
@@ -78,7 +80,7 @@ export const DEFAULT_SETTINGS: Settings = {
   imports: 0,
   askedForRating: false,
   fonts: {},
-  web: { widths: [1440], theme: 'light', language: '' },
+  web: { widths: [1440], customWidths: [], theme: 'light', language: '' },
   agent: { listen: false, code: '' },
 }
 
@@ -104,6 +106,9 @@ function migrateOptions(saved: unknown): ImportOptions {
  * (1.0 had no theme, language, fonts, Web or agent settings) take their
  * default, and values of the wrong shape fall back to it.
  */
+const isWidth = (w: unknown): w is number =>
+  Number.isInteger(w) && Number(w) >= 240 && Number(w) <= 3840
+
 export function migrateSettings(input: unknown): Settings {
   const saved: Saved = isObject(input) ? input : {}
   const web = isObject(saved.web) ? saved.web : {}
@@ -129,9 +134,8 @@ export function migrateSettings(input: unknown): Settings {
       ),
     ),
     web: {
-      widths: Array.isArray(web.widths)
-        ? web.widths.filter((w): w is number => Number.isInteger(w) && w >= 240 && w <= 3840)
-        : DEFAULT_SETTINGS.web.widths,
+      widths: Array.isArray(web.widths) ? web.widths.filter(isWidth) : DEFAULT_SETTINGS.web.widths,
+      customWidths: Array.isArray(web.customWidths) ? web.customWidths.filter(isWidth) : [],
       theme: pick(web.theme, ['light', 'dark', 'both'] as const, 'light'),
       language: typeof web.language === 'string' ? web.language : '',
     },

@@ -21,7 +21,7 @@ import {
 } from '@pagerecast/i18n'
 import {
   Button,
-  Chips,
+  WidthPicker,
   CREDIT,
   DOCS_URL,
   FrameLineup,
@@ -195,7 +195,6 @@ export function App() {
   const [history, setHistory] = useState<Entry[]>([])
   const [latest, setLatest] = useState<string | null>(null)
   const [copied, setCopied] = useState<string | null>(null)
-  const [customWidth, setCustomWidth] = useState('')
   const [url, setUrl] = useState('')
   /** Sites with remembered choices, which "Reset all preferences" also clears. */
   const [sites, setSites] = useState(0)
@@ -295,33 +294,6 @@ export function App() {
         hide: next.hide,
       })
   }
-
-  const toggleWidth = (width: number) => {
-    const widths = settings.widths.includes(width)
-      ? settings.widths.filter((w) => w !== width)
-      : [...settings.widths, width].sort((a, b) => b - a)
-    update({ widths })
-  }
-
-  const addCustomWidth = () => {
-    const width = Math.round(Number(customWidth))
-    if (!width || width < 240 || width > 3840) return
-    setCustomWidth('')
-    const known =
-      settings.customWidths.includes(width) || PRESET_WIDTHS.some((p) => p.width === width)
-    update({
-      customWidths: known ? settings.customWidths : [...settings.customWidths, width],
-      widths: settings.widths.includes(width)
-        ? settings.widths
-        : [...settings.widths, width].sort((a, b) => b - a),
-    })
-  }
-
-  const removeCustomWidth = (width: number) =>
-    update({
-      customWidths: settings.customWidths.filter((w) => w !== width),
-      widths: settings.widths.filter((w) => w !== width),
-    })
 
   const themes =
     settings.theme === 'both' ? (['light', 'dark'] as const) : ([settings.theme] as const)
@@ -657,61 +629,16 @@ export function App() {
                 <span class="num">{t('panel.selected', { count: settings.widths.length })}</span>
               }
             >
-              <Chips
-                label={t('common.widths')}
-                items={PRESET_WIDTHS.map((p) => ({
-                  label: (
-                    <>
-                      {t(DEVICES[p.icon])} <span class="num">{p.width}</span>
-                    </>
-                  ),
-                  pressed: settings.widths.includes(p.width),
-                  onClick: () => toggleWidth(p.width),
+              <WidthPicker
+                presets={PRESET_WIDTHS.map((p) => ({
+                  width: p.width,
+                  icon: p.icon,
+                  name: t(DEVICES[p.icon]),
                 }))}
-              >
-                {settings.customWidths.map((width) => (
-                  <span class="custom-width">
-                    <button
-                      type="button"
-                      class="pr-chip"
-                      aria-pressed={settings.widths.includes(width)}
-                      onClick={() => toggleWidth(width)}
-                    >
-                      {t('device.custom')} <span class="num">{width}</span>
-                    </button>
-                    <IconButton
-                      icon="close"
-                      label={t('panel.removeWidth', { width: String(width) })}
-                      onClick={() => removeCustomWidth(width)}
-                    />
-                  </span>
-                ))}
-              </Chips>
-              <form
-                class="pr-field add-width"
-                onSubmit={(e) => {
-                  e.preventDefault()
-                  addCustomWidth()
-                }}
-              >
-                <Icon name="width" size={16} />
-                <input
-                  class="pr-input"
-                  type="number"
-                  min={240}
-                  max={3840}
-                  placeholder={t('panel.widthPlaceholder')}
-                  aria-label={t('panel.widthLabel')}
-                  value={customWidth}
-                  onInput={(e) => setCustomWidth(e.currentTarget.value)}
-                />
-                <IconButton
-                  type="submit"
-                  icon="plus"
-                  label={t('panel.addWidth')}
-                  disabled={!customWidth}
-                />
-              </form>
+                widths={settings.widths}
+                custom={settings.customWidths}
+                onChange={({ widths, custom }) => update({ widths, customWidths: custom })}
+              />
             </Section>
 
             <Section title={t('panel.before')}>

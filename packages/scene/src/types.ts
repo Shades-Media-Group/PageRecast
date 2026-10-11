@@ -18,6 +18,11 @@ export interface RecastFile {
   captures: Capture[]
   /** Binary and SVG resources shared by every capture, keyed by asset id. */
   assets: Record<string, Asset>
+  /**
+   * Where the page loaded its web fonts from: family name → the font file or
+   * stylesheet URL, as far as the page's own stylesheets show it. Optional.
+   */
+  fontSources?: Record<string, string>
 }
 
 export type Theme = 'light' | 'dark'

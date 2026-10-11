@@ -96,6 +96,7 @@ export function assemble(
       ...(screenshot ? { screenshot } : {}),
     }
   })
+  const fontSources = Object.assign({}, ...parts.map((p) => p.walk.fontSources ?? {}))
   return {
     format: SCENE_FORMAT,
     version: SCENE_VERSION,
@@ -103,6 +104,7 @@ export function assemble(
     source: { url: meta.url, title: meta.title, capturedAt: new Date().toISOString() },
     captures,
     assets,
+    ...(Object.keys(fontSources).length ? { fontSources } : {}),
   }
 }
 

@@ -78,6 +78,17 @@ Only differences are recorded, and a state that changes nothing is left out. Sta
 
 `assets` maps ids to either `{ "kind": "image", "mime", "width", "height", "data" }` (base64) or `{ "kind": "image", "url" }` for images the plugin should download, or `{ "kind": "svg", "markup" }`.
 
+## Font sources
+
+`fontSources` is optional and maps a web font family to where the page loaded it from: the first `url()` of its `@font-face` rule, or the Google Fonts stylesheet that names it. Rules in cross-origin stylesheets cannot be read, so the map can be incomplete. The plugin uses it to send someone missing a font to the right place to get it.
+
+```json
+"fontSources": {
+  "Space Grotesk": "https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;700",
+  "Söhne": "https://example.com/fonts/soehne-buch.woff2"
+}
+```
+
 ## Compatibility
 
 New optional fields can be added in a minor release. Removing or changing the meaning of a field raises the format `version` and needs a major release.

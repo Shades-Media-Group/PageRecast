@@ -84,6 +84,8 @@ test('captures the kitchen sink faithfully', async ({ page }) => {
   const image = nodes.find((n) => n.type === 'image')!
   expect(image).toMatchObject({ width: 40, height: 40, name: 'Image "Red pixel"' })
   expect(image).not.toHaveProperty('position')
+  // Where each web font comes from, for "Get font" in the plugin.
+  expect(result.fontSources['Fixture Sans']).toMatch(/\/fixtures\/fonts\/fixture-sans\.woff2$/)
   // object-position and background-position keep the visible crop.
   const cropped = nodes.find((n) => n.type === 'image' && n.name.includes('Cropped'))
   expect(cropped).toMatchObject({ fit: 'fill', position: [0.5, 0] })

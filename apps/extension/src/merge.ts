@@ -25,10 +25,12 @@ export function mergeFiles(files: RecastFile[]): RecastFile {
     }))
   })
   const [first] = files
+  const fontSources = Object.assign({}, ...files.map((f) => f.fontSources ?? {}))
   return {
     ...first!,
     source: { ...first!.source, title: `${files.length} pages` },
     captures,
     assets,
+    ...(Object.keys(fontSources).length ? { fontSources } : {}),
   }
 }

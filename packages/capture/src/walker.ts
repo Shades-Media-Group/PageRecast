@@ -19,6 +19,7 @@ import type {
 import {
   parseBlur,
   parseColor,
+  googleFontFamilies,
   parseGradient,
   parseImagePosition,
   parseShadows,
@@ -60,7 +61,52 @@ export interface WalkResult {
   assets: Record<string, PendingAsset>
   rasters: RasterRequest[]
   fonts: string[]
+  /** Family → where the page loaded it from, for families its stylesheets declare. */
+  fontSources: Record<string, string>
   truncated: boolean
+}
+
+/**
+ * Where each web font family comes from: the first `url()` of its
+ * `@font-face`, or the Google Fonts stylesheet that loads it. Cross-origin
+ * stylesheets cannot be read, but a Google Fonts one names its families in
+ * its own URL.
+ */
+export function fontSources(doc: Document): Record<string, string> {
+  const out: Record<string, string> = {}
+  const add = (family: string, url: string) => {
+    const name = family.trim().replace(/^["']|["']$/g, '')
+    if (name && url && !out[name]) out[name] = url
+  }
+  const fromGoogle = (href: string) => {
+    for (const family of googleFontFamilies(href)) add(family, href)
+  }
+  const visit = (sheet: CSSStyleSheet, depth: number) => {
+    if (sheet.href) fromGoogle(sheet.href)
+    let rules: CSSRuleList
+    try {
+      rules = sheet.cssRules
+    } catch {
+      return
+    }
+    for (const rule of Array.from(rules)) {
+      if (rule instanceof CSSFontFaceRule) {
+        const src = /url\(\s*["']?([^"')]+)/.exec(rule.style.getPropertyValue('src'))?.[1]
+        if (src)
+          add(
+            rule.style.getPropertyValue('font-family'),
+            new URL(src, sheet.href ?? doc.baseURI).href,
+          )
+      } else if (rule instanceof CSSImportRule && rule.styleSheet && depth < 4) {
+        visit(rule.styleSheet, depth + 1)
+      }
+    }
+  }
+  // A Google Fonts link names its families even when it did not load.
+  for (const link of Array.from(doc.querySelectorAll<HTMLLinkElement>('link[href]')))
+    fromGoogle(link.href)
+  for (const sheet of Array.from(doc.styleSheets)) visit(sheet, 0)
+  return out
 }
 
 const SKIP = new Set([
@@ -1230,6 +1276,7 @@ export function walk(doc: Document, options: WalkOptions): WalkResult {
     assets,
     rasters,
     fonts: [...fonts],
+    fontSources: fontSources(doc),
     truncated,
   }
 }

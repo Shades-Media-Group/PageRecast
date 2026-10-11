@@ -354,3 +354,21 @@ export function parseImagePosition(
   if (position.every((v) => Math.abs(v - 0.5) < 0.0005)) return undefined
   return [round(position[0]), round(position[1])]
 }
+
+/**
+ * Families a Google Fonts stylesheet URL loads: `family=Inter:wght@400;700`
+ * (css2, repeated) or `family=Roboto:400,700|Open+Sans` (the older API).
+ */
+export function googleFontFamilies(href: string): string[] {
+  try {
+    const url = new URL(href)
+    if (url.hostname !== 'fonts.googleapis.com') return []
+    return url.searchParams
+      .getAll('family')
+      .flatMap((value) => value.split('|'))
+      .map((family) => family.split(':')[0]!.trim())
+      .filter(Boolean)
+  } catch {
+    return []
+  }
+}

@@ -7,6 +7,7 @@ import {
   parseContent,
   parseGradient,
   parseImagePosition,
+  googleFontFamilies,
   parseShadows,
   parseTransform,
   parseUrl,
@@ -143,6 +144,20 @@ describe('small parsers', () => {
     expect(parseContent('"\\201C"')).toBe('\u201C')
     expect(parseContent('none')).toBeNull()
     expect(parseContent('""')).toBe('')
+  })
+})
+
+describe('googleFontFamilies', () => {
+  it('reads both stylesheet APIs and ignores other hosts', () => {
+    expect(
+      googleFontFamilies(
+        'https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Space+Grotesk&display=swap',
+      ),
+    ).toEqual(['Inter', 'Space Grotesk'])
+    expect(
+      googleFontFamilies('https://fonts.googleapis.com/css?family=Roboto:400,700|Open+Sans'),
+    ).toEqual(['Roboto', 'Open Sans'])
+    expect(googleFontFamilies('https://example.com/fonts.css?family=Inter')).toEqual([])
   })
 })
 

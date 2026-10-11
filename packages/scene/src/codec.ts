@@ -89,6 +89,14 @@ export function validate(value: unknown): RecastFile {
     throw new SceneError('This capture is empty.')
   }
   if (!file.assets || typeof file.assets !== 'object') file.assets = {}
+  if (
+    file.fontSources !== undefined &&
+    !(
+      isObject(file.fontSources) &&
+      Object.values(file.fontSources).every((v) => typeof v === 'string')
+    )
+  )
+    delete file.fontSources
   for (const capture of file.captures) if (capture?.root) checkNode(capture.root)
   return file as RecastFile
 }

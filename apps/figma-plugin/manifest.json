@@ -8,7 +8,7 @@
   "documentAccess": "dynamic-page",
   "permissions": ["teamlibrary"],
   "networkAccess": {
-    "allowedDomains": ["*", "http://localhost:7357", "http://127.0.0.1:7357"],
+    "allowedDomains": ["*"],
     "reasoning": "Captures reference images on the websites they came from; the plugin downloads those images so they appear in the imported design. When you turn on agent imports, it also collects captures that an AI agent queued on this computer (127.0.0.1, port 7357). Nothing is sent anywhere."
   }
 }

@@ -6,9 +6,11 @@ import {
   type WalkResult,
 } from '@pagerecast/capture'
 import type { RecastFile, Scope, Theme } from '@pagerecast/scene'
+import { firefoxDriver } from './firefox'
 
 declare const __CAPTURE_BUNDLE__: string
 declare const __VERSION__: string
+declare const __FIREFOX__: boolean
 
 export interface CaptureSettings {
   scope: Scope
@@ -34,7 +36,8 @@ export class CaptureError extends Error {}
 
 /**
  * What a browser has to provide for a capture. Chrome drives the tab through
- * the DevTools Protocol.
+ * the DevTools Protocol; Firefox has no `debugger` API and uses plain
+ * WebExtension APIs instead (see firefox.ts).
  */
 export interface Driver {
   /** Whether the page can be set to another colour scheme and language. */
@@ -50,6 +53,9 @@ export interface Driver {
   /** Puts the tab back as it was. */
   stop(): Promise<void>
 }
+
+/** True in Chrome, where the colour scheme and language can be emulated. */
+export const canEmulate = !__FIREFOX__
 
 type Target = chrome.debugger.Debuggee
 
@@ -303,7 +309,7 @@ export async function captureTab(
   settings: CaptureSettings,
   onProgress: (progress: CaptureProgress) => void,
 ): Promise<RecastFile> {
-  const driver = chromeDriver(tabId)
+  const driver = canEmulate ? chromeDriver(tabId) : firefoxDriver(tabId)
   try {
     await driver.start(driver.emulates ? settings.language : '', onProgress)
     const meta = await driver.run(() => ({

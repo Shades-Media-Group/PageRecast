@@ -3,7 +3,16 @@ import globals from 'globals'
 import tseslint from 'typescript-eslint'
 
 export default tseslint.config(
-  { ignores: ['**/dist', '**/release', 'coverage', 'graphify-out', 'test-results'] },
+  {
+    ignores: [
+      '**/dist',
+      '**/dist-firefox',
+      '**/release',
+      'coverage',
+      'graphify-out',
+      'test-results',
+    ],
+  },
   js.configs.recommended,
   ...tseslint.configs.recommended,
   {

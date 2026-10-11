@@ -25,7 +25,7 @@ import {
   type IconName,
   type LineupFrame,
 } from '@pagerecast/ui'
-import { CaptureError, captureTab, openTab, type CaptureProgress } from '../capture'
+import { canEmulate, CaptureError, captureTab, openTab, type CaptureProgress } from '../capture'
 import { mergeFiles } from '../merge'
 import {
   addHistory,
@@ -65,12 +65,15 @@ const THEMES = { light: 'Light', dark: 'Dark', both: 'Light and dark' } as const
 const countLayers = (node: SceneNode): number =>
   1 + (node.type === 'frame' ? node.children.reduce((n, c) => n + countLayers(c), 0) : 0)
 
-const UNCAPTURABLE =
-  'Chrome doesn’t let extensions capture its own pages or the Web Store. Open a website, then capture.'
+const UNCAPTURABLE = canEmulate
+  ? 'Chrome doesn’t let extensions capture its own pages or the Web Store. Open a website, then capture.'
+  : 'Firefox doesn’t let extensions capture its own pages or addons.mozilla.org. Open a website, then capture.'
 
 const isCapturable = (url = '') =>
   /^(https?|file):/.test(url) &&
-  !/^https:\/\/(chrome\.google\.com\/webstore|chromewebstore\.google\.com)/.test(url)
+  !/^https:\/\/(chrome\.google\.com\/webstore|chromewebstore\.google\.com|addons\.mozilla\.org)/.test(
+    url,
+  )
 
 function hostOf(url: string) {
   try {
@@ -262,7 +265,8 @@ export function App() {
 
   const themes =
     settings.theme === 'both' ? (['light', 'dark'] as const) : ([settings.theme] as const)
-  const views = settings.widths.length * themes.length
+  // Firefox captures the theme the page shows, so each width is one frame.
+  const views = settings.widths.length * (canEmulate ? themes.length : 1)
   const busy = status.kind === 'capturing'
   const language = LANGUAGES.find((l) => l.value === settings.language)?.label ?? settings.language
 
@@ -400,7 +404,7 @@ export function App() {
   const current = history.find((h) => h.id === latest)
   const older = history.filter((h) => h.id !== latest)
   const targetUrl = normaliseUrl(url)
-  const feedbackUrl = `${REPO_URL}/issues/new?template=feedback.yml&surface=Chrome%20extension&version=${__VERSION__}`
+  const feedbackUrl = `${REPO_URL}/issues/new?template=feedback.yml&surface=${canEmulate ? 'Chrome' : 'Firefox'}%20extension&version=${__VERSION__}`
 
   return (
     <div class="panel">
@@ -446,7 +450,11 @@ export function App() {
             </div>
           )}
           {tab && !tab.capturable && (
-            <p class="hint">Chrome doesn't let extensions read its own pages or the Web Store.</p>
+            <p class="hint">
+              {canEmulate
+                ? "Chrome doesn't let extensions read its own pages or the Web Store."
+                : "Firefox doesn't let extensions read its own pages or addons.mozilla.org."}
+            </p>
           )}
           <form
             class="pr-field url"
@@ -495,33 +503,42 @@ export function App() {
                   After you press Capture, click the part of the page you want.
                 </p>
               )}
-              <div class="pr-prop">
-                <span>Theme</span>
-                <Segmented
-                  label="Colour scheme"
-                  value={settings.theme}
-                  onChange={(theme) => update({ theme })}
-                  options={[
-                    { value: 'light', label: 'Light' },
-                    { value: 'dark', label: 'Dark' },
-                    { value: 'both', label: 'Both' },
-                  ]}
-                />
-              </div>
-              <label class="pr-prop">
-                <span>Language</span>
-                <select
-                  class="pr-input"
-                  value={settings.language}
-                  onChange={(e) => update({ language: e.currentTarget.value })}
-                >
-                  {LANGUAGES.map((l) => (
-                    <option value={l.value}>{l.label}</option>
-                  ))}
-                </select>
-              </label>
-              {settings.language && (
-                <p class="hint hint--prop">The page reloads once in this language.</p>
+              {canEmulate ? (
+                <>
+                  <div class="pr-prop">
+                    <span>Theme</span>
+                    <Segmented
+                      label="Colour scheme"
+                      value={settings.theme}
+                      onChange={(theme) => update({ theme })}
+                      options={[
+                        { value: 'light', label: 'Light' },
+                        { value: 'dark', label: 'Dark' },
+                        { value: 'both', label: 'Both' },
+                      ]}
+                    />
+                  </div>
+                  <label class="pr-prop">
+                    <span>Language</span>
+                    <select
+                      class="pr-input"
+                      value={settings.language}
+                      onChange={(e) => update({ language: e.currentTarget.value })}
+                    >
+                      {LANGUAGES.map((l) => (
+                        <option value={l.value}>{l.label}</option>
+                      ))}
+                    </select>
+                  </label>
+                  {settings.language && (
+                    <p class="hint hint--prop">The page reloads once in this language.</p>
+                  )}
+                </>
+              ) : (
+                <p class="hint">
+                  Firefox captures the page in the theme and language it shows now. For dark, switch
+                  Firefox or your system to dark before capturing.
+                </p>
               )}
             </Section>
 
@@ -629,11 +646,11 @@ export function App() {
               </div>
               <div class="pr-prop">
                 <dt>Theme</dt>
-                <dd>{THEMES[settings.theme]}</dd>
+                <dd>{canEmulate ? THEMES[settings.theme] : 'As shown'}</dd>
               </div>
               <div class="pr-prop">
                 <dt>Language</dt>
-                <dd class="truncate">{language}</dd>
+                <dd class="truncate">{canEmulate ? language : 'As shown'}</dd>
               </div>
             </dl>
           </Section>
@@ -686,7 +703,7 @@ export function App() {
             {status.message}
           </Message>
         )}
-        {!settings.seenDebuggerNote && status.kind === 'idle' && (
+        {canEmulate && !settings.seenDebuggerNote && status.kind === 'idle' && (
           <Message>
             While capturing, Chrome shows{' '}
             <strong>“PageRecast started debugging this browser”</strong>. That's how it reads the

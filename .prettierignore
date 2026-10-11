@@ -1,4 +1,5 @@
 dist
+dist-firefox
 release
 coverage
 yarn.lock

@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "node build.mjs --watch",
-    "build": "node build.mjs"
+    "build": "node build.mjs",
+    "build:firefox": "node build.mjs --target firefox"
   }
 }

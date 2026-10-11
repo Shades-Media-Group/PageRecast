@@ -6,6 +6,8 @@ export interface ImportOptions {
   autoLayout: boolean
   /** Turn repeated patterns (cards, list rows, links) into components and instances. */
   components: boolean
+  /** Turn elements captured with hover, focus and active looks into component sets. */
+  states: boolean
   /** Name layers after their HTML (`div.card`) instead of their role (`Card`). */
   htmlNames: boolean
   /**
@@ -26,6 +28,7 @@ export interface ImportOptions {
 export const DEFAULT_OPTIONS: ImportOptions = {
   autoLayout: true,
   components: true,
+  states: true,
   htmlNames: false,
   variables: true,
   textStyles: true,

@@ -46,6 +46,8 @@ type Stage =
       existing: Set<string>
       /** Replace those frames rather than adding new ones. */
       update: boolean
+      /** Keep these options as the site's defaults for its next import. */
+      remember: boolean
       /** Fonts Figma lacks and every family it has; absent until the plugin answers. */
       fonts?: { missing: MissingFont[]; families: string[] }
       /** The family picked for each missing font. */
@@ -107,11 +109,13 @@ export function App() {
     options: ImportOptions,
     fonts: FontChoices,
     update = true,
+    remember = true,
   ) => {
-    saveSettings({
-      ...settingsRef.current,
-      domains: { ...settingsRef.current.domains, [domainOf(file)]: options },
-    })
+    if (remember)
+      saveSettings({
+        ...settingsRef.current,
+        domains: { ...settingsRef.current.domains, [domainOf(file)]: options },
+      })
     const chosen: RecastFile = {
       ...file,
       captures: file.captures.filter((c) => selected.has(c.id)),
@@ -145,6 +149,7 @@ export function App() {
         options,
         existing: new Set(),
         update: true,
+        remember: true,
         fontChoices: {},
       })
       const keys = file.captures.flatMap((c) => importKey(file.source.url, c) ?? [])
@@ -356,6 +361,7 @@ export function App() {
                     stage.options,
                     stage.fontChoices,
                     stage.update,
+                    stage.remember,
                   )
                 }}
               >
@@ -489,13 +495,16 @@ function importLabel(stage: Extract<Stage, { kind: 'ready' }>) {
 function OptionToggles({
   options,
   onChange,
+  aside,
 }: {
   options: ImportOptions
   onChange: (patch: Partial<ImportOptions>) => void
+  /** Says whom the options are for, beside the first title. */
+  aside?: string
 }) {
   return (
     <>
-      <Section title="Structure">
+      <Section title="Structure" aside={aside}>
         <Toggle
           label="Auto Layout"
           hint="Where it reproduces the page exactly"
@@ -507,6 +516,12 @@ function OptionToggles({
           hint="From repeated cards, rows and links"
           checked={options.components}
           onChange={(components) => onChange({ components })}
+        />
+        <Toggle
+          label="Interaction states"
+          hint="Hover, focus and active looks as variants"
+          checked={options.states}
+          onChange={(states) => onChange({ states })}
         />
         <Toggle
           label="HTML layer names"
@@ -740,10 +755,22 @@ function Review({
         />
       )}
       <OptionToggles
+        aside="For this import"
         options={stage.options}
         onChange={(patch) => onChange({ options: { ...stage.options, ...patch } })}
       />
-      <p class="credit">These options are remembered for {domain}.</p>
+      <Section>
+        <Toggle
+          label={`Remember for ${domain}`}
+          hint={
+            stage.remember
+              ? 'The next import from this site starts with these options'
+              : 'These options apply to this import only'
+          }
+          checked={stage.remember}
+          onChange={(remember) => onChange({ remember })}
+        />
+      </Section>
     </>
   )
 }

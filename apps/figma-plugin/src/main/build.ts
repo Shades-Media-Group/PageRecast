@@ -549,7 +549,8 @@ export async function importFile(
         return rect
       }
       case 'frame': {
-        if (scene.states && !inComponent) return buildStates(scene, parent, ox, oy, capture)
+        if (scene.states && options.states && !inComponent)
+          return buildStates(scene, parent, ox, oy, capture)
         const pattern = !inComponent && !recording ? patterns.get(capture)?.get(scene) : undefined
         if (pattern) return buildPattern(scene, pattern, parent, ox, oy, capture)
         const frame = figma.createFrame()

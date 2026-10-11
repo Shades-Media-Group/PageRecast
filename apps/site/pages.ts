@@ -11,10 +11,13 @@ import { mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import type { Plugin } from 'vite'
-import { LINKS } from './src/links'
+import { CHROME, FIGMA, LINKS, REPO, SHADES } from './src/links'
 
 const root = fileURLToPath(new URL('.', import.meta.url))
 export const SITE = 'https://pagerecast.shades.md'
+const { version } = JSON.parse(readFileSync(join(root, '../../package.json'), 'utf8')) as {
+  version: string
+}
 
 /** The languages the site is written in. English is the default, at the root. */
 export const LOCALES = [
@@ -144,6 +147,166 @@ function checkDictionaries() {
   }
 }
 
+const plain = (text: string) =>
+  text
+    .replace(/<[^>]+>/g, '')
+    .replaceAll('&lt;', '<')
+    .replaceAll('&gt;', '>')
+    .replaceAll('&amp;', '&')
+
+const ORGANIZATION = {
+  '@type': 'Organization',
+  '@id': `${SHADES}/#organization`,
+  name: 'Shades Media Group',
+  url: SHADES,
+  logo: `${SHADES}/logo.svg`,
+}
+const WEBSITE = {
+  '@type': 'WebSite',
+  '@id': `${SITE}/#website`,
+  name: 'PageRecast',
+  url: `${SITE}/`,
+  inLanguage: LOCALES.map((l) => l.lang),
+  publisher: { '@id': ORGANIZATION['@id'] },
+}
+
+/** schema.org data for a page: what the page shows, never more. */
+function structuredData(locale: Locale, page: Page, t: (key: string) => string, dict: Dict) {
+  const home = `${SITE}${pathOf(locale, PAGES[0])}`
+  const url = `${SITE}${pathOf(locale, page)}`
+  const webPage = {
+    '@type': 'WebPage',
+    '@id': `${url}#webpage`,
+    url,
+    name: t(`${page.id}.title`),
+    description: t(`${page.id}.description`),
+    inLanguage: locale.lang,
+    isPartOf: { '@id': WEBSITE['@id'] },
+  }
+  if (page.id !== 'home') {
+    const names = {
+      sample: 'footer.sample',
+      gallery: 'gallery.heading',
+      privacy: 'privacy.heading',
+      capture: 'capture.heading',
+    }
+    const breadcrumb = {
+      '@type': 'BreadcrumbList',
+      '@id': `${url}#breadcrumb`,
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: t('nav.home'), item: home },
+        { '@type': 'ListItem', position: 2, name: t(names[page.id]), item: url },
+      ],
+    }
+    return [
+      ORGANIZATION,
+      WEBSITE,
+      { ...webPage, breadcrumb: { '@id': breadcrumb['@id'] } },
+      breadcrumb,
+    ]
+  }
+  const howto = ((dict.home as Dict).faq as Dict).howto as Dict
+  const app = {
+    '@type': 'SoftwareApplication',
+    '@id': `${SITE}/#software`,
+    name: 'PageRecast',
+    url: home,
+    description: t('home.description'),
+    applicationCategory: 'DesignApplication',
+    operatingSystem: 'Chrome, Firefox, Figma',
+    softwareVersion: version,
+    isAccessibleForFree: true,
+    offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+    license: 'https://opensource.org/licenses/MIT',
+    image: `${SITE}/icon-512.png`,
+    screenshot: `${SITE}/social-preview.png`,
+    downloadUrl: CHROME,
+    installUrl: CHROME,
+    inLanguage: locale.lang,
+    publisher: { '@id': ORGANIZATION['@id'] },
+    author: { '@id': ORGANIZATION['@id'] },
+    sameAs: [REPO, 'https://www.npmjs.com/package/pagerecast', FIGMA, CHROME],
+  }
+  return [
+    ORGANIZATION,
+    WEBSITE,
+    app,
+    { ...webPage, about: { '@id': app['@id'] }, mainEntity: { '@id': app['@id'] } },
+    {
+      '@type': 'HowTo',
+      '@id': `${url}#howto`,
+      name: howto.name,
+      inLanguage: locale.lang,
+      totalTime: 'PT2M',
+      tool: [t('home.install.chrome'), t('home.install.figma')].map((name) => ({
+        '@type': 'HowToTool',
+        name,
+      })),
+      step: entries(howto.steps).map((step, i) => ({
+        '@type': 'HowToStep',
+        position: i + 1,
+        name: step.name,
+        text: plain(step.text as string),
+        url: `${url}#faq`,
+      })),
+    },
+    {
+      '@type': 'FAQPage',
+      '@id': `${url}#faq`,
+      inLanguage: locale.lang,
+      mainEntity: questions(dict).map(({ q, a }) => ({
+        '@type': 'Question',
+        name: plain(q),
+        acceptedAnswer: { '@type': 'Answer', text: plain(a.replaceAll('</li><li>', ' ')) },
+      })),
+    },
+  ]
+}
+
+/** Title, description, canonical, every language's address, social cards and JSON-LD. */
+function head(locale: Locale, page: Page, t: (key: string) => string, dict: Dict) {
+  const url = `${SITE}${pathOf(locale, page)}`
+  const title = html(t(`${page.id}.title`))
+  const description = html(t(`${page.id}.description`))
+  const image = html(t('imageAlt'))
+  const json = JSON.stringify({
+    '@context': 'https://schema.org',
+    '@graph': structuredData(locale, page, t, dict),
+  }).replaceAll('<', '\\u003c')
+  return [
+    `<title>${title}</title>`,
+    `<meta name="description" content="${description}" />`,
+    `<meta name="robots" content="${'noindex' in page ? 'noindex, follow' : 'index, follow, max-image-preview:large'}" />`,
+    `<link rel="canonical" href="${url}" />`,
+    ...LOCALES.map(
+      (l) => `<link rel="alternate" hreflang="${l.lang}" href="${SITE}${pathOf(l, page)}" />`,
+    ),
+    `<link rel="alternate" hreflang="x-default" href="${SITE}${pathOf(LOCALES[0], page)}" />`,
+    '<meta name="color-scheme" content="light dark" />',
+    '<meta name="theme-color" content="#fdfdfc" media="(prefers-color-scheme: light)" />',
+    '<meta name="theme-color" content="#0b0b0c" media="(prefers-color-scheme: dark)" />',
+    '<meta property="og:type" content="website" />',
+    '<meta property="og:site_name" content="PageRecast" />',
+    `<meta property="og:title" content="${title}" />`,
+    `<meta property="og:description" content="${description}" />`,
+    `<meta property="og:url" content="${url}" />`,
+    `<meta property="og:locale" content="${locale.og}" />`,
+    ...LOCALES.filter((l) => l !== locale).map(
+      (l) => `<meta property="og:locale:alternate" content="${l.og}" />`,
+    ),
+    `<meta property="og:image" content="${SITE}/social-preview.png" />`,
+    '<meta property="og:image:width" content="1280" />',
+    '<meta property="og:image:height" content="640" />',
+    `<meta property="og:image:alt" content="${image}" />`,
+    '<meta name="twitter:card" content="summary_large_image" />',
+    `<meta name="twitter:title" content="${title}" />`,
+    `<meta name="twitter:description" content="${description}" />`,
+    `<meta name="twitter:image" content="${SITE}/social-preview.png" />`,
+    `<meta name="twitter:image:alt" content="${image}" />`,
+    `<script type="application/ld+json">${json}</script>`,
+  ].join('\n    ')
+}
+
 function render(locale: Locale, page: Page): string {
   const dict = dictionary(locale.code)
   const base = pathOf(locale, PAGES[0])
@@ -153,15 +316,7 @@ function render(locale: Locale, page: Page): string {
   const specials: Record<string, () => string> = {
     lang: () => locale.lang,
     base: () => base,
-    head: () =>
-      [
-        `<title>${t(`${page.id}.title`)}</title>`,
-        `<meta name="description" content="${html(t(`${page.id}.description`))}" />`,
-        `<link rel="canonical" href="${SITE}${pathOf(locale, page)}" />`,
-        'noindex' in page ? '<meta name="robots" content="noindex" />' : '',
-      ]
-        .filter(Boolean)
-        .join('\n    '),
+    head: () => head(locale, page, t, dict),
     langs: () => {
       const { own, machine } = languages(locale, page)
       return `<details class="lang">
@@ -235,6 +390,15 @@ export function pages(): Plugin {
   return {
     name: 'pagerecast-pages',
     config: () => ({ build: { rollupOptions: { input: generate() } } }),
+    generateBundle() {
+      // The social card and the app icon the head and JSON-LD point at.
+      const brand = join(root, '../../assets/brand')
+      for (const [fileName, source] of [
+        ['social-preview.png', 'social-preview.png'],
+        ['icon-512.png', 'png/app-icon-512.png'],
+      ])
+        this.emitFile({ type: 'asset', fileName, source: readFileSync(join(brand, source!)) })
+    },
     configureServer(server) {
       const sources = [join(root, 'templates'), join(root, 'i18n')]
       server.watcher.add(sources)

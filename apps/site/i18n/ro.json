@@ -2,6 +2,7 @@
   "language": "Limba",
   "moreLanguages": "Alte limbi",
   "machine": "Traducere automată de Google",
+  "imageAlt": "PageRecast: orice pagină web, ca straturi Figma reale",
   "preferred": {
     "button": "Adaugă la sursele preferate<span class='visually-hidden'> în Google</span>",
     "mention": "Găsește PageRecast mai des în căutarea Google: <a data-link='preferred' target='_blank'>adaugă-l la sursele preferate</a>."
@@ -179,7 +180,10 @@
           "title": "Vector",
           "detail": "5 forme din SVG-ul paginii, încă editabile"
         },
-        "Text": { "title": "Text", "detail": "Hanken Grotesk · 650 · 26 px" },
+        "Text": {
+          "title": "Text",
+          "detail": "Hanken Grotesk · 650 · 26 px"
+        },
         "Auto Layout": {
           "title": "Auto Layout",
           "detail": "Orizontal · spațiu 10 · padding 20 · complet rotunjit"
@@ -264,11 +268,19 @@
       "target": "{host} la {widths} px, {theme}{language}.",
       "and": " și ",
       "language": ", în {language}",
-      "themes": { "light": "luminos", "dark": "întunecat", "both": "luminos și întunecat" },
+      "themes": {
+        "light": "luminos",
+        "dark": "întunecat",
+        "both": "luminos și întunecat"
+      },
       "starting": "Se pornește…",
       "failed": "{message} Apasă Capturează ca să încerci din nou.",
       "again": "Capturează din nou",
-      "frames": { "one": "{n} frame", "few": "{n} frame-uri", "other": "{n} de frame-uri" },
+      "frames": {
+        "one": "{n} frame",
+        "few": "{n} frame-uri",
+        "other": "{n} de frame-uri"
+      },
       "thePage": "pagina",
       "copied": "Copiat, lipește în Figma. {frames} din {title}.",
       "ready": "Captură gata: {frames}. Copiaz-o, apoi lipește în Figma."

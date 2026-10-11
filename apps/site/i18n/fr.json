@@ -2,6 +2,7 @@
   "language": "Langue",
   "moreLanguages": "Autres langues",
   "machine": "Traduction automatique par Google",
+  "imageAlt": "PageRecast : n’importe quelle page web, en vrais calques Figma",
   "preferred": {
     "button": "Ajouter aux sources préférées<span class='visually-hidden'> sur Google</span>",
     "mention": "Retrouvez PageRecast plus souvent dans la recherche Google : <a data-link='preferred' target='_blank'>ajoutez-le à vos sources préférées</a>."
@@ -179,7 +180,10 @@
           "title": "Vecteur",
           "detail": "5 formes issues du SVG de la page, toujours modifiables"
         },
-        "Text": { "title": "Texte", "detail": "Hanken Grotesk · 650 · 26 px" },
+        "Text": {
+          "title": "Texte",
+          "detail": "Hanken Grotesk · 650 · 26 px"
+        },
         "Auto Layout": {
           "title": "Auto Layout",
           "detail": "Horizontal · écart 10 · marge 20 · entièrement arrondi"
@@ -264,11 +268,18 @@
       "target": "{host} à {widths} px, {theme}{language}.",
       "and": " et ",
       "language": ", en {language}",
-      "themes": { "light": "clair", "dark": "sombre", "both": "clair et sombre" },
+      "themes": {
+        "light": "clair",
+        "dark": "sombre",
+        "both": "clair et sombre"
+      },
       "starting": "Démarrage…",
       "failed": "{message} Cliquez sur Capturer pour réessayer.",
       "again": "Capturer à nouveau",
-      "frames": { "one": "{n} cadre", "other": "{n} cadres" },
+      "frames": {
+        "one": "{n} cadre",
+        "other": "{n} cadres"
+      },
       "thePage": "la page",
       "copied": "Copié, collez-le dans Figma. {frames} de {title}.",
       "ready": "Capture terminée : {frames}. Copiez-la, puis collez-la dans Figma."

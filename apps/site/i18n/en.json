@@ -2,6 +2,7 @@
   "language": "Language",
   "moreLanguages": "More languages",
   "machine": "Machine translation by Google",
+  "imageAlt": "PageRecast: any web page, as real Figma layers",
   "preferred": {
     "button": "Add to preferred sources<span class='visually-hidden'> on Google</span>",
     "mention": "Find PageRecast more often in Google Search: <a data-link='preferred' target='_blank'>add it as a preferred source</a>."
@@ -35,8 +36,8 @@
     "version": "Version"
   },
   "home": {
-    "title": "PageRecast — Import any website into Figma | HTML to design, free",
-    "description": "A free, open-source Chrome extension and Figma plugin. Capture any web page, even behind a login, at every width and in light and dark, and paste it into Figma as editable layers.",
+    "title": "Import any website into Figma, free | PageRecast",
+    "description": "Convert any website into editable Figma layers, free. A Chrome extension and Figma plugin that capture pages behind a login, at every width, in light and dark.",
     "hero": {
       "title": "Recast any web page.",
       "lead": "Capture what your browser shows. Paste it into Figma as layers you can edit, every one of them.",
@@ -195,8 +196,8 @@
     }
   },
   "gallery": {
-    "title": "Gallery · PageRecast",
-    "description": "Ready PageRecast captures to open in Figma: download a .recast file and drop it into the plugin.",
+    "title": "Website captures to open in Figma | PageRecast Gallery",
+    "description": "Free .recast files of real web pages, ready to import into Figma as editable layers. Download one, drop it on the PageRecast plugin and start editing.",
     "heading": "Gallery",
     "intro": "Ready captures you can open in Figma right now. Download a file, open PageRecast in Figma, and drop it on the plugin. Every one has three widths in light and dark.",
     "download": "Download .recast",
@@ -221,7 +222,7 @@
     }
   },
   "privacy": {
-    "title": "Privacy policy · PageRecast",
+    "title": "Privacy policy | PageRecast",
     "description": "PageRecast does not collect, transmit, sell or share any personal data. Everything happens on your computer.",
     "heading": "Privacy policy",
     "updated": "Last updated 11 October 2026",
@@ -250,7 +251,7 @@
     "contactTitle": "Contact"
   },
   "capture": {
-    "title": "Capture a page · PageRecast",
+    "title": "Capture a page for Figma | PageRecast",
     "description": "The PageRecast extension captures a page you chose in the Figma plugin and copies it for Figma.",
     "heading": "Capture for Figma",
     "reading": "Reading the link…",
@@ -285,8 +286,8 @@
     }
   },
   "sample": {
-    "title": "Test page · PageRecast",
-    "description": "A page made to be captured with PageRecast: type, colour, layout, surfaces, vectors, images and controls, in light and dark.",
+    "title": "Test page for website-to-Figma imports | PageRecast",
+    "description": "A page built to be imported into Figma with PageRecast: type, colour, Auto Layout, surfaces, vectors, images and form controls, in light and dark.",
     "sections": "Sections",
     "install": "Install PageRecast",
     "heading": "A page made<br />to be <em>recast.</em>",

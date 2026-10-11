@@ -2,6 +2,7 @@
   "language": "Язык",
   "moreLanguages": "Другие языки",
   "machine": "Машинный перевод Google",
+  "imageAlt": "PageRecast: любая веб-страница в виде настоящих слоёв Figma",
   "preferred": {
     "button": "Добавить в предпочитаемые источники<span class='visually-hidden'> Google</span>",
     "mention": "Чтобы чаще видеть PageRecast в Google Поиске, <a data-link='preferred' target='_blank'>добавьте его в предпочитаемые источники</a>."
@@ -179,7 +180,10 @@
           "title": "Вектор",
           "detail": "5 фигур из SVG страницы, по-прежнему редактируемые"
         },
-        "Text": { "title": "Текст", "detail": "Hanken Grotesk · 650 · 26 px" },
+        "Text": {
+          "title": "Текст",
+          "detail": "Hanken Grotesk · 650 · 26 px"
+        },
         "Auto Layout": {
           "title": "Auto Layout",
           "detail": "Горизонтально · отступ 10 · поля 20 · полностью скруглено"
@@ -264,7 +268,11 @@
       "target": "{host} в ширине {widths} px, {theme}{language}.",
       "and": " и ",
       "language": ", язык: {language}",
-      "themes": { "light": "светлая тема", "dark": "тёмная тема", "both": "светлая и тёмная темы" },
+      "themes": {
+        "light": "светлая тема",
+        "dark": "тёмная тема",
+        "both": "светлая и тёмная темы"
+      },
       "starting": "Запускаем…",
       "failed": "{message} Нажмите «Захватить», чтобы попробовать ещё раз.",
       "again": "Захватить снова",

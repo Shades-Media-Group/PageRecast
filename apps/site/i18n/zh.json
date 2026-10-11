@@ -2,6 +2,7 @@
   "language": "语言",
   "moreLanguages": "更多语言",
   "machine": "由 Google 机器翻译",
+  "imageAlt": "PageRecast：任意网页，变成真正的 Figma 图层",
   "preferred": {
     "button": "添加为首选来源<span class='visually-hidden'>（Google）</span>",
     "mention": "想在 Google 搜索中更常看到 PageRecast？<a data-link='preferred' target='_blank'>将它添加为首选来源</a>。"
@@ -179,7 +180,10 @@
           "title": "矢量",
           "detail": "来自页面 SVG 的 5 个形状，仍可编辑"
         },
-        "Text": { "title": "文本", "detail": "Hanken Grotesk · 650 · 26 px" },
+        "Text": {
+          "title": "文本",
+          "detail": "Hanken Grotesk · 650 · 26 px"
+        },
         "Auto Layout": {
           "title": "Auto Layout",
           "detail": "水平 · 间距 10 · 内边距 20 · 全圆角"
@@ -264,11 +268,17 @@
       "target": "{host}，{widths} px，{theme}{language}。",
       "and": " 和 ",
       "language": "，语言：{language}",
-      "themes": { "light": "浅色", "dark": "深色", "both": "浅色和深色" },
+      "themes": {
+        "light": "浅色",
+        "dark": "深色",
+        "both": "浅色和深色"
+      },
       "starting": "正在开始…",
       "failed": "{message} 点击“捕获”重试。",
       "again": "再次捕获",
-      "frames": { "other": "{n} 个框架" },
+      "frames": {
+        "other": "{n} 个框架"
+      },
       "thePage": "该页面",
       "copied": "已复制，请粘贴到 Figma。{title}：{frames}。",
       "ready": "已捕获 {frames}。请复制后粘贴到 Figma。"

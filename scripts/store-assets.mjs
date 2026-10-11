@@ -83,7 +83,7 @@ const hero = (theme, { width, height }) => {
   </style>
   <div class="logo">${logoOnRed}</div>
   <h1>Any web page.<br>Real Figma<br>layers.</h1>
-  <p>Free and open source.<br>Nothing leaves your computer.</p>
+  <p>Free and open source.<br>No account, no tracking.</p>
   ${panel(shots.captured[theme], s, right - 634 * s, 72 * s + dy, 300 * s)}
   ${panel(shots.review[theme], s, right - 310 * s, 160 * s + dy, 310 * s)}`
 }

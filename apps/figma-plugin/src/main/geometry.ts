@@ -158,10 +158,16 @@ const GENERIC: Record<string, string[]> = {
 }
 
 /** The family names to try in Figma for a CSS font stack, in order. */
+/** Web font packages name variable builds "Inter Variable" or "Inter VF"; Figma lists "Inter". */
+export function baseFamily(family: string): string {
+  return family.replace(/\s+(variable|vf)$/i, '').trim()
+}
+
 export function familyCandidates(stack: string[]): string[] {
   const out: string[] = []
   for (const family of stack) {
     out.push(family)
+    if (baseFamily(family) !== family) out.push(baseFamily(family))
     const generic = GENERIC[family.toLowerCase()]
     if (generic) out.push(...generic)
   }

@@ -1,6 +1,6 @@
 import type { TextStyle } from '@pagerecast/scene'
 import type { FontSubstitution } from '../shared/messages'
-import { closestStyle, familyCandidates } from './geometry'
+import { baseFamily, closestStyle, familyCandidates } from './geometry'
 
 /** Resolves CSS font stacks to fonts Figma has, loading each once. */
 export class FontResolver {
@@ -34,7 +34,7 @@ export class FontResolver {
     }
     const requested = style.fontFamily[0] ?? 'sans-serif'
     const isGeneric = /^(sans-serif|serif|monospace|system-ui|-apple-system|ui-)/i.test(requested)
-    if (!isGeneric && result.family.toLowerCase() !== requested.toLowerCase()) {
+    if (!isGeneric && result.family.toLowerCase() !== baseFamily(requested).toLowerCase()) {
       const sub = this.substitutions.get(requested) ?? { requested, used: result.family, count: 0 }
       sub.count++
       this.substitutions.set(requested, sub)

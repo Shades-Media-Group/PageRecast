@@ -3,6 +3,7 @@ import {
   angularGradientTransform,
   apply,
   closestStyle,
+  baseFamily,
   familyCandidates,
   invert,
   linearGradientTransform,
@@ -91,6 +92,20 @@ describe('font matching', () => {
       'Roboto',
       'sans-serif',
       'Arial',
+    ])
+  })
+})
+
+describe('baseFamily', () => {
+  it('drops the variable-font packaging suffix', () => {
+    expect(baseFamily('Hanken Grotesk Variable')).toBe('Hanken Grotesk')
+    expect(baseFamily('Inter VF')).toBe('Inter')
+    expect(baseFamily('Inter')).toBe('Inter')
+  })
+  it('tries the base family right after the packaged one', () => {
+    expect(familyCandidates(['Inter Variable', 'sans-serif']).slice(0, 2)).toEqual([
+      'Inter Variable',
+      'Inter',
     ])
   })
 })

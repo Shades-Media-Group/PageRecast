@@ -1,5 +1,5 @@
 import type { Capture, Color, RecastFile, TextStyle } from '@pagerecast/scene'
-import { nearestColor, typeKey, type Candidate } from './match'
+import { nearestColor, nearestNumber, numberScale, typeKey, type Candidate } from './match'
 import { hex, solid } from './paints'
 
 export interface ColorRef {
@@ -9,6 +9,14 @@ export interface ColorRef {
   /** DOM path, equal for the same element across light and dark captures. */
   key: string
   capture: Capture
+}
+
+/** An auto layout gap or padding, or a corner radius, that a number variable can drive. */
+export interface NumberRef {
+  node: FrameNode | RectangleNode
+  field: VariableBindableNodeField
+  kind: 'spacing' | 'radius'
+  value: number
 }
 
 export interface TextRef {
@@ -299,6 +307,90 @@ export async function applyLocalStyles(colors: ColorRef[], texts: TextRef[]): Pr
   }
   texts.splice(0, texts.length, ...remainingTexts)
   return reused
+}
+
+const NUMBER_KINDS = {
+  spacing: { collection: 'Spacing', scope: 'GAP', words: /spac|gap|pad/i },
+  radius: { collection: 'Radius', scope: 'CORNER_RADIUS', words: /radi|round|corner/i },
+} as const
+
+/**
+ * Binds spacing and radius to number variables. With `reuse`, values equal to
+ * an existing spacing or radius variable (in the file, then in enabled
+ * libraries) bind to it. With `create`, the rest that recur at least three
+ * times become variables in a "Spacing" and a "Radius" collection, reused
+ * across imports, and bind to them when within half a pixel.
+ */
+export async function applyNumberVariables(
+  refs: NumberRef[],
+  { reuse, create }: { reuse: boolean; create: boolean },
+): Promise<Reused & { created: number }> {
+  const result = { local: 0, library: 0, created: 0 }
+  let remaining = refs
+  const bindFrom = async (variables: Variable[], source: 'local' | 'library') => {
+    const candidates = { spacing: [], radius: [] } as Record<
+      NumberRef['kind'],
+      { number: number; value: Variable }[]
+    >
+    for (const variable of variables) {
+      const value = await resolve(variable).catch(() => undefined)
+      if (typeof value !== 'number') continue
+      for (const kind of ['spacing', 'radius'] as const) {
+        const { scope, words } = NUMBER_KINDS[kind]
+        if (
+          variable.scopes.includes(scope) ||
+          (variable.scopes.includes('ALL_SCOPES') && words.test(variable.name))
+        )
+          candidates[kind].push({ number: value, value: variable })
+      }
+    }
+    remaining = remaining.filter((ref) => {
+      const variable = nearestNumber(ref.value, candidates[ref.kind])
+      if (variable) {
+        ref.node.setBoundVariable(ref.field, variable)
+        result[source]++
+      }
+      return !variable
+    })
+  }
+  if (reuse) {
+    await bindFrom(await figma.variables.getLocalVariablesAsync('FLOAT'), 'local')
+    if (remaining.length) await bindFrom(await libraryVariables('FLOAT'), 'library')
+  }
+  if (!create) return result
+
+  const collections = await figma.variables.getLocalVariableCollectionsAsync()
+  for (const kind of ['spacing', 'radius'] as const) {
+    const refsOfKind = remaining.filter((r) => r.kind === kind)
+    const scale = numberScale(refsOfKind.map((r) => r.value))
+    if (scale.length === 0) continue
+    const { collection: name, scope } = NUMBER_KINDS[kind]
+    let collection = collections.find((c) => c.name === name && c.getPluginData('kind') === kind)
+    if (!collection) {
+      collection = figma.variables.createVariableCollection(name)
+      collection.setPluginData('kind', kind)
+    }
+    const mode = collection.defaultModeId
+    const existing = await Promise.all(
+      collection.variableIds.map((id) => figma.variables.getVariableByIdAsync(id)),
+    )
+    const variables = scale.map((value) => {
+      const variableName = `${kind}/${value}`
+      let variable = existing.find((v) => v?.name === variableName)
+      if (!variable) {
+        variable = figma.variables.createVariable(variableName, collection, 'FLOAT')
+        variable.setValueForMode(mode, value)
+        variable.scopes = [scope]
+        result.created++
+      }
+      return { number: value, value: variable }
+    })
+    for (const ref of refsOfKind) {
+      const variable = nearestNumber(ref.value, variables, 0.5)
+      if (variable) ref.node.setBoundVariable(ref.field, variable)
+    }
+  }
+  return result
 }
 
 // Figma's TextStyle type clashes with the scene's; alias it locally.

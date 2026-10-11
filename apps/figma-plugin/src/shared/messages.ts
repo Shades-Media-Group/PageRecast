@@ -7,7 +7,10 @@ export interface ImportOptions {
   components: boolean
   /** Name layers after their HTML (`div.card`) instead of their role (`Card`). */
   htmlNames: boolean
-  /** Create colour variables (with Light/Dark modes when both were captured). */
+  /**
+   * Create colour variables (with Light/Dark modes when both were captured) and
+   * spacing and radius variables for values that recur.
+   */
   variables: boolean
   /** Create local text styles for repeated type. */
   textStyles: boolean
@@ -78,7 +81,7 @@ export interface ImportReport {
   textStyles: number
   /** Nodes bound to styles or variables that were already in the file. */
   reusedStyles: number
-  /** Nodes bound to colour variables from the file's enabled team libraries. */
+  /** Nodes bound to variables from the file's enabled team libraries. */
   matchedFromLibrary: number
   substitutions: FontSubstitution[]
   warnings: string[]

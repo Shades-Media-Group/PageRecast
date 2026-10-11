@@ -443,8 +443,8 @@ function OptionToggles({
           onChange={(useLocalStyles) => onChange({ useLocalStyles })}
         />
         <Toggle
-          label="Create colour variables"
-          hint="Light and Dark modes when both are captured"
+          label="Create variables"
+          hint="Colour, spacing and radius, with Light and Dark modes"
           checked={options.variables}
           onChange={(variables) => onChange({ variables })}
         />
@@ -632,7 +632,7 @@ function Done({ report, askRating }: { report: ImportReport; askRating: boolean 
     ['Auto Layout frames', report.autoLayouts],
     ['Components', report.components],
     ['Instances', report.instances],
-    ['New colour variables', report.variables],
+    ['New variables', report.variables],
     ['New text styles', report.textStyles],
     ['Layers using existing styles', report.reusedStyles],
     ['Layers using library variables', report.matchedFromLibrary],

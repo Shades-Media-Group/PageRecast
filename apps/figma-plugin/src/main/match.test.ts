@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { nearestColor, typeKey } from './match'
+import { nearestColor, nearestNumber, numberScale, typeKey } from './match'
 
 const c = (r: number, g: number, b: number, a = 1) => ({ r: r / 255, g: g / 255, b: b / 255, a })
 
@@ -37,5 +37,28 @@ describe('typeKey', () => {
     expect(typeKey('Inter', 'Bold', 16.001, 24.004)).toBe(typeKey('Inter', 'Bold', 16, 24))
     expect(typeKey('Inter', 'Bold', 16, null)).not.toBe(typeKey('Inter', 'Bold', 16, 16))
     expect(typeKey('Inter', 'Bold', 16, 24)).not.toBe(typeKey('Inter', 'Regular', 16, 24))
+  })
+})
+
+describe('nearestNumber', () => {
+  const candidates = [
+    { number: 8, value: 'sm' },
+    { number: 16, value: 'md' },
+  ]
+  it('matches exact values by default and within a delta when asked', () => {
+    expect(nearestNumber(16, candidates)).toBe('md')
+    expect(nearestNumber(15.6, candidates)).toBeUndefined()
+    expect(nearestNumber(15.6, candidates, 0.5)).toBe('md')
+    expect(nearestNumber(12, candidates, 0.5)).toBeUndefined()
+  })
+})
+
+describe('numberScale', () => {
+  it('keeps rounded values used at least three times, ascending', () => {
+    expect(numberScale([16, 15.8, 16.2, 8, 8, 8, 24, 24, 0, 0, 0, 4.4, 4, 3.6])).toEqual([4, 8, 16])
+  })
+
+  it('takes a custom threshold', () => {
+    expect(numberScale([12, 12, 6], 2)).toEqual([12])
   })
 })

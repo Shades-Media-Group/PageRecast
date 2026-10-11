@@ -24,7 +24,9 @@ import {
   applyLocalStyles,
   createTextStyles,
   createVariables,
+  applyNumberVariables,
   type ColorRef,
+  type NumberRef,
   type TextRef,
 } from './tokens'
 
@@ -125,6 +127,7 @@ export async function importFile(
   let done = 0
   const colorRefs: ColorRef[] = []
   const textRefs: TextRef[] = []
+  const numberRefs: NumberRef[] = []
   // While building state variants: nested states stay plain layers (components
   // cannot nest), and only the Default variant feeds variables and text styles.
   let inComponent = false
@@ -317,6 +320,31 @@ export async function importFile(
     }
   }
 
+  const SPACING_FIELDS = ['paddingTop', 'paddingRight', 'paddingBottom', 'paddingLeft'] as const
+  const RADIUS_FIELDS = [
+    'topLeftRadius',
+    'topRightRadius',
+    'bottomRightRadius',
+    'bottomLeftRadius',
+  ] as const
+
+  function collectSpacing(frame: FrameNode) {
+    if (!collectRefs) return
+    for (const field of [...SPACING_FIELDS, 'itemSpacing', 'counterAxisSpacing'] as const) {
+      // Space-between ignores the gap, and only wrapping rows use the cross gap.
+      if (field === 'itemSpacing' && frame.primaryAxisAlignItems === 'SPACE_BETWEEN') continue
+      if (field === 'counterAxisSpacing' && frame.layoutWrap !== 'WRAP') continue
+      const value = frame[field] ?? 0
+      if (value > 0) numberRefs.push({ node: frame, field, kind: 'spacing', value })
+    }
+  }
+
+  function collectRadius(node: FrameNode | RectangleNode) {
+    if (!collectRefs) return
+    for (const field of RADIUS_FIELDS)
+      if (node[field] > 0) numberRefs.push({ node, field, kind: 'radius', value: node[field] })
+  }
+
   function sideBorders(frame: FrameNode, scene: SceneFrame) {
     const stroke = scene.stroke!
     const [top, right, bottom, left] = stroke.widths
@@ -452,9 +480,15 @@ export async function importFile(
           report.warnings.push(
             `An image could not be loaded and was replaced by a placeholder (${scene.name}).`,
           )
-        if (scene.radius)
-          [rect.topLeftRadius, rect.topRightRadius, rect.bottomRightRadius, rect.bottomLeftRadius] =
-            scene.radius
+        if (scene.radius) {
+          ;[
+            rect.topLeftRadius,
+            rect.topRightRadius,
+            rect.bottomRightRadius,
+            rect.bottomLeftRadius,
+          ] = scene.radius
+          collectRadius(rect)
+        }
         place(rect, scene, ox, oy)
         report.images++
         return rect
@@ -512,8 +546,12 @@ export async function importFile(
           if (node) kids.push([node, child])
         }
         if (options.autoLayout && scene.layout && kids.length > 0 && !scene.rotation) {
-          if (tryAutoLayout(frame, scene, kids)) report.autoLayouts++
+          if (tryAutoLayout(frame, scene, kids)) {
+            report.autoLayouts++
+            collectSpacing(frame)
+          }
         }
+        if (scene.radius) collectRadius(frame)
         if (scene.stroke?.sides) sideBorders(frame, scene)
         place(frame, scene, ox, oy)
         report.frames++
@@ -739,6 +777,15 @@ export async function importFile(
     report.matchedFromLibrary = reused.library
   }
   if (options.variables) report.variables = createVariables(colorRefs, file, roots)
+  if (options.useLocalStyles || options.variables) {
+    const numbers = await applyNumberVariables(numberRefs, {
+      reuse: options.useLocalStyles,
+      create: options.variables,
+    })
+    report.reusedStyles += numbers.local
+    report.matchedFromLibrary += numbers.library
+    report.variables += numbers.created
+  }
   if (options.textStyles) report.textStyles = await createTextStyles(textRefs, file)
 
   // Put the section beside whatever is already on the page.

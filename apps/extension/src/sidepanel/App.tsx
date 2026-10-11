@@ -9,13 +9,24 @@ import {
   type Scope,
 } from '@pagerecast/scene'
 import {
+  formatAgo,
+  formatBytes,
+  formatNumber,
+  formatSeconds,
+  fromEnglish,
+  resolveLocale,
+  rich,
+  setLocale,
+  t,
+} from '@pagerecast/i18n'
+import {
   Button,
   CREDIT,
   DOCS_URL,
-  formatBytes,
   FrameLineup,
   Icon,
   IconButton,
+  InterfaceLanguage,
   Logo,
   Message,
   Progress,
@@ -27,7 +38,15 @@ import {
   type LineupFrame,
 } from '@pagerecast/ui'
 import { splitTopLevel } from '@pagerecast/capture'
-import { canEmulate, CaptureError, captureTab, openTab, type CaptureProgress } from '../capture'
+import {
+  canEmulate,
+  CaptureCancelled,
+  CaptureError,
+  captureTab,
+  openTab,
+  type CaptureProgress,
+} from '../capture'
+
 import {
   addHistory,
   DEFAULT_SETTINGS,
@@ -60,13 +79,21 @@ type Status =
   | { kind: 'capturing'; progress: CaptureProgress }
   | { kind: 'error'; message: string }
 
-const SCOPES = { page: 'Full page', viewport: 'Visible area', element: 'One element' } as const
-const THEMES = { light: 'Light', dark: 'Dark', both: 'Light and dark' } as const
-const DELAYS = [
-  { value: '0', label: 'None' },
-  { value: '1000', label: '1 s' },
-  { value: '3000', label: '3 s' },
-  { value: '5000', label: '5 s' },
+const SCOPES = {
+  page: 'panel.scope.page',
+  viewport: 'panel.scope.viewport',
+  element: 'panel.scope.element',
+} as const
+const THEMES = { light: 'theme.light', dark: 'theme.dark', both: 'theme.lightAndDark' } as const
+const DEVICES = {
+  desktop: 'device.desktop',
+  laptop: 'device.laptop',
+  tablet: 'device.tablet',
+  mobile: 'device.mobile',
+} as const
+const delays = () => [
+  { value: '0', label: t('panel.noDelay') },
+  ...[1000, 3000, 5000].map((ms) => ({ value: String(ms), label: formatSeconds(ms, 0) })),
 ]
 
 /** The selectors in a comma-separated list that the browser rejects. */
@@ -85,9 +112,8 @@ function invalidSelectors(list: string): string[] {
 const countLayers = (node: SceneNode): number =>
   1 + (node.type === 'frame' ? node.children.reduce((n, c) => n + countLayers(c), 0) : 0)
 
-const UNCAPTURABLE = canEmulate
-  ? 'Chrome doesn’t let extensions capture its own pages or the Web Store. Open a website, then capture.'
-  : 'Firefox doesn’t let extensions capture its own pages or addons.mozilla.org. Open a website, then capture.'
+const uncapturable = () =>
+  t(canEmulate ? 'panel.uncapturable.chrome' : 'panel.uncapturable.firefox')
 
 const isCapturable = (url = '') =>
   /^(https?|file):/.test(url) &&
@@ -98,7 +124,7 @@ const isCapturable = (url = '') =>
 function hostOf(url: string) {
   try {
     const u = new URL(url)
-    return u.protocol === 'file:' ? 'Local file' : u.host
+    return u.protocol === 'file:' ? t('panel.localFile') : u.host
   } catch {
     return url
   }
@@ -116,14 +142,6 @@ function normaliseUrl(input: string): string | null {
   } catch {
     return null
   }
-}
-
-function ago(ms: number) {
-  const minutes = Math.round((Date.now() - ms) / 60000)
-  if (minutes < 1) return 'Just now'
-  if (minutes < 60) return `${minutes} min ago`
-  const hours = Math.round(minutes / 60)
-  return hours < 24 ? `${hours} h ago` : new Date(ms).toLocaleDateString()
 }
 
 function save(data: Uint8Array, name: string) {
@@ -155,11 +173,11 @@ const framesOf = (entry: Entry): LineupFrame[] =>
     height: 720,
   }))
 
-const plural = (n: number, word: string) => `${n.toLocaleString()} ${word}${n === 1 ? '' : 's'}`
-
 export function App() {
   const [settings, setSettings] = useState<Settings>(DEFAULT_SETTINGS)
   const [loaded, setLoaded] = useState(false)
+  // The interface language: chosen in settings, else the browser's. Set before rendering.
+  setLocale(resolveLocale(settings.interfaceLanguage))
   /** The site whose remembered area, widths and theme are applied. */
   const [siteHost, setSiteHost] = useState<string | null>()
   const [pending, setPending] = useState<PendingCapture | null>(null)
@@ -178,7 +196,7 @@ export function App() {
     if (!active?.id) return setTab(null)
     setTab({
       id: active.id,
-      title: active.title || 'Untitled page',
+      title: active.title || t('panel.untitled'),
       url: active.url ?? '',
       favicon: active.favIconUrl,
       capturable: isCapturable(active.url),
@@ -300,7 +318,9 @@ export function App() {
   // Firefox captures the theme the page shows, so each width is one frame.
   const views = settings.widths.length * (canEmulate ? themes.length : 1)
   const busy = status.kind === 'capturing'
-  const language = LANGUAGES.find((l) => l.value === settings.language)?.label ?? settings.language
+  const language = settings.language
+    ? (LANGUAGES.find((l) => l.value === settings.language)?.label ?? settings.language)
+    : t('panel.pageDefault')
   const invalid = invalidSelectors(settings.hide)
 
   const capture = async ({
@@ -311,15 +331,16 @@ export function App() {
     if (!targetUrl && !tab?.capturable)
       return setStatus({
         kind: 'error',
-        message: tab ? UNCAPTURABLE : 'Open a website to capture it.',
+        message: tab ? uncapturable() : t('panel.errorOpen'),
       })
-    if (views === 0)
-      return setStatus({ kind: 'error', message: 'Choose at least one width, then capture.' })
+    if (views === 0) return setStatus({ kind: 'error', message: t('panel.errorWidths') })
     setSelecting(false)
     setStatus({
       kind: 'capturing',
       progress: {
-        label: targetUrl ? `Opening ${hostOf(targetUrl)}` : 'Starting',
+        label: targetUrl
+          ? t('progress.opening', { host: hostOf(targetUrl) })
+          : t('progress.starting'),
         step: 0,
         steps: views,
       },
@@ -376,14 +397,11 @@ export function App() {
       return entry.id
     } catch (error) {
       console.error(error)
-      if (error instanceof CaptureError && error.message === 'Capture cancelled.')
-        return setStatus({ kind: 'idle' })
+      if (error instanceof CaptureCancelled) return setStatus({ kind: 'idle' })
       setStatus({
         kind: 'error',
         message:
-          error instanceof CaptureError
-            ? error.message
-            : 'The capture stopped unexpectedly. Reload the page and try again.',
+          error instanceof CaptureError ? fromEnglish(error.message) : t('panel.errorUnexpected'),
       })
     } finally {
       if (openedTab !== null) void chrome.tabs.remove(openedTab).catch(() => undefined)
@@ -426,7 +444,7 @@ export function App() {
   }
 
   const downloadChosen = async () =>
-    save(await encodeFile(await merged()), fileName(`${chosen.length} pages`))
+    save(await encodeFile(await merged()), fileName(`${chosen.length}-pages`))
 
   const pick = (id: string) => {
     const next = new Set(picked)
@@ -477,17 +495,17 @@ export function App() {
         <div class="pr-header__actions">
           <IconButton
             icon="feedback"
-            label="Send feedback"
+            label={t('common.feedback')}
             onClick={() => chrome.tabs.create({ url: feedbackUrl })}
           />
           <IconButton
             icon="help"
-            label="Guides and help"
+            label={t('common.help')}
             onClick={() => chrome.tabs.create({ url: DOCS_URL })}
           />
           <IconButton
             icon="sliders"
-            label="Capture settings"
+            label={t('panel.settings')}
             aria-pressed={settings.editing}
             onClick={() => update({ editing: !settings.editing })}
           />
@@ -497,7 +515,7 @@ export function App() {
       <main class="scroll">
         {current && <Result entry={current} />}
 
-        <Section title={current ? 'Capture another' : 'Page'}>
+        <Section title={current ? t('panel.captureAnother') : t('panel.page')}>
           {(!current || current.url !== tab?.url) && (
             <div class="target" aria-live="polite">
               {tab?.favicon ? (
@@ -506,18 +524,14 @@ export function App() {
                 <Icon name="page" size={16} class="muted" />
               )}
               <div class="target-text">
-                <p class="truncate target-title">{tab?.title ?? 'No page selected'}</p>
-                <p class="truncate muted">
-                  {tab ? hostOf(tab.url) : 'Open a website to capture it'}
-                </p>
+                <p class="truncate target-title">{tab?.title ?? t('panel.noPage')}</p>
+                <p class="truncate muted">{tab ? hostOf(tab.url) : t('panel.openWebsite')}</p>
               </div>
             </div>
           )}
           {tab && !tab.capturable && (
             <p class="hint">
-              {canEmulate
-                ? "Chrome doesn't let extensions read its own pages or the Web Store."
-                : "Firefox doesn't let extensions read its own pages or addons.mozilla.org."}
+              {t(canEmulate ? 'panel.restricted.chrome' : 'panel.restricted.firefox')}
             </p>
           )}
           <form
@@ -533,8 +547,8 @@ export function App() {
               type="text"
               inputMode="url"
               spellcheck={false}
-              placeholder="Capture another URL"
-              aria-label="URLs to capture"
+              placeholder={t('panel.urlPlaceholder')}
+              aria-label={t('panel.urlLabel')}
               value={url}
               onInput={(e) => setUrl(e.currentTarget.value)}
             />
@@ -542,49 +556,46 @@ export function App() {
               type="submit"
               icon="arrowRight"
               label={
-                targetUrls.length > 1 ? `Capture ${targetUrls.length} URLs` : 'Capture this URL'
+                targetUrls.length > 1
+                  ? t('panel.captureUrls', { count: targetUrls.length })
+                  : t('panel.captureUrl')
               }
               disabled={!targetUrls.length || busy}
             />
           </form>
           {targetUrls.length > 1 && (
-            <p class="hint">
-              <span class="num">{targetUrls.length}</span> pages, captured one after another and
-              combined for one paste.
-            </p>
+            <p class="hint">{t('panel.urlsHint', { count: targetUrls.length })}</p>
           )}
         </Section>
 
         {settings.editing ? (
           <>
-            <Section title="Capture">
+            <Section title={t('common.capture')}>
               <div class="pr-prop">
-                <span>Area</span>
+                <span>{t('panel.area')}</span>
                 <Segmented
-                  label="Capture area"
+                  label={t('panel.areaLabel')}
                   value={settings.scope}
                   onChange={(scope) => update({ scope })}
                   options={[
-                    { value: 'page', label: 'Full page' },
-                    { value: 'viewport', label: 'Visible' },
-                    { value: 'element', label: 'Element' },
+                    { value: 'page', label: t('panel.scope.page') },
+                    { value: 'viewport', label: t('panel.scopeShort.viewport') },
+                    { value: 'element', label: t('panel.scopeShort.element') },
                   ]}
                 />
               </div>
               {settings.scope === 'element' && (
-                <p class="hint hint--prop">
-                  After you press Capture, click the part of the page you want.
-                </p>
+                <p class="hint hint--prop">{t('panel.elementHint')}</p>
               )}
               {settings.scope === 'page' && (
                 <label class="pr-prop">
-                  <span>Max height</span>
+                  <span>{t('panel.maxHeight')}</span>
                   <input
                     class="pr-input"
                     type="number"
                     min={0}
                     step={500}
-                    placeholder="No limit"
+                    placeholder={t('panel.noLimit')}
                     value={settings.maxHeight || ''}
                     onInput={(e) =>
                       update({
@@ -597,52 +608,51 @@ export function App() {
               {canEmulate ? (
                 <>
                   <div class="pr-prop">
-                    <span>Theme</span>
+                    <span>{t('common.theme')}</span>
                     <Segmented
-                      label="Colour scheme"
+                      label={t('panel.colourScheme')}
                       value={settings.theme}
                       onChange={(theme) => update({ theme })}
                       options={[
-                        { value: 'light', label: 'Light' },
-                        { value: 'dark', label: 'Dark' },
-                        { value: 'both', label: 'Both' },
+                        { value: 'light', label: t('theme.light') },
+                        { value: 'dark', label: t('theme.dark') },
+                        { value: 'both', label: t('theme.both') },
                       ]}
                     />
                   </div>
                   <label class="pr-prop">
-                    <span>Language</span>
+                    <span>{t('language.page')}</span>
                     <select
                       class="pr-input"
                       value={settings.language}
                       onChange={(e) => update({ language: e.currentTarget.value })}
                     >
                       {LANGUAGES.map((l) => (
-                        <option value={l.value}>{l.label}</option>
+                        <option value={l.value} lang={l.value || undefined}>
+                          {l.value ? l.label : t('panel.pageDefault')}
+                        </option>
                       ))}
                     </select>
                   </label>
-                  {settings.language && (
-                    <p class="hint hint--prop">The page reloads once in this language.</p>
-                  )}
+                  {settings.language && <p class="hint hint--prop">{t('panel.languageHint')}</p>}
                 </>
               ) : (
-                <p class="hint">
-                  Firefox captures the page in the theme and language it shows now. For dark, switch
-                  Firefox or your system to dark before capturing.
-                </p>
+                <p class="hint">{t('panel.firefoxHint')}</p>
               )}
             </Section>
 
             <Section
-              title="Widths"
-              aside={<span class="num">{settings.widths.length} selected</span>}
+              title={t('common.widths')}
+              aside={
+                <span class="num">{t('panel.selected', { count: settings.widths.length })}</span>
+              }
             >
               <div class={settings.customWidths.length ? 'widths widths--custom' : 'widths'}>
                 {[
                   ...PRESET_WIDTHS,
                   ...settings.customWidths.map((width) => ({
                     width,
-                    label: 'Custom',
+                    custom: true,
                     icon: 'width' as const,
                   })),
                 ].map((p) => (
@@ -654,12 +664,12 @@ export function App() {
                       onChange={() => toggleWidth(p.width)}
                     />
                     <Icon name={p.icon as IconName} size={16} class="muted" />
-                    <span>{p.label}</span>
+                    <span>{'custom' in p ? t('device.custom') : t(DEVICES[p.icon])}</span>
                     <span class="num muted">{p.width}</span>
-                    {p.label === 'Custom' ? (
+                    {'custom' in p ? (
                       <IconButton
                         icon="close"
-                        label={`Remove ${p.width}`}
+                        label={t('panel.removeWidth', { width: String(p.width) })}
                         onClick={() => removeCustomWidth(p.width)}
                       />
                     ) : (
@@ -681,54 +691,57 @@ export function App() {
                   type="number"
                   min={240}
                   max={3840}
-                  placeholder="Add a width, e.g. 1024"
-                  aria-label="Custom width in pixels"
+                  placeholder={t('panel.widthPlaceholder')}
+                  aria-label={t('panel.widthLabel')}
                   value={customWidth}
                   onInput={(e) => setCustomWidth(e.currentTarget.value)}
                 />
-                <IconButton type="submit" icon="plus" label="Add width" disabled={!customWidth} />
+                <IconButton
+                  type="submit"
+                  icon="plus"
+                  label={t('panel.addWidth')}
+                  disabled={!customWidth}
+                />
               </form>
             </Section>
 
-            <Section title="Before capturing">
+            <Section title={t('panel.before')}>
               <Toggle
-                label="Hide cookie banners"
-                hint="And unlock scrolling they block"
+                label={t('panel.hideOverlays')}
+                hint={t('panel.hideOverlaysHint')}
                 checked={settings.hideOverlays}
                 onChange={(hideOverlays) => update({ hideOverlays })}
               />
               <Toggle
-                label="Load lazy content"
-                hint="Scrolls the page once first"
+                label={t('panel.preload')}
+                hint={t('panel.preloadHint')}
                 checked={settings.preload}
                 onChange={(preload) => update({ preload })}
               />
               <Toggle
-                label="Hover and focus states"
-                hint="Buttons and links become components with variants"
+                label={t('panel.states')}
+                hint={t('panel.statesHint')}
                 checked={settings.states}
                 onChange={(states) => update({ states })}
               />
               <Toggle
-                label="Screenshot reference"
-                hint="To compare against in Figma"
+                label={t('common.screenshotReference')}
+                hint={t('panel.screenshotHint')}
                 checked={settings.screenshot}
                 onChange={(screenshot) => update({ screenshot })}
               />
               <div class="pr-prop">
-                <span>Wait</span>
+                <span>{t('panel.wait')}</span>
                 <Segmented
-                  label="Wait before reading the page"
+                  label={t('panel.waitLabel')}
                   value={String(settings.delay)}
                   onChange={(delay) => update({ delay: Number(delay) })}
-                  options={DELAYS}
+                  options={delays()}
                 />
               </div>
-              {settings.delay > 0 && (
-                <p class="hint hint--prop">For content that arrives after the page loads.</p>
-              )}
+              {settings.delay > 0 && <p class="hint hint--prop">{t('panel.waitHint')}</p>}
               <label class="pr-prop">
-                <span>Hide</span>
+                <span>{t('panel.hide')}</span>
                 <input
                   class="pr-input"
                   type="text"
@@ -741,55 +754,62 @@ export function App() {
               </label>
               <p class="hint hint--prop" id="hide-hint">
                 {invalid.length
-                  ? `Not a CSS selector: ${invalid.join(', ')}`
+                  ? t('panel.hideInvalid', { selectors: invalid.join(', ') })
                   : host
-                    ? `CSS selectors left out of the capture, remembered for ${host}.`
-                    : 'CSS selectors left out of the capture, remembered per site.'}
+                    ? t('panel.hideSite', { host })
+                    : t('panel.hideAny')}
               </p>
+            </Section>
+
+            <Section title={t('panel.panel')}>
+              <InterfaceLanguage
+                value={settings.interfaceLanguage}
+                onChange={(interfaceLanguage) => update({ interfaceLanguage })}
+              />
             </Section>
           </>
         ) : (
           <Section
-            title="Settings"
+            title={t('panel.summary')}
             aside={
               <button type="button" class="text-button" onClick={() => update({ editing: true })}>
-                Edit
+                {t('common.edit')}
               </button>
             }
           >
             <dl class="pr-props">
               <div class="pr-prop">
-                <dt>Area</dt>
-                <dd>{SCOPES[settings.scope]}</dd>
+                <dt>{t('panel.area')}</dt>
+                <dd>{t(SCOPES[settings.scope])}</dd>
               </div>
               <div class="pr-prop">
-                <dt>Widths</dt>
-                <dd class="num truncate">{settings.widths.join(', ') || 'None'}</dd>
+                <dt>{t('common.widths')}</dt>
+                <dd class="num truncate">{settings.widths.join(', ') || t('common.none')}</dd>
               </div>
               <div class="pr-prop">
-                <dt>Theme</dt>
-                <dd>{canEmulate ? THEMES[settings.theme] : 'As shown'}</dd>
+                <dt>{t('common.theme')}</dt>
+                <dd>{canEmulate ? t(THEMES[settings.theme]) : t('panel.asShown')}</dd>
               </div>
               <div class="pr-prop">
-                <dt>Language</dt>
-                <dd class="truncate">{canEmulate ? language : 'As shown'}</dd>
+                <dt>{t('language.page')}</dt>
+                <dd class="truncate">{canEmulate ? language : t('panel.asShown')}</dd>
               </div>
               {settings.hide.trim() && (
                 <div class="pr-prop">
-                  <dt>Hide</dt>
+                  <dt>{t('panel.hide')}</dt>
                   <dd class="truncate">{settings.hide}</dd>
                 </div>
               )}
               {settings.delay > 0 && (
                 <div class="pr-prop">
-                  <dt>Wait</dt>
-                  <dd class="num">{settings.delay / 1000} s</dd>
+                  <dt>{t('panel.wait')}</dt>
+                  <dd class="num">{formatSeconds(settings.delay, 0)}</dd>
                 </div>
               )}
               {settings.scope === 'page' && settings.maxHeight > 0 && (
                 <div class="pr-prop">
-                  <dt>Max height</dt>
-                  <dd class="num">{settings.maxHeight.toLocaleString()} px</dd>
+                  <dt>{t('panel.maxHeight')}</dt>
+                  <dd class="num">{formatNumber(settings.maxHeight)} px</dd>
                 </div>
               )}
             </dl>
@@ -798,7 +818,7 @@ export function App() {
 
         {older.length > 0 && (
           <Section
-            title="Recent"
+            title={t('panel.recent')}
             aside={
               history.length > 1 ? (
                 <button
@@ -809,10 +829,10 @@ export function App() {
                     setPicked(new Set())
                   }}
                 >
-                  {selecting ? 'Done' : 'Select'}
+                  {selecting ? t('common.done') : t('panel.select')}
                 </button>
               ) : (
-                'On this device'
+                t('panel.onDevice')
               )
             }
           >
@@ -829,11 +849,14 @@ export function App() {
         )}
 
         <p class="credit">
-          Free and open source. Built by{' '}
-          <a href={CREDIT.url} target="_blank" rel="noreferrer">
-            {CREDIT.company}
-          </a>
-          . <span class="num">v{__VERSION__}</span>
+          {rich('credit.built', {
+            company: (
+              <a href={CREDIT.url} target="_blank" rel="noreferrer">
+                {CREDIT.company}
+              </a>
+            ),
+          })}{' '}
+          <span class="num">v{__VERSION__}</span>
         </p>
       </main>
 
@@ -845,9 +868,7 @@ export function App() {
         )}
         {canEmulate && !settings.seenDebuggerNote && status.kind === 'idle' && (
           <Message>
-            While capturing, Chrome shows{' '}
-            <strong>“PageRecast started debugging this browser”</strong>. That's how it reads the
-            page at other widths. It closes when the capture ends.
+            {rich('panel.debugger', { notice: <strong>{t('panel.debuggerNotice')}</strong> })}
           </Message>
         )}
         {busy ? (
@@ -857,17 +878,17 @@ export function App() {
               <span class="pr-spinner" />
               <span class="truncate">{status.progress.label}</span>
               <span class="num muted">
-                {Math.min(status.progress.step + 1, status.progress.steps)} of{' '}
-                {status.progress.steps}
+                {t('common.countOf', {
+                  count: Math.min(status.progress.step + 1, status.progress.steps),
+                  total: status.progress.steps,
+                })}
               </span>
             </div>
           </div>
         ) : selecting ? (
           <>
             <p class="next">
-              {chosen.length > 1
-                ? 'One file, so a single paste imports every frame.'
-                : 'Tick the captures to bring into Figma together.'}
+              {chosen.length > 1 ? t('panel.combineReady') : t('panel.combinePick')}
             </p>
             <div class="dock-row">
               <Button
@@ -880,15 +901,15 @@ export function App() {
                 onClick={copyChosen}
               >
                 {copied === 'tray'
-                  ? 'Copied'
+                  ? t('common.copied')
                   : chosen.length
-                    ? `Copy ${chosen.length} for Figma`
-                    : 'Choose captures to combine'}
+                    ? t('panel.copyMany', { count: chosen.length })
+                    : t('panel.combineChoose')}
               </Button>
               {chosen.length > 0 && (
                 <IconButton
                   icon="download"
-                  label="Download as one .recast file"
+                  label={t('panel.downloadOne')}
                   onClick={downloadChosen}
                 />
               )}
@@ -896,7 +917,7 @@ export function App() {
           </>
         ) : current ? (
           <>
-            <p class="next">Then paste it into the PageRecast plugin in Figma.</p>
+            <p class="next">{t('panel.next')}</p>
             <div class="dock-row">
               <Button
                 variant="primary"
@@ -906,14 +927,18 @@ export function App() {
                 data-done={copied === current.id ? '' : undefined}
                 onClick={() => copy(current)}
               >
-                {copied === current.id ? 'Copied' : 'Copy for Figma'}
+                {copied === current.id ? t('common.copied') : t('common.copyForFigma')}
               </Button>
               <IconButton
                 icon="download"
-                label="Download .recast file"
+                label={t('common.downloadRecast')}
                 onClick={() => download(current)}
               />
-              <IconButton icon="refresh" label="Capture again" onClick={() => capture()} />
+              <IconButton
+                icon="refresh"
+                label={t('panel.captureAgain')}
+                onClick={() => capture()}
+              />
             </div>
           </>
         ) : (
@@ -924,7 +949,7 @@ export function App() {
             disabled={!tab?.capturable || views === 0}
             onClick={() => capture()}
           >
-            {views > 1 ? `Capture ${views} frames` : 'Capture this page'}
+            {views > 1 ? t('panel.captureFrames', { count: views }) : t('panel.capturePage')}
             <kbd>⌘↵</kbd>
           </Button>
         )}
@@ -945,8 +970,8 @@ function Result({ entry }: { entry: Entry }) {
         <h1 class="truncate">{entry.title}</h1>
         <p>
           <span class="truncate">{hostOf(entry.url)}</span>
-          <span class="num">{plural(frames.length, 'frame')}</span>
-          <span class="num">{plural(entry.layers, 'layer')}</span>
+          <span class="num">{t('count.frames', { count: frames.length })}</span>
+          <span class="num">{t('count.layers', { count: entry.layers })}</span>
           <span class="num">{formatBytes(entry.bytes)}</span>
         </p>
       </div>
@@ -982,8 +1007,8 @@ function History({
             <div class="history-text">
               <p class="truncate">{entry.title}</p>
               <p class="truncate muted">
-                <span class="num">{plural(entry.views.length, 'frame')}</span> ·{' '}
-                {ago(entry.createdAt)}
+                <span class="num">{t('count.frames', { count: entry.views.length })}</span> ·{' '}
+                {formatAgo(entry.createdAt)}
               </p>
             </div>
           </>
@@ -1006,15 +1031,15 @@ function History({
             <div class="history-actions">
               <IconButton
                 icon={copied === entry.id ? 'check' : 'copy'}
-                label="Copy for Figma"
+                label={t('common.copyForFigma')}
                 onClick={() => onCopy(entry)}
               />
               <IconButton
                 icon="download"
-                label="Download .recast file"
+                label={t('common.downloadRecast')}
                 onClick={() => onDownload(entry)}
               />
-              <IconButton icon="trash" label="Delete" onClick={() => onRemove(entry)} />
+              <IconButton icon="trash" label={t('common.delete')} onClick={() => onRemove(entry)} />
             </div>
           </li>
         )

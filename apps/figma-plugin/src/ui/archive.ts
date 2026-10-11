@@ -3,6 +3,7 @@
  * single-file `.mhtml`. Both become one HTML document whose stylesheets,
  * images and fonts are inlined, so the script-free render needs no network.
  */
+import { t } from '@pagerecast/i18n'
 
 /** A file inside the page, by absolute URL. */
 export interface Resource {
@@ -59,7 +60,7 @@ export async function readZip(bytes: Uint8Array): Promise<Map<string, Uint8Array
       break
     }
   }
-  if (end < 0) throw new Error('This is not a zip archive.')
+  if (end < 0) throw new Error(t('archive.notZip'))
   const count = view.getUint16(end + 10, true)
   let at = view.getUint32(end + 16, true)
   const files = new Map<string, Uint8Array>()
@@ -82,7 +83,7 @@ export async function readZip(bytes: Uint8Array): Promise<Map<string, Uint8Array
     if (method !== 0 && method !== 8) continue
     const file = method === 8 ? await inflate(data) : data
     total += file.byteLength
-    if (total > MAX_ZIP_BYTES) throw new Error('This archive is larger than 64 MB unpacked.')
+    if (total > MAX_ZIP_BYTES) throw new Error(t('archive.tooLarge'))
     files.set(name, file)
   }
   return files
@@ -95,7 +96,7 @@ export async function zipPage(bytes: Uint8Array): Promise<SavedPage> {
     .filter((p) => /\.html?$/i.test(p))
     .sort((a, b) => a.split('/').length - b.split('/').length)
   const page = pages.find((p) => /(^|\/)index\.html?$/i.test(p)) ?? pages[0]
-  if (!page) throw new Error('This archive has no HTML page.')
+  if (!page) throw new Error(t('archive.noPage'))
   const resources: Resources = new Map()
   for (const [path, data] of files)
     resources.set(new URL(path, ZIP_ORIGIN).href, { type: typeOf(path), bytes: data })
@@ -167,9 +168,9 @@ export function mhtmlPage(text: string): SavedPage {
     }
   }
   const boundary = /boundary="?([^";\r\n]+)"?/i.exec(text)?.[1]
-  if (!boundary) throw new Error('This is not a saved web page or email.')
+  if (!boundary) throw new Error(t('archive.notSaved'))
   read(text, boundary, 0)
-  if (!page.html) throw new Error('This file has no HTML page in it.')
+  if (!page.html) throw new Error(t('archive.noHtml'))
   return page
 }
 

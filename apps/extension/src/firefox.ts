@@ -3,6 +3,7 @@
 // the window (and zoom), and screenshots from tabs.captureTab. Colour scheme and language
 // cannot be emulated, so the page is captured as it is shown.
 import type { PendingAsset } from '@pagerecast/capture'
+import { t } from '@pagerecast/i18n'
 import { toBase64 } from '@pagerecast/scene'
 import {
   CaptureError,
@@ -54,7 +55,7 @@ export function firefoxDriver(tabId: number): Driver {
       throw new CaptureError(message(error))
     }
     const [first] = results
-    if (!first) throw new CaptureError('The page stopped the capture script.')
+    if (!first) throw new CaptureError(t('error.captureScript'))
     // Firefox reports a script's own exception here instead of rejecting.
     if (first.error) throw new CaptureError(message(first.error))
     return first.result
@@ -70,9 +71,7 @@ export function firefoxDriver(tabId: number): Driver {
         // Firefox resolves the path from the calling page, so it starts at the root.
         await inject({ files: ['/capture.js'] })
       } catch {
-        throw new CaptureError(
-          'PageRecast can’t capture this page. Firefox blocks extensions on its own pages and on addons.mozilla.org.',
-        )
+        throw new CaptureError(t('capture.blocked.firefox'))
       }
       windowId = (await chrome.tabs.get(tabId)).windowId
     },
@@ -101,9 +100,7 @@ export function firefoxDriver(tabId: number): Driver {
           await wait(250)
         }
       }
-      throw new CaptureError(
-        `Firefox can’t make the page ${width} px wide in this window. Choose another width, or make the window larger and try again.`,
-      )
+      throw new CaptureError(t('capture.width', { width: String(width) }))
     },
 
     async screenshot(x, y, width, height) {

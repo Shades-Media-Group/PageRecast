@@ -6,6 +6,7 @@
  * the page asks the user to press Capture first.
  */
 import { CAPTURE_PAGE, parseCaptureLink } from '@pagerecast/capture'
+import { resolveLocale, setLocale, t } from '@pagerecast/i18n'
 import { encodeClipboard } from '@pagerecast/scene'
 import { CaptureError, captureTab, openTab } from './capture'
 import { loadSettings } from './store'
@@ -47,12 +48,14 @@ export function listenForLinks() {
 
 async function run(hash: string, pageTab: number | undefined, send: (r: LinkReply) => void) {
   // The page already checked the link; the extension does not trust it to.
-  const link = parseCaptureLink(hash)
-  if (!link) return send({ type: 'error', message: 'This capture link is incomplete.' })
   const settings = await loadSettings()
+  // The capture page shows these messages; they follow the panel's language.
+  setLocale(resolveLocale(settings.interfaceLanguage))
+  const link = parseCaptureLink(hash)
+  if (!link) return send({ type: 'error', message: t('link.incomplete') })
   let opened: number | null = null
   try {
-    send({ type: 'progress', label: `Opening ${new URL(link.url).host}` })
+    send({ type: 'progress', label: t('progress.opening', { host: new URL(link.url).host }) })
     opened = await openTab(link.url)
     const file = await captureTab(
       opened,
@@ -80,10 +83,7 @@ async function run(hash: string, pageTab: number | undefined, send: (r: LinkRepl
   } catch (error) {
     send({
       type: 'error',
-      message:
-        error instanceof CaptureError
-          ? error.message
-          : 'The capture stopped unexpectedly. Try again, or capture from the extension panel.',
+      message: error instanceof CaptureError ? error.message : t('link.unexpected'),
     })
   } finally {
     if (opened !== null) await chrome.tabs.remove(opened).catch(() => undefined)

@@ -5,6 +5,7 @@ import {
   type PendingAsset,
   type WalkResult,
 } from '@pagerecast/capture'
+import { frameName, t } from '@pagerecast/i18n'
 import type { RecastFile, Scope, Theme } from '@pagerecast/scene'
 import { firefoxDriver } from './firefox'
 
@@ -38,7 +39,10 @@ const MOBILE_UA =
 // Chrome cannot capture a single screenshot taller than this.
 export const MAX_SCREENSHOT_HEIGHT = 16_000
 
+/** A capture that stopped for a reason the user can act on; its message is shown as is. */
 export class CaptureError extends Error {}
+/** The user pressed Esc while picking an element. */
+export class CaptureCancelled extends CaptureError {}
 
 /**
  * What a browser has to provide for a capture. Chrome drives the tab through
@@ -81,7 +85,7 @@ async function evaluate<T>(target: Target, expression: string, awaitPromise = fa
   })
   if (result.exceptionDetails) {
     throw new CaptureError(
-      result.exceptionDetails.exception?.description ?? 'The page stopped the capture script.',
+      result.exceptionDetails.exception?.description ?? t('error.captureScript'),
     )
   }
   return result.result.value
@@ -255,11 +259,8 @@ function chromeDriver(tabId: number): Driver {
         await chrome.debugger.attach(target, '1.3')
       } catch (error) {
         const message = error instanceof Error ? error.message : String(error)
-        if (/another debugger/i.test(message))
-          throw new CaptureError('Close DevTools on this tab, then capture again.')
-        throw new CaptureError(
-          'PageRecast can’t capture this page. Chrome blocks extensions on its own pages and the Web Store.',
-        )
+        if (/another debugger/i.test(message)) throw new CaptureError(t('capture.devtools'))
+        throw new CaptureError(t('capture.blocked.chrome'))
       }
       await command(target, 'Page.enable')
       await command(target, 'Network.enable')
@@ -273,7 +274,7 @@ function chromeDriver(tabId: number): Driver {
       language = lang
       if (language) {
         // Sites pick their language from the request, so the page is reloaded once.
-        onProgress({ label: `Switching the page to ${language}`, step: 0, steps: 1 })
+        onProgress({ label: t('progress.language', { language }), step: 0, steps: 1 })
         await command(target, 'Emulation.setLocaleOverride', { locale: language })
         await command(target, 'Emulation.setUserAgentOverride', {
           userAgent,
@@ -326,13 +327,9 @@ export async function captureTab(
     }))
 
     if (settings.scope === 'element') {
-      onProgress({
-        label: 'Click the part of the page to capture. Press Esc to cancel.',
-        step: 0,
-        steps: 1,
-      })
+      onProgress({ label: t('progress.pick'), step: 0, steps: 1 })
       const picked = await driver.run(() => (window.__pagerecast as PageApi).pickElement(document))
-      if (!picked) throw new CaptureError('Capture cancelled.')
+      if (!picked) throw new CaptureCancelled()
     }
 
     // Without emulation, the page is captured in the colour scheme it shows now.
@@ -350,9 +347,14 @@ export async function captureTab(
       const label = viewportLabel(width, theme)
       const mobile = driver.emulates && width < 600
       const height = mobile ? 844 : meta.height
+      const name = frameName(width, theme)
       const report = (what: string) =>
-        onProgress({ label: `${label} · ${what}`, step, steps: views.length })
-      report('setting up')
+        onProgress({
+          label: t('progress.step', { frame: name, step: what }),
+          step,
+          steps: views.length,
+        })
+      report(t('progress.setup'))
 
       await driver.setView({ width, height, mobile, theme })
       await wait(350)
@@ -363,14 +365,14 @@ export async function captureTab(
         api.thaw = api.freeze(document)
       })
       if (settings.preload) {
-        report('loading lazy content')
+        report(t('progress.lazy'))
         await driver.run(() => (window.__pagerecast as PageApi).preload(document))
       }
       if (settings.delay > 0) {
-        report('waiting for the page')
+        report(t('progress.waiting'))
         await wait(settings.delay)
       }
-      report('reading layout')
+      report(t('progress.layout'))
       await driver.run(
         (options) => {
           const api = window.__pagerecast as PageApi
@@ -394,7 +396,7 @@ export async function captureTab(
         settings.maxHeight,
       )
 
-      report('saving images')
+      report(t('progress.images'))
       await driver.embedImages(walk.assets)
       const rasters: Record<string, string> = {}
       for (const r of walk.rasters) {
@@ -403,7 +405,7 @@ export async function captureTab(
       }
       let shot: string | undefined
       if (settings.screenshot) {
-        report('taking the screenshot')
+        report(t('progress.screenshot'))
         const origin = await driver.run((scope) => {
           if (scope === 'element') {
             const r = document.querySelector('[data-pagerecast-target]')!.getBoundingClientRect()
@@ -433,7 +435,8 @@ export async function captureTab(
       step++
     }
 
-    onProgress({ label: 'Packing the capture', step: views.length, steps: views.length })
+    onProgress({ label: t('progress.packing'), step: views.length, steps: views.length })
+
     return assemble(parts, {
       url: meta.url,
       title: meta.title,

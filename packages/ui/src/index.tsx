@@ -1,6 +1,14 @@
 import type { ComponentChildren, JSX } from 'preact'
 import { useLayoutEffect, useRef, useState } from 'preact/hooks'
 import { icons, type IconName } from '@pagerecast/icons'
+import {
+  LOCALE_NAMES,
+  LOCALES,
+  localizeLabel,
+  t,
+  themeName,
+  type LocaleChoice,
+} from '@pagerecast/i18n'
 import { WORDMARK } from './brand'
 import { layoutLineup, type LineupFrame } from './lineup'
 import './tokens.css'
@@ -251,7 +259,11 @@ export function Message({
     <div class={`pr-message pr-message--${tone}`} role={tone === 'error' ? 'alert' : 'status'}>
       <Icon name={icon} size={16} />
       <div>{children}</div>
-      {onDismiss ? <IconButton icon="close" label="Dismiss" onClick={onDismiss} /> : <span />}
+      {onDismiss ? (
+        <IconButton icon="close" label={t('common.dismiss')} onClick={onDismiss} />
+      ) : (
+        <span />
+      )}
     </div>
   )
 }
@@ -270,10 +282,34 @@ export function Progress({ value }: { value: number }) {
   )
 }
 
-export function formatBytes(bytes: number): string {
-  if (bytes < 1024) return `${bytes} B`
-  if (bytes < 1024 * 1024) return `${Math.round(bytes / 1024)} KB`
-  return `${(bytes / 1024 / 1024).toFixed(1)} MB`
+/**
+ * The interface language row for both apps' settings: automatic (the
+ * browser's or Figma's language), or one of the languages in its own name.
+ */
+export function InterfaceLanguage({
+  value,
+  onChange,
+}: {
+  value: LocaleChoice
+  onChange: (value: LocaleChoice) => void
+}) {
+  return (
+    <label class="pr-prop pr-prop--wide">
+      <span>{t('language.interface')}</span>
+      <select
+        class="pr-input"
+        value={value}
+        onChange={(e) => onChange(e.currentTarget.value as LocaleChoice)}
+      >
+        <option value="">{t('language.automatic')}</option>
+        {LOCALES.map((locale) => (
+          <option value={locale} lang={locale}>
+            {LOCALE_NAMES[locale]}
+          </option>
+        ))}
+      </select>
+    </label>
+  )
 }
 
 /**
@@ -299,26 +335,29 @@ export function FrameLineup({
   }, [])
   const groups = avail ? layoutLineup(frames, avail, maxHeight) : []
   return (
-    <div class="pr-lineup" ref={ref} role="img" aria-label={frames.map((f) => f.label).join(', ')}>
+    <div
+      class="pr-lineup"
+      ref={ref}
+      role="img"
+      aria-label={frames.map((f) => localizeLabel(f.label)).join(', ')}
+    >
       {groups.map((g) => (
         <div class="pr-lineup__group" style={{ width: `${g.box}px` }}>
           <div class="pr-lineup__tiles">
             {g.tiles.map((t) =>
               t.src ? (
-                <img src={t.src} alt="" width={t.w} height={t.h} title={t.label} />
+                <img src={t.src} alt="" width={t.w} height={t.h} title={localizeLabel(t.label)} />
               ) : (
                 <span
                   class={`pr-lineup__empty pr-lineup__empty--${t.theme}`}
                   style={{ width: `${t.w}px`, height: `${t.h}px` }}
-                  title={t.label}
+                  title={localizeLabel(t.label)}
                 />
               ),
             )}
           </div>
           <p class="pr-lineup__width num">{g.width}</p>
-          <p class="pr-lineup__theme">
-            {g.tiles.map((t) => (t.theme === 'dark' ? 'Dark' : 'Light')).join(' · ')}
-          </p>
+          <p class="pr-lineup__theme">{g.tiles.map((tile) => themeName(tile.theme)).join(' · ')}</p>
         </div>
       ))}
     </div>

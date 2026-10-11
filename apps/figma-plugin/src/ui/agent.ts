@@ -3,6 +3,7 @@
  * an AI agent's PageRecast MCP server holds captures on 127.0.0.1, and this
  * window, while listening, polls for them and imports each one.
  */
+import { t } from '@pagerecast/i18n'
 
 export const BRIDGE_URL = 'http://127.0.0.1:7357'
 const POLL_MS = 2_000
@@ -118,7 +119,7 @@ export function listen(options: ListenOptions): () => void {
         options.onUnauthorized()
         options.onState({
           kind: 'pairing',
-          error: 'The agent has a new pairing code. Enter the code it shows now.',
+          error: t('mcp.newCode'),
         })
       } else {
         options.onState({ kind: 'searching' })

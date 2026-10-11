@@ -40,6 +40,9 @@ figma.ui.onmessage = async (message: UiToMain) => {
     case 'open-url':
       figma.openExternal(message.url)
       break
+    case 'notify':
+      figma.notify(message.message)
+      break
     case 'import':
       try {
         const report = await importFile(
@@ -51,11 +54,8 @@ figma.ui.onmessage = async (message: UiToMain) => {
           message.update,
           send,
         )
+        // The window answers with the toast, in its own language.
         send({ type: 'done', report })
-        const count = message.file.captures.length
-        figma.notify(
-          `Imported ${count === 1 ? 'the page' : `${count} frames`} in ${(report.durationMs / 1000).toFixed(1)} s`,
-        )
       } catch (error) {
         send({ type: 'error', message: error instanceof Error ? error.message : String(error) })
       }

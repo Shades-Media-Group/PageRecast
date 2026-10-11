@@ -1,5 +1,6 @@
 import { decode, fromBase64, mergeFiles, SceneError, type RecastFile } from '@pagerecast/scene'
 import { assemble, viewportLabel, walk } from '@pagerecast/capture'
+import { t } from '@pagerecast/i18n'
 import type { ImageBytes, ImageTiles } from '../shared/messages'
 import { imageUses, shrinkFactor } from '../shared/images'
 import { inlinePage, mhtmlPage, zipPage } from './archive'
@@ -42,7 +43,7 @@ export async function readFiles(files: File[]): Promise<RecastFile> {
 export async function readText(text: string): Promise<RecastFile> {
   const trimmed = text.trim()
   if (/^<(!doctype|html|head|body|div|section|main|header|style|[a-z]+[\s>])/i.test(trimmed)) {
-    return renderHtml(trimmed, 1440, 'Pasted HTML')
+    return renderHtml(trimmed, 1440, t('plugin.pastedHtml'))
   }
   return decode(trimmed)
 }
@@ -71,7 +72,7 @@ export async function renderHtml(html: string, width: number, title: string): Pr
   try {
     await loaded
     const doc = frame.contentDocument
-    if (!doc?.body) throw new SceneError('That HTML could not be rendered.')
+    if (!doc?.body) throw new SceneError(t('plugin.notRendered'))
     await Promise.race([doc.fonts.ready, new Promise((r) => setTimeout(r, 2000))])
     const images = Array.from(doc.images).filter((img) => !img.complete)
     await Promise.race([

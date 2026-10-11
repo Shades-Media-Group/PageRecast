@@ -1,6 +1,7 @@
 /** The Web, Extension, MCP and API tabs: ways in that start outside this window. */
 import { useState } from 'preact/hooks'
 import { captureLink, webUrl } from '@pagerecast/capture'
+import { deviceName, rich, t, type MessageKey } from '@pagerecast/i18n'
 import {
   Button,
   Icon,
@@ -48,14 +49,14 @@ function Snippet({ title, code, aside }: { title: string; code: string; aside?: 
           <button
             type="button"
             class="text-button"
-            aria-label={`Copy ${title}`}
+            aria-label={t('snippet.copy', { title })}
             onClick={() => {
               if (!copyText(code)) return
               setCopied(true)
               setTimeout(() => setCopied(false), 1600)
             }}
           >
-            {copied ? 'Copied' : 'Copy'}
+            {copied ? t('common.copied') : t('common.copy')}
           </button>
         </span>
       }
@@ -91,17 +92,18 @@ function DocLink({
   )
 }
 
-const WIDTHS: { width: number; label: string; icon: IconName }[] = [
-  { width: 1440, label: 'Desktop', icon: 'desktop' },
-  { width: 1280, label: 'Laptop', icon: 'laptop' },
-  { width: 768, label: 'Tablet', icon: 'tablet' },
-  { width: 390, label: 'Mobile', icon: 'mobile' },
+const WIDTHS: { width: number; icon: IconName }[] = [
+  { width: 1440, icon: 'desktop' },
+  { width: 1280, icon: 'laptop' },
+  { width: 768, icon: 'tablet' },
+  { width: 390, icon: 'mobile' },
 ]
-const THEMES = { light: 'Light', dark: 'Dark', both: 'Light and dark' } as const
+const THEMES = { light: 'theme.light', dark: 'theme.dark', both: 'theme.lightAndDark' } as const
 
 const widthsLabel = (widths: number[]) =>
-  widths.map((w) => `${WIDTHS.find((p) => p.width === w)?.label ?? 'Custom'} ${w}`).join(', ') ||
-  'None'
+  widths
+    .map((w) => `${WIDTHS.some((p) => p.width === w) ? deviceName(w) : t('device.custom')} ${w}`)
+    .join(', ') || t('common.none')
 
 export function WebTab({
   web,
@@ -138,11 +140,8 @@ export function WebTab({
   return (
     <>
       <section class="intro">
-        <h1>Import a page by URL</h1>
-        <p>
-          The PageRecast extension opens the page in your browser, captures it and copies it. Then
-          paste it here.
-        </p>
+        <h1>{t('web.title')}</h1>
+        <p>{t('web.body')}</p>
       </section>
       <Section>
         <form
@@ -160,7 +159,7 @@ export function WebTab({
               inputMode="url"
               spellcheck={false}
               autoComplete="off"
-              aria-label="Page URL"
+              aria-label={t('web.url')}
               aria-invalid={invalid}
               placeholder="https://example.com"
               value={input}
@@ -170,35 +169,34 @@ export function WebTab({
               }}
             />
           </div>
-          {invalid && <p class="hint hint--error">Enter a web address, such as example.com.</p>}
+          {invalid && <p class="hint hint--error">{t('web.invalid')}</p>}
           <Button type="submit" variant="primary" block disabled={!url || !web.widths.length}>
-            Capture in browser
+            {t('web.capture')}
           </Button>
         </form>
         {sent && (
           <div class="sent">
             <Message tone="success">
-              Opened {sent} in your browser. Press <strong>Capture</strong> there, then paste here
-              with ⌘V.
+              {rich('web.sent', { host: sent, button: <strong>{t('web.captureButton')}</strong> })}
             </Message>
           </div>
         )}
       </Section>
       <Section
-        title="Capture"
+        title={t('common.capture')}
         aside={
           <button type="button" class="text-button" onClick={() => setEditing(!editing)}>
-            {editing ? 'Done' : 'Edit'}
+            {editing ? t('common.done') : t('common.edit')}
           </button>
         }
       >
         {editing ? (
           <>
-            <div class="width-list" role="group" aria-label="Widths">
+            <div class="width-list" role="group" aria-label={t('common.widths')}>
               {WIDTHS.map((p) => (
                 <label class="width-option">
                   <Icon name={p.icon} size={16} />
-                  <span>{p.label}</span>
+                  <span>{deviceName(p.width)}</span>
                   <span class="num muted">{p.width}</span>
                   <input
                     class="pr-check"
@@ -210,62 +208,59 @@ export function WebTab({
               ))}
             </div>
             <div class="pr-prop">
-              <span>Theme</span>
+              <span>{t('common.theme')}</span>
               <Segmented
-                label="Theme"
+                label={t('common.theme')}
                 value={web.theme}
                 onChange={(theme) => onChange({ ...web, theme })}
                 options={[
-                  { value: 'light', label: 'Light' },
-                  { value: 'dark', label: 'Dark' },
-                  { value: 'both', label: 'Both' },
+                  { value: 'light', label: t('theme.light') },
+                  { value: 'dark', label: t('theme.dark') },
+                  { value: 'both', label: t('theme.both') },
                 ]}
               />
             </div>
             <div class="pr-prop">
-              <label for="web-language">Language</label>
+              <label for="web-language">{t('language.page')}</label>
               <input
                 id="web-language"
                 class="pr-input"
                 spellcheck={false}
-                placeholder="Browser default, or de-DE"
+                placeholder={t('web.languagePlaceholder')}
                 value={web.language}
                 onInput={(e) => onChange({ ...web, language: e.currentTarget.value.trim() })}
               />
             </div>
             {web.language && !language && (
-              <p class="hint hint--prop hint--error">Use a language tag such as de-DE or fr.</p>
+              <p class="hint hint--prop hint--error">{t('web.languageInvalid')}</p>
             )}
           </>
         ) : (
           <dl class="pr-props">
             <div class="pr-prop">
-              <dt>Widths</dt>
+              <dt>{t('common.widths')}</dt>
               <dd class="num truncate">{widthsLabel(web.widths)}</dd>
             </div>
             <div class="pr-prop">
-              <dt>Theme</dt>
-              <dd>{THEMES[web.theme]}</dd>
+              <dt>{t('common.theme')}</dt>
+              <dd>{t(THEMES[web.theme])}</dd>
             </div>
             <div class="pr-prop">
-              <dt>Language</dt>
-              <dd>{language || 'Browser default'}</dd>
+              <dt>{t('language.page')}</dt>
+              <dd>{language || t('web.browserDefault')}</dd>
             </div>
           </dl>
         )}
       </Section>
-      <Section title="Without the extension">
+      <Section title={t('web.without')}>
         {/*
          * TODO(renderer): a hosted render endpoint (Cloudflare) would capture public URLs
          * without the extension. When it exists, call it here and keep the extension path
          * for pages behind a login. Until then this text is the honest answer.
          */}
-        <p class="body">
-          URL import needs the extension for now. Without it, save the page in your browser as a web
-          page or .mhtml file and open it in File.
-        </p>
+        <p class="body">{t('web.withoutBody')}</p>
         <button type="button" class="text-button text-button--gap" onClick={onExtension}>
-          Get the extension
+          {t('web.getExtension')}
         </button>
       </Section>
     </>
@@ -276,43 +271,38 @@ export function ExtensionTab({ open }: { open: (url: string) => void }) {
   return (
     <>
       <section class="intro">
-        <h1>The PageRecast extension</h1>
-        <p>
-          Captures what your browser shows, then hands it to this window. Free, with nothing sent
-          anywhere.
-        </p>
+        <h1>{t('ext.title')}</h1>
+        <p>{t('ext.body')}</p>
         <Button icon="external" onClick={() => open(CHROME_URL)}>
-          Add to Chrome
+          {t('ext.add')}
         </Button>
-        <p class="hint">Also works in Edge, Brave and Arc. The Firefox add-on is not listed yet.</p>
+        <p class="hint">{t('ext.browsers')}</p>
       </section>
-      <Section title="It captures">
+      <Section title={t('ext.captures')}>
         <ul class="facts">
-          <li>Pages behind a login, staging and localhost</li>
-          <li>Several widths and both themes in one go</li>
-          <li>A whole page, the visible area or one element</li>
-          <li>A list of URLs, one after another</li>
+          <li>{t('ext.login')}</li>
+          <li>{t('ext.widths')}</li>
+          <li>{t('ext.scopes')}</li>
+          <li>{t('ext.list')}</li>
         </ul>
       </Section>
-      <Section title="Paste a capture">
+      <Section title={t('ext.paste')}>
         <div class="paste">
           <div class="keys" aria-hidden="true">
             <span class="pr-keycap">⌘</span>
             <span class="pr-keycap">V</span>
           </div>
-          <p class="body">
-            Press Copy for Figma in the extension, then paste anywhere in this window, on any tab.
-          </p>
+          <p class="body">{t('ext.pasteBody')}</p>
         </div>
       </Section>
     </>
   )
 }
 
-const MCP_SNIPPETS: { title: string; aside?: string; code: string }[] = [
+const MCP_SNIPPETS: { title: string; aside?: string | MessageKey; code: string }[] = [
   {
     title: 'Claude Code',
-    aside: 'Terminal',
+    aside: 'mcp.terminal',
     code: 'claude mcp add pagerecast -- npx -y pagerecast-mcp',
   },
   {
@@ -353,15 +343,13 @@ tool_timeout_sec = 180`,
 function agentHint(state: AgentState): string {
   switch (state.kind) {
     case 'off':
-      return 'Off. Agents can still save captures for you to drop here.'
+      return t('mcp.off')
     case 'searching':
-      return 'No agent on this computer yet. Looking every few seconds.'
+      return t('mcp.searching')
     case 'pairing':
-      return 'An agent is running. Pair with the code it showed you.'
+      return t('mcp.pairing')
     case 'connected':
-      return state.last
-        ? `Paired. Imported ${state.last}; waiting for the next capture.`
-        : 'Paired. Captures the agent sends import here.'
+      return state.last ? t('mcp.last', { name: state.last }) : t('mcp.connected')
   }
 }
 
@@ -390,15 +378,12 @@ export function McpTab({
   return (
     <>
       <section class="intro">
-        <h1>Import from AI agents</h1>
-        <p>
-          Claude Code, Codex, Cursor and other agents can capture pages with PageRecast on this
-          computer and send them here. Nothing goes through a server.
-        </p>
+        <h1>{t('mcp.title')}</h1>
+        <p>{t('mcp.body')}</p>
       </section>
       <Section>
         <Toggle
-          label="Listen for agent imports"
+          label={t('mcp.listen')}
           hint={agentHint(listening ? state : { kind: 'off' })}
           checked={listening}
           onChange={onListen}
@@ -411,10 +396,10 @@ export function McpTab({
               void pair()
             }}
           >
-            <label for="pairing-code">Code</label>
+            <label for="pairing-code">{t('mcp.code')}</label>
             <input
               id="pairing-code"
-              aria-label="Pairing code"
+              aria-label={t('mcp.pairingCode')}
               class="pr-input num"
               spellcheck={false}
               autoComplete="off"
@@ -426,21 +411,18 @@ export function McpTab({
               }}
             />
             <Button type="submit" disabled={cleanCode(code).length < 19 || checking}>
-              Pair
+              {t('mcp.pair')}
             </Button>
             {(error ?? state.error) && <p class="hint hint--error">{error ?? state.error}</p>}
           </form>
         )}
       </Section>
       {MCP_SNIPPETS.map((s) => (
-        <Snippet {...s} />
+        <Snippet {...s} aside={s.aside === 'mcp.terminal' ? t(s.aside) : s.aside} />
       ))}
       <Section>
-        <p class="body">
-          Ask the agent to capture a page and send it to Figma. It shows a pairing code the first
-          time.
-        </p>
-        <DocLink label="Agent setup guide" href={`${GUIDES}/mcp.md`} open={open} />
+        <p class="body">{t('mcp.ask')}</p>
+        <DocLink label={t('mcp.guide')} href={`${GUIDES}/mcp.md`} open={open} />
       </Section>
     </>
   )
@@ -450,15 +432,12 @@ export function ApiTab({ open }: { open: (url: string) => void }) {
   return (
     <>
       <section class="intro">
-        <h1>Capture from code</h1>
-        <p>
-          The pagerecast package captures pages in headless Chromium on your machine, for scripts,
-          CI and design-token builds. Drop its .recast files here.
-        </p>
+        <h1>{t('api.title')}</h1>
+        <p>{t('api.body')}</p>
       </section>
-      <Snippet title="Install" aside="Node 22" code="npm i pagerecast" />
+      <Snippet title={t('api.install')} aside="Node 22" code="npm i pagerecast" />
       <Snippet
-        title="Command line"
+        title={t('api.cli')}
         code="npx pagerecast capture https://example.com --widths 1440,390 --theme both"
       />
       <Snippet
@@ -472,11 +451,11 @@ const file = await capture('https://example.com', {
 })
 await writeFile('example.recast', await encode(file))`}
       />
-      <Snippet title="Design tokens" code="npx pagerecast tokens example.recast --format md" />
+      <Snippet title={t('api.tokens')} code="npx pagerecast tokens example.recast --format md" />
       <Section>
         <div class="doc-links">
-          <DocLink label="API guide" href={`${GUIDES}/api.md`} open={open} />
-          <DocLink label="Command line guide" href={`${GUIDES}/cli.md`} open={open} />
+          <DocLink label={t('api.guide')} href={`${GUIDES}/api.md`} open={open} />
+          <DocLink label={t('api.cliGuide')} href={`${GUIDES}/cli.md`} open={open} />
         </div>
       </Section>
     </>

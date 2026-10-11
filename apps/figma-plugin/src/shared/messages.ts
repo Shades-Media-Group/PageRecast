@@ -42,6 +42,8 @@ export const DEFAULT_OPTIONS: ImportOptions = {
 
 /** Options for new sites, options remembered per site, and the review switch. */
 export interface Settings {
+  /** The plugin window's language, such as `ro`; '' follows Figma's (the browser's) language. */
+  interfaceLanguage: string
   defaults: ImportOptions
   domains: Record<string, ImportOptions>
   /** Show the review screen before importing. Holding ⌘ or Ctrl shows it anyway. */
@@ -66,6 +68,7 @@ export interface WebCapture {
 }
 
 export const DEFAULT_SETTINGS: Settings = {
+  interfaceLanguage: '',
   defaults: DEFAULT_OPTIONS,
   domains: {},
   review: true,
@@ -103,6 +106,26 @@ export interface FontSubstitution {
   count: number
 }
 
+/**
+ * Something the import could not do exactly, shown under Notes. The main
+ * thread names it by key; the window words it in its own language.
+ */
+export interface Note {
+  key:
+    | 'note.imageDecode'
+    | 'note.vector'
+    | 'note.image'
+    | 'note.instance'
+    | 'note.componentsKept'
+    | 'note.duplicate'
+    | 'note.oneMode'
+    | 'note.skippedStyles'
+    | 'note.skippedColours'
+    | 'note.skippedNumbers'
+    | 'note.skippedTextStyles'
+  params?: Record<string, string>
+}
+
 export interface ImportReport {
   frames: number
   texts: number
@@ -123,7 +146,7 @@ export interface ImportReport {
   /** Nodes bound to variables from the file's enabled team libraries. */
   matchedFromLibrary: number
   substitutions: FontSubstitution[]
-  warnings: string[]
+  warnings: Note[]
   durationMs: number
 }
 
@@ -152,6 +175,9 @@ export type UiToMain =
   /** Asks which of these import keys already have a frame on the current page. */
   | { type: 'find-imported'; keys: string[] }
   | { type: 'open-url'; url: string }
+  /** A Figma toast, worded by the window in its language. */
+  | { type: 'notify'; message: string }
+
   /** Asks which of these fonts Figma lacks, and for every family it has. */
   | { type: 'check-fonts'; uses: FontUse[] }
 

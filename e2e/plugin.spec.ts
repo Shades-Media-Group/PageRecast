@@ -3,6 +3,7 @@ import { execFileSync } from 'node:child_process'
 import { fileURLToPath } from 'node:url'
 import { encodeFile, SCENE_FORMAT, SCENE_VERSION, type RecastFile } from '@pagerecast/scene'
 import { captureLink } from '@pagerecast/capture'
+import { DICTIONARIES } from '@pagerecast/i18n'
 import { DEFAULT_SETTINGS } from '../apps/figma-plugin/src/shared/messages'
 import { startBridge, type Bridge } from '../packages/mcp/src/bridge'
 
@@ -17,7 +18,7 @@ test.beforeAll(() => {
 })
 
 /** The plugin UI as Figma frames it: 400 × 620, settings from the main thread. */
-async function open(page: Page, scheme: 'light' | 'dark' = 'light') {
+async function open(page: Page, scheme: 'light' | 'dark' = 'light', settings = DEFAULT_SETTINGS) {
   const errors: string[] = []
   page.on('pageerror', (e) => errors.push(e.message))
   page.on('console', (m) => m.type() === 'error' && errors.push(m.text()))
@@ -35,8 +36,10 @@ async function open(page: Page, scheme: 'light' | 'dark' = 'light') {
       if (m && m.type !== 'ready') sent.push(m)
     })
     window.postMessage({ pluginMessage: { type: 'ready', settings, version: '1.0.0' } }, '*')
-  }, DEFAULT_SETTINGS)
-  await expect(page.getByRole('tab', { name: 'Web' })).toHaveAttribute('aria-selected', 'true')
+  }, settings)
+  // The first tab, Web, is open; its name depends on the interface language.
+  await expect(page.getByRole('tab').first()).toHaveAttribute('aria-selected', 'true')
+
   return errors
 }
 
@@ -206,4 +209,97 @@ test.describe('agent imports', () => {
     // The browser logs the deliberate wrong-code attempt; nothing else may fail.
     expect(errors.filter((e) => !e.includes('status of 401'))).toEqual([])
   })
+})
+
+test('every interface language renders the paste, review, done and settings views', async ({
+  page,
+}) => {
+  const { encodeClipboard } = await import('@pagerecast/scene')
+  const payload = await encodeClipboard(minimalFile())
+  for (const locale of ['ru', 'ro', 'fr', 'zh-CN'] as const) {
+    const words = DICTIONARIES[locale]
+    for (const scheme of ['light', 'dark'] as const) {
+      const errors = await open(page, scheme, { ...DEFAULT_SETTINGS, interfaceLanguage: locale })
+      await expect(page.locator('html')).toHaveAttribute('lang', locale)
+      await expect(page.getByRole('tab').first()).toHaveText(words['tab.web'])
+      await page.getByRole('tab').nth(1).click()
+      await expect(page.getByRole('heading', { name: words['ext.title'] })).toBeVisible()
+      await shot(page, `${locale}-paste-${scheme}`)
+
+      // A pasted capture opens the review; Figma then reports a missing font.
+      await page.evaluate((text) => {
+        const event = new ClipboardEvent('paste', { clipboardData: new DataTransfer() })
+        event.clipboardData!.setData('text', text)
+        document.dispatchEvent(event)
+      }, payload)
+      await expect(page.getByRole('heading', { name: words['review.frames'] })).toBeVisible()
+      await page.evaluate(() =>
+        window.postMessage(
+          {
+            pluginMessage: {
+              type: 'fonts',
+              missing: [
+                {
+                  requested: 'Söhne Breit',
+                  styles: ['Regular', 'Bold'],
+                  count: 42,
+                  replacement: 'Inter',
+                },
+              ],
+              families: ['Inter', 'Roboto'],
+            },
+          },
+          '*',
+        ),
+      )
+      await expect(page.getByRole('button', { name: words['fonts.checkAgain'] })).toBeVisible()
+      await shot(page, `${locale}-review-${scheme}`)
+      await page.locator('.font-row').scrollIntoViewIfNeeded()
+      await shot(page, `${locale}-review-fonts-${scheme}`)
+
+      await page.evaluate(() =>
+        window.postMessage(
+          {
+            pluginMessage: {
+              type: 'done',
+              report: {
+                frames: 2,
+                texts: 1840,
+                images: 23,
+                vectors: 61,
+                rasters: 1,
+                autoLayouts: 412,
+                components: 7,
+                instances: 38,
+                variables: 24,
+                textStyles: 9,
+                reusedStyles: 0,
+                updated: 1,
+                matchedFromLibrary: 0,
+                substitutions: [{ requested: 'Söhne Breit', used: 'Inter', count: 42 }],
+                warnings: [
+                  { key: 'note.image', params: { name: 'Hero' } },
+                  { key: 'note.duplicate', params: { frame: 'Desktop · 1440 · Light' } },
+                ],
+                durationMs: 3240,
+              },
+            },
+          },
+          '*',
+        ),
+      )
+      await expect(page.getByRole('button', { name: words['plugin.importAnother'] })).toBeVisible()
+      await shot(page, `${locale}-done-${scheme}`)
+      await page.locator('.facts').scrollIntoViewIfNeeded()
+      await shot(page, `${locale}-done-notes-${scheme}`)
+
+      await page.getByRole('button', { name: words['plugin.settings'] }).click()
+      await shot(page, `${locale}-settings-${scheme}`)
+      await page
+        .getByRole('combobox', { name: words['language.interface'] })
+        .scrollIntoViewIfNeeded()
+      await shot(page, `${locale}-settings-language-${scheme}`)
+      expect(errors).toEqual([])
+    }
+  }
 })

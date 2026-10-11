@@ -1,6 +1,9 @@
+import type { LocaleChoice } from '@pagerecast/i18n'
 import type { Scope, Theme } from '@pagerecast/scene'
 
 export interface Settings {
+  /** The panel's own language; '' follows the browser. Not the page's language below. */
+  interfaceLanguage: LocaleChoice
   scope: Scope
   widths: number[]
   customWidths: number[]
@@ -10,6 +13,7 @@ export interface Settings {
   screenshot: boolean
   /** Hover, focus and active looks, imported as component variants. */
   states: boolean
+  /** The language the captured page is loaded in; '' keeps the page's own. */
   language: string
   /** CSS selectors, comma separated, of elements to leave out; remembered per site. */
   hide: string
@@ -30,6 +34,7 @@ export const PRESET_WIDTHS = [
 ] as const
 
 export const DEFAULT_SETTINGS: Settings = {
+  interfaceLanguage: '',
   scope: 'page',
   widths: [1440],
   customWidths: [],
@@ -46,9 +51,9 @@ export const DEFAULT_SETTINGS: Settings = {
   editing: true,
 }
 
-/** Languages offered for capture; the page's own language is the default. */
+/** Languages offered for capture, each in its own name; '' is the page's own language. */
 export const LANGUAGES = [
-  { value: '', label: 'Page default' },
+  { value: '', label: '' },
   { value: 'en-US', label: 'English (US)' },
   { value: 'en-GB', label: 'English (UK)' },
   { value: 'ro-RO', label: 'Română' },

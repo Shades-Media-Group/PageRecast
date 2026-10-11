@@ -15,6 +15,7 @@ import {
   type ImportOptions,
   type ImportReport,
   type MainToUi,
+  type Note,
 } from '../shared/messages'
 import { FontResolver } from './fonts'
 import type { FontChoices } from '../shared/fonts'
@@ -129,7 +130,7 @@ export async function importFile(
     try {
       hashes.set(id, figma.createImage(bytes).hash)
     } catch {
-      report.warnings.push(`An image could not be decoded (${id}).`)
+      report.warnings.push({ key: 'note.imageDecode', params: { id } })
     }
   }
 
@@ -343,9 +344,7 @@ export async function importFile(
       report.vectors++
       return svg
     } catch {
-      report.warnings.push(
-        `A vector could not be converted and was left as an empty frame (${scene.name}).`,
-      )
+      report.warnings.push({ key: 'note.vector', params: { name: scene.name } })
       const frame = figma.createFrame()
       parent.appendChild(frame)
       frame.name = `${scene.name} (unsupported SVG)`
@@ -518,10 +517,7 @@ export async function importFile(
         rect.fills = hash
           ? [placedImage(hash, scene.fit, scene, scene.position, sizes.get(scene.asset))]
           : [solid({ r: 0.9, g: 0.9, b: 0.9, a: 1 })]
-        if (!hash)
-          report.warnings.push(
-            `An image could not be loaded and was replaced by a placeholder (${scene.name}).`,
-          )
+        if (!hash) report.warnings.push({ key: 'note.image', params: { name: scene.name } })
         if (scene.radius) {
           ;[
             rect.topLeftRadius,
@@ -767,7 +763,7 @@ export async function importFile(
         node.fills = toPaints(diff.fills, node.width, node.height, hashes, sizes)
       }
     } catch {
-      report.warnings.push(`An instance could not take its own content (${node.name}).`)
+      report.warnings.push({ key: 'note.instance', params: { name: node.name } })
     }
   }
 
@@ -801,10 +797,7 @@ export async function importFile(
     if (components && earlier.components && !keepComponents) replace(earlier.components, components)
     else if (components) after(components, earlier.components ?? reference ?? root)
     else if (earlier.components && !keepComponents) earlier.components.remove()
-    if (keepComponents)
-      report.warnings.push(
-        `The earlier components of ${name} were kept because other layers use them.`,
-      )
+    if (keepComponents) report.warnings.push({ key: 'note.componentsKept', params: { name } })
     report.updated++
   }
 
@@ -826,9 +819,7 @@ export async function importFile(
       const key = importKey(file.source.url, capture)
       const earlier = key ? imported.get(key) : undefined
       if (earlier && earlier.pages.length > 1)
-        report.warnings.push(
-          `${capture.label} is on this page more than once, so it was added as a new frame.`,
-        )
+        report.warnings.push({ key: 'note.duplicate', params: { frame: capture.label } })
       const start = cursor
       const root = (await build(capture.root, section, -cursor, 0, capture)) as FrameNode
       root.name = groups.length > 1 ? capture.label : `${section.name} · ${capture.label}`
@@ -889,16 +880,17 @@ export async function importFile(
   progress({ type: 'progress', phase: 'styles', done: 0, total: 1 })
   // Styles already in the file win; only what is left gets new variables and styles.
   // A failure here must not lose the layers already built: it becomes a note.
-  const step = async (what: string, run: () => unknown) => {
+  const step = async (key: Note['key'], run: () => unknown) => {
     try {
       await run()
     } catch (error) {
-      report.warnings.push(
-        `${what} were skipped: ${error instanceof Error ? error.message : String(error)}`,
-      )
+      report.warnings.push({
+        key,
+        params: { error: error instanceof Error ? error.message : String(error) },
+      })
     }
   }
-  const warn = (message: string) => report.warnings.push(message)
+  const warn = (note: Note) => report.warnings.push(note)
   // Repeated patterns became components above, which removed the copies they
   // replaced; only layers still on the canvas take variables and styles.
   for (const refs of [colorRefs, textRefs, numberRefs] as { node: BaseNode }[][]) {
@@ -906,19 +898,19 @@ export async function importFile(
     refs.splice(0, refs.length, ...alive)
   }
   if (options.useLocalStyles) {
-    await step('Existing styles', async () => {
+    await step('note.skippedStyles', async () => {
       const reused = await applyLocalStyles(colorRefs, textRefs)
       report.reusedStyles = reused.local
       report.matchedFromLibrary = reused.library
     })
   }
   if (options.variables) {
-    await step('Colour variables', () => {
+    await step('note.skippedColours', () => {
       report.variables = createVariables(colorRefs, file, roots, warn)
     })
   }
   if (options.useLocalStyles || options.variables) {
-    await step('Spacing and radius variables', async () => {
+    await step('note.skippedNumbers', async () => {
       const numbers = await applyNumberVariables(numberRefs, {
         reuse: options.useLocalStyles,
         create: options.variables,
@@ -929,7 +921,7 @@ export async function importFile(
     })
   }
   if (options.textStyles) {
-    await step('Text styles', async () => {
+    await step('note.skippedTextStyles', async () => {
       report.textStyles = await createTextStyles(textRefs, file)
     })
   }

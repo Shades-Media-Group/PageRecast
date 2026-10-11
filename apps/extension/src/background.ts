@@ -1,5 +1,6 @@
+import { resolveLocale, setLocale, t } from '@pagerecast/i18n'
 import { listenForLinks } from './link'
-import type { PendingCapture } from './store'
+import { loadSettings, type PendingCapture, type Settings } from './store'
 
 // Chrome's side panel, or Firefox's sidebar (which has no "open on action click" setting).
 declare const __FIREFOX__: boolean
@@ -23,30 +24,48 @@ if (__FIREFOX__)
 // Firefox has no `externally_connectable` for web pages, so capture links are Chrome's.
 if (!__FIREFOX__) listenForLinks()
 
-chrome.runtime.onStartup.addListener(setUp)
+/** The right-click menu, in the panel's interface language. */
+async function createMenus() {
+  setLocale(resolveLocale((await loadSettings()).interfaceLanguage))
+  await chrome.contextMenus.removeAll()
+  const contexts: ['page', 'frame', 'selection', 'link', 'image'] = [
+    'page',
+    'frame',
+    'selection',
+    'link',
+    'image',
+  ]
+  chrome.contextMenus.create({
+    id: 'page',
+    title: t('menu.capturePage'),
+    contexts,
+    documentUrlPatterns: PAGES,
+  })
+  chrome.contextMenus.create({
+    id: 'element',
+    title: t('menu.pickElement'),
+    contexts,
+    documentUrlPatterns: PAGES,
+  })
+}
+
+// On startup too, as the browser's own language may have changed since.
+chrome.runtime.onStartup.addListener(() => {
+  setUp()
+  void createMenus()
+})
 chrome.runtime.onInstalled.addListener(() => {
   setUp()
-  void chrome.contextMenus.removeAll().then(() => {
-    const contexts: ['page', 'frame', 'selection', 'link', 'image'] = [
-      'page',
-      'frame',
-      'selection',
-      'link',
-      'image',
-    ]
-    chrome.contextMenus.create({
-      id: 'page',
-      title: 'Capture this page with PageRecast',
-      contexts,
-      documentUrlPatterns: PAGES,
-    })
-    chrome.contextMenus.create({
-      id: 'element',
-      title: 'Pick an element to capture',
-      contexts,
-      documentUrlPatterns: PAGES,
-    })
-  })
+  void createMenus()
+})
+
+// A new interface language in the panel renames the menu items.
+chrome.storage.onChanged.addListener((changes, area) => {
+  const change = changes.settings
+  if (area !== 'local' || !change) return
+  const before = (change.oldValue as Partial<Settings> | undefined)?.interfaceLanguage
+  const after = (change.newValue as Partial<Settings> | undefined)?.interfaceLanguage
+  if (before !== after) void createMenus()
 })
 
 /**

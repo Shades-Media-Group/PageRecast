@@ -1,5 +1,6 @@
 import type { Capture, Color, RecastFile, TextStyle } from '@pagerecast/scene'
 import { nearestColor, nearestNumber, numberScale, typeKey, type Candidate } from './match'
+import type { Note } from '../shared/messages'
 import { pageOf } from '../shared/pages'
 import { hex, solid } from './paints'
 
@@ -52,7 +53,7 @@ export function createVariables(
   refs: ColorRef[],
   file: RecastFile,
   roots: Map<Capture, FrameNode>,
-  warn: (message: string) => void = () => {},
+  warn: (note: Note) => void = () => {},
 ): number {
   if (refs.length === 0) return 0
   const light = refs.filter((r) => r.capture.theme === 'light')
@@ -114,9 +115,7 @@ export function createVariables(
       darkCollection = figma.variables.createVariableCollection(`${hostOf(file)} · Dark`)
       darkMode = darkCollection.modes[0]!.modeId
       darkCollection.renameMode(darkMode, 'Dark')
-      warn(
-        'This Figma plan allows one mode per collection, so the dark colours are in a second collection.',
-      )
+      warn({ key: 'note.oneMode' })
     }
   }
 

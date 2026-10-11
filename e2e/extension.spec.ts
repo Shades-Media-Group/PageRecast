@@ -4,6 +4,7 @@ import { createServer, type Server } from 'node:http'
 import { readFile } from 'node:fs/promises'
 import { fileURLToPath } from 'node:url'
 import { captureLink } from '@pagerecast/capture'
+import { DICTIONARIES } from '@pagerecast/i18n'
 import { decode, type RecastFile } from '@pagerecast/scene'
 
 const extensionPath = fileURLToPath(new URL('../apps/extension/dist', import.meta.url))
@@ -60,6 +61,8 @@ test.beforeAll(async () => {
   origin = `http://127.0.0.1:${typeof address === 'object' && address ? address.port : 0}`
   context = await chromium.launchPersistentContext('', {
     channel: 'chromium',
+    // The panel follows the browser's language; these tests read it in English.
+    locale: 'en-US',
     // Lets a local run point at a Chromium build that works on this machine.
     ...(process.env.PW_CHROMIUM_PATH ? { executablePath: process.env.PW_CHROMIUM_PATH } : {}),
     args: [
@@ -220,4 +223,50 @@ test('the capture page asks for the extension when none answers', async () => {
     timeout: 10_000,
   })
   await shot(page, 'capture-link-missing')
+})
+
+test('the panel speaks the chosen interface language', async () => {
+  test.setTimeout(120_000)
+  const errors: string[] = []
+  let panel = await openPanel()
+  const setSettings = (patch: Record<string, unknown>) =>
+    panel.evaluate(async (patch) => {
+      const { settings } = await chrome.storage.local.get('settings')
+      await chrome.storage.local.set({ settings: { ...(settings as object), ...patch } })
+    }, patch)
+  // The panel reads its settings when it opens, so each change opens it afresh.
+  const reopen = async (patch: Record<string, unknown>) => {
+    await setSettings(patch)
+    await panel.close()
+    panel = await openPanel()
+    panel.on('pageerror', (e) => errors.push(e.message))
+  }
+  for (const locale of ['ru', 'ro', 'fr', 'zh-CN'] as const) {
+    const words = DICTIONARIES[locale]
+    await reopen({ interfaceLanguage: locale, editing: true })
+    await expect(panel.locator('html')).toHaveAttribute('lang', locale)
+    await expect(panel.getByRole('heading', { name: words['panel.before'] })).toBeVisible()
+    await expect(panel.locator('.dock .pr-button--primary')).toBeVisible()
+    await shot(panel, `${locale}-settings`)
+    await panel
+      .getByRole('combobox', { name: words['language.interface'] })
+      .scrollIntoViewIfNeeded()
+    await shot(panel, `${locale}-settings-language`)
+
+    await reopen({ editing: false })
+
+    await expect(panel.getByRole('heading', { name: words['panel.summary'] })).toBeVisible()
+    await shot(panel, `${locale}-ready`)
+    await panel.locator('.dock .pr-button--primary').click()
+    await expect(
+      panel.locator('.dock').getByRole('button', { name: words['common.copyForFigma'] }),
+    ).toBeVisible({
+      timeout: 30_000,
+    })
+    await shot(panel, `${locale}-captured`)
+  }
+  // Back to the language of the browser.
+  await setSettings({ interfaceLanguage: '' })
+  expect(errors).toEqual([])
+  await panel.close()
 })

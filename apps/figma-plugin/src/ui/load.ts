@@ -2,14 +2,33 @@ import { decode, fromBase64, mergeFiles, SceneError, type RecastFile } from '@pa
 import { assemble, viewportLabel, walk } from '@pagerecast/capture'
 import type { ImageBytes, ImageTiles } from '../shared/messages'
 import { imageUses, shrinkFactor } from '../shared/images'
+import { inlinePage, mhtmlPage, zipPage } from './archive'
 
 const MAX_SIDE = 4096
 declare const __VERSION__: string
 
-/** Reads a dropped or chosen file: a `.recast` capture or an HTML page. */
+/**
+ * Reads a dropped or chosen file: a `.recast` capture, an HTML page, a zipped
+ * site folder or a single-file saved page (`.mhtml`).
+ */
 export async function readFile(file: File): Promise<RecastFile> {
+  const name = file.name.replace(/\.[a-z0-9]+$/i, '')
   if (/\.html?$/i.test(file.name) || file.type === 'text/html') {
-    return renderHtml(await file.text(), 1440, file.name.replace(/\.html?$/i, ''))
+    return renderHtml(await file.text(), 1440, name)
+  }
+  try {
+    if (/\.zip$/i.test(file.name))
+      return renderHtml(
+        inlinePage(await zipPage(new Uint8Array(await file.arrayBuffer()))),
+        1440,
+        name,
+      )
+    if (/\.mht(ml)?$/i.test(file.name))
+      return renderHtml(inlinePage(mhtmlPage(await file.text())), 1440, name)
+  } catch (error) {
+    throw error instanceof SceneError
+      ? error
+      : new SceneError(error instanceof Error ? error.message : String(error))
   }
   return decode(new Uint8Array(await file.arrayBuffer()))
 }

@@ -1,11 +1,17 @@
-/* Shared PageRecast controls, drawn in the grammar of a Figma inspector. */
+/*
+ * Shared PageRecast controls, drawn in the grammar of a Figma inspector.
+ *
+ * Grid: 4 px steps, 32 px rows (24 px for read-only lists), 16 px gutter.
+ * Type: 11 px labels and meta, 12 px body and controls, 13 px row titles,
+ * 15 px the one title per screen.
+ */
 
 .pr-icon {
   flex: none;
   display: block;
 }
 
-/* Header and tabs */
+/* Header: the logo, then the panel's own actions on the right. */
 .pr-header {
   display: flex;
   align-items: center;
@@ -13,12 +19,22 @@
   height: 40px;
   padding: 0 8px 0 var(--pad);
 }
+.pr-header__actions {
+  display: flex;
+  align-items: center;
+}
+.pr-header .pr-icon-button[aria-pressed='true'] {
+  background: var(--hover);
+  color: var(--ink);
+}
 .pr-logo {
   display: flex;
   align-items: center;
-  gap: 7px;
+  gap: 8px;
   color: var(--ink);
 }
+
+/* Text tabs, or a title with a back arrow in their place. */
 .pr-tabs {
   display: flex;
   gap: 16px;
@@ -27,6 +43,9 @@
 }
 .pr-tabs button {
   position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
   height: 32px;
   padding: 0;
   border: 0;
@@ -52,10 +71,13 @@
   background: var(--ink);
 }
 
-/* Inspector sections */
+/* Inspector sections: a 32 px title row, rows, 12 px to the next hairline. */
 .pr-section {
-  padding: 12px var(--pad);
+  padding: 0 var(--pad) 12px;
   border-top: 1px solid var(--line);
+}
+.pr-section--bare {
+  padding-top: 12px;
 }
 .pr-section:first-child {
   border-top: 0;
@@ -64,14 +86,14 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  min-height: 20px;
-  margin-bottom: 4px;
+  gap: 8px;
+  height: 32px;
 }
 .pr-section-head h2 {
-  font: 600 11px/1 var(--font);
+  font: 600 11px/16px var(--font);
   color: var(--ink);
 }
-.pr-section-head span {
+.pr-section-head > span {
   font-size: 11px;
   color: var(--ink-3);
 }
@@ -83,14 +105,64 @@
   min-height: var(--row);
 }
 
+/* Property rows: an 11 px label column, then the control. */
+.pr-prop {
+  display: grid;
+  grid-template-columns: 72px minmax(0, 1fr);
+  align-items: center;
+  gap: 8px;
+  min-height: var(--row);
+}
+.pr-prop > :first-child {
+  color: var(--ink-3);
+  font-size: 11px;
+}
+.pr-prop + .pr-prop {
+  margin-top: 0;
+}
+dl.pr-props {
+  margin: 0;
+}
+.pr-props .pr-prop {
+  min-height: 24px;
+}
+.pr-props dd {
+  margin: 0;
+  min-width: 0;
+}
+
+/* Read-only figures: label left, number right, 24 px apart. */
+.pr-stats {
+  margin: 0;
+}
+.pr-stats > div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  min-height: 24px;
+}
+.pr-stats dt {
+  min-width: 0;
+  color: var(--ink-2);
+}
+.pr-stats dd {
+  margin: 0;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+.pr-stats dd.is-zero {
+  color: var(--ink-3);
+}
+
 /* Buttons */
 .pr-button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
+  gap: 8px;
   height: 28px;
-  padding: 0 10px;
+  padding: 0 12px;
   border: 1px solid var(--line-strong);
   border-radius: var(--radius);
   background: var(--raised);
@@ -121,6 +193,11 @@
 .pr-button--primary:active {
   background: var(--red-press);
 }
+.pr-button--primary:disabled {
+  background: var(--hover);
+  color: var(--ink-3);
+  opacity: 1;
+}
 .pr-button--ghost {
   border-color: transparent;
   background: transparent;
@@ -138,14 +215,14 @@
   width: 100%;
 }
 .pr-button kbd {
-  margin-left: 4px;
   font: 500 11px/1 var(--font);
-  opacity: 0.7;
+  opacity: 0.72;
 }
 
 .pr-icon-button {
   display: inline-grid;
   place-items: center;
+  flex: none;
   width: 28px;
   height: 28px;
   padding: 0;
@@ -158,6 +235,14 @@
 .pr-icon-button:hover {
   background: var(--hover);
   color: var(--ink);
+}
+.pr-icon-button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+.pr-icon-button:disabled:hover {
+  background: transparent;
+  color: var(--ink-3);
 }
 
 /* Segmented control, Figma style: flat track, raised thumb. */
@@ -174,12 +259,15 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 5px;
+  gap: 4px;
+  min-width: 0;
+  padding: 0 4px;
   border: 0;
   border-radius: 4px;
   background: transparent;
   color: var(--ink-3);
   font: 500 11px/1 var(--font);
+  white-space: nowrap;
   cursor: pointer;
 }
 .pr-segmented button:hover {
@@ -189,34 +277,36 @@
   background: var(--raised);
   color: var(--ink);
   box-shadow:
-    0 0 0 1px var(--line),
+    0 0 0 1px var(--line-strong),
     0 1px 1px rgba(10, 10, 11, 0.06);
 }
 
-/* Toggle rows */
+/* Toggle rows: label and its one-line effect, switch on the right. */
 .pr-toggle {
   display: grid;
-  grid-template-columns: 1fr auto;
+  grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
-  gap: 12px;
+  gap: 16px;
   min-height: var(--row);
   padding: 4px 0;
   cursor: pointer;
 }
 .pr-toggle__label {
+  display: block;
   color: var(--ink);
+  line-height: 16px;
 }
 .pr-toggle__hint {
   display: block;
   color: var(--ink-3);
   font-size: 11px;
-  margin-top: 1px;
+  line-height: 16px;
 }
 .pr-toggle input {
   appearance: none;
   position: relative;
   flex: none;
-  width: 26px;
+  width: 28px;
   height: 16px;
   margin: 0;
   border-radius: 999px;
@@ -240,7 +330,7 @@
   background: var(--ink);
 }
 .pr-toggle input:checked::after {
-  transform: translateX(10px);
+  transform: translateX(12px);
   background: var(--bg);
 }
 
@@ -250,11 +340,11 @@
   flex: none;
   display: grid;
   place-items: center;
-  width: 14px;
-  height: 14px;
+  width: 16px;
+  height: 16px;
   margin: 0;
   border: 1px solid var(--line-strong);
-  border-radius: 3px;
+  border-radius: 4px;
   background: var(--raised);
   cursor: pointer;
 }
@@ -296,16 +386,58 @@
 .pr-input::placeholder {
   color: var(--ink-3);
 }
+select.pr-input {
+  appearance: none;
+  padding-right: 24px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M15.88 9.29 12 13.17 8.12 9.29a.996.996 0 1 0-1.41 1.41l4.59 4.59c.39.39 1.02.39 1.41 0l4.59-4.59a.996.996 0 0 0 0-1.41c-.39-.38-1.03-.39-1.42 0z' fill='%236e6d6b'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 4px center;
+  background-size: 16px;
+  cursor: pointer;
+}
+
+/*
+ * A field with an icon inside on the left and an action inside on the
+ * right, the way Figma draws its property inputs.
+ */
+.pr-field {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-width: 0;
+}
+.pr-field > .pr-icon {
+  position: absolute;
+  left: 8px;
+  color: var(--ink-3);
+  pointer-events: none;
+}
+.pr-field .pr-input {
+  flex: 1;
+  padding-left: 32px;
+  padding-right: 32px;
+}
+.pr-field .pr-icon-button {
+  position: absolute;
+  right: 2px;
+  width: 24px;
+  height: 24px;
+  border-radius: 4px;
+}
+.pr-field .pr-icon-button:not(:disabled) {
+  color: var(--ink);
+}
+
 .pr-textarea {
   display: block;
   width: 100%;
-  padding: 10px;
+  padding: 8px;
   border: 1px solid var(--line);
   border-radius: var(--radius);
   background: var(--raised);
   color: var(--ink);
   font:
-    400 12px/1.55 ui-monospace,
+    400 12px/1.5 ui-monospace,
     'SF Mono',
     Menlo,
     Consolas,
@@ -320,23 +452,28 @@
 /* Messages: an inline line with a coloured glyph, not a tinted box. */
 .pr-message {
   display: grid;
-  grid-template-columns: 16px 1fr auto;
+  grid-template-columns: 16px minmax(0, 1fr) auto;
   gap: 8px;
   align-items: start;
   color: var(--ink-2);
   font-size: 12px;
+  line-height: 16px;
 }
 .pr-message .pr-icon {
-  margin-top: 1px;
   color: var(--ink-3);
 }
-.pr-message--success .pr-icon {
+.pr-message .pr-icon-button {
+  width: 24px;
+  height: 24px;
+  margin: -4px -4px 0 0;
+}
+.pr-message--success > .pr-icon {
   color: var(--success);
 }
-.pr-message--warning .pr-icon {
+.pr-message--warning > .pr-icon {
   color: var(--warning);
 }
-.pr-message--error .pr-icon {
+.pr-message--error > .pr-icon {
   color: var(--error);
 }
 .pr-message strong {
@@ -352,12 +489,13 @@
 }
 .pr-progress > div {
   height: 100%;
-  background: var(--red);
+  background: var(--ink);
   transform-origin: left center;
   transition: transform 240ms var(--ease);
 }
 
 .pr-spinner {
+  flex: none;
   width: 12px;
   height: 12px;
   border-radius: 50%;
@@ -375,7 +513,7 @@
   display: inline-grid;
   place-items: center;
   min-width: 20px;
-  height: 18px;
+  height: 20px;
   padding: 0 4px;
   border: 1px solid var(--line-strong);
   border-bottom-width: 2px;
@@ -385,55 +523,71 @@
   font: 600 11px/1 var(--font);
 }
 
-/* Settings, feedback and help, always at the bottom. */
-.toolbar {
-  flex: none;
+/*
+ * The frames of a capture, side by side on one baseline like frames on a
+ * Figma canvas. Each tile is the top of that frame's own screenshot.
+ */
+.pr-lineup {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  height: 36px;
-  padding: 0 4px;
-  border-top: 1px solid var(--line);
+  align-items: flex-end;
+  gap: 16px;
+  min-height: 40px;
+}
+.pr-lineup__group {
+  flex: none;
+  min-width: 0;
+}
+.pr-lineup__tiles {
+  display: flex;
+  align-items: flex-end;
+  gap: 4px;
+}
+.pr-lineup__tiles img,
+.pr-lineup__empty {
+  display: block;
+  flex: none;
+  border-radius: 2px;
+  object-fit: cover;
+  object-position: top center;
+  box-shadow: 0 0 0 1px var(--line-strong);
+  background: var(--raised);
+}
+.pr-lineup__empty--dark {
+  background: #0e0e10;
+}
+.pr-lineup__width {
+  margin-top: 8px;
+  color: var(--ink);
   font-size: 11px;
+  font-weight: 600;
+  line-height: 16px;
 }
-.toolbar a {
-  color: var(--ink-2);
-  text-decoration: none;
-}
-.toolbar a:hover {
-  color: var(--ink);
-  text-decoration: underline;
-}
-.toolbar .pr-icon-button[aria-pressed='true'] {
-  background: var(--hover);
-  color: var(--ink);
-}
-
-.credit {
-  padding: 16px var(--pad) 20px;
+.pr-lineup__theme {
   color: var(--ink-3);
   font-size: 11px;
+  line-height: 16px;
+  white-space: nowrap;
+}
+
+/* The credit closes the scrolling area, at its bottom edge. */
+.credit {
+  margin-top: auto;
+  padding: 16px var(--pad);
+  color: var(--ink-3);
+  font-size: 11px;
+  line-height: 16px;
 }
 .credit a {
   color: var(--ink-2);
 }
 .hint {
-  margin-top: 6px;
+  margin-top: 4px;
   color: var(--ink-3);
   font-size: 11px;
-  line-height: 1.45;
+  line-height: 16px;
 }
 .hint a {
   color: var(--ink-2);
-}
-select.pr-input {
-  appearance: none;
-  padding-right: 24px;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M15.88 9.29 12 13.17 8.12 9.29a.996.996 0 1 0-1.41 1.41l4.59 4.59c.39.39 1.02.39 1.41 0l4.59-4.59a.996.996 0 0 0 0-1.41c-.39-.38-1.03-.39-1.42 0z' fill='%236e6d6b'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 6px center;
-  background-size: 16px;
-  cursor: pointer;
 }
 
 .text-button {
@@ -441,7 +595,7 @@ select.pr-input {
   border: 0;
   background: none;
   color: var(--ink);
-  font: 500 11px/1 var(--font);
+  font: 500 11px/16px var(--font);
   text-decoration: underline;
   text-decoration-color: var(--line-strong);
   text-underline-offset: 3px;
@@ -451,11 +605,11 @@ select.pr-input {
   text-decoration-color: currentColor;
 }
 
-/* Motion: screens settle in, they never perform. */
+/* Motion: state changes settle in; nothing performs on load. */
 @keyframes pr-enter {
   from {
     opacity: 0;
-    transform: translateY(6px);
+    transform: translateY(4px);
   }
 }
 @keyframes pr-fade {
@@ -468,24 +622,12 @@ select.pr-input {
     transform: scale(1.18);
   }
 }
-.pr-section,
 .pr-message {
-  animation: pr-enter 260ms var(--ease) both;
+  animation: pr-fade 200ms var(--ease) both;
 }
-.pr-section:nth-child(2) {
-  animation-delay: 30ms;
-}
-.pr-section:nth-child(3) {
-  animation-delay: 60ms;
-}
-.pr-section:nth-child(4) {
-  animation-delay: 90ms;
-}
-.pr-section:nth-child(n + 5) {
-  animation-delay: 120ms;
-}
+.pr-lineup img,
 .stage img {
-  animation: pr-fade 400ms var(--ease) both;
+  animation: pr-fade 320ms var(--ease) both;
 }
 .pr-button .pr-icon {
   transition: transform var(--fast) var(--ease);
@@ -493,6 +635,6 @@ select.pr-input {
 .pr-button[data-done] .pr-icon {
   animation: pr-pop 320ms var(--ease);
 }
-.pr-button--primary:active {
+.pr-button--primary:not(:disabled):active {
   transform: scale(0.985);
 }

@@ -2,6 +2,7 @@ import type {
   Capture,
   Color,
   FrameNode as SceneFrame,
+  InteractionState,
   RecastFile,
   SceneNode as Scene,
   TextNode as SceneText,
@@ -17,6 +18,7 @@ import type {
 import { FontResolver } from './fonts'
 import { rotatedTransform } from './geometry'
 import { hex, imagePaint, solid, toBlend, toEffects, toPaints } from './paints'
+import { withState } from './states'
 import {
   applyLocalStyles,
   createTextStyles,
@@ -28,6 +30,12 @@ import {
 const CAPTURE_GAP = 160
 const REFERENCE_GAP = 80
 const YIELD_EVERY = 150
+const VARIANT_GAP = 24
+const STATE_NAMES: Record<InteractionState, string> = {
+  hover: 'Hover',
+  focus: 'Focus',
+  active: 'Active',
+}
 
 type Parent = BaseNode & ChildrenMixin
 type Progress = (message: MainToUi) => void
@@ -113,6 +121,11 @@ export async function importFile(
   let done = 0
   const colorRefs: ColorRef[] = []
   const textRefs: TextRef[] = []
+  // While building state variants: nested states stay plain layers (components
+  // cannot nest), and only the Default variant feeds variables and text styles.
+  let inComponent = false
+  let collectRefs = true
+  const componentFrames = new Map<Capture, FrameNode>()
 
   const fontFor = (style: TextStyle): FontName => {
     const font = fonts.resolve(style)
@@ -239,6 +252,7 @@ export async function importFile(
       )
 
     report.texts++
+    if (!collectRefs) return text
     if (!scene.paint && scene.runs.length === 1)
       colorRefs.push({ node: text, kind: 'text', color: base.color, key: scene.key, capture })
     if (
@@ -433,6 +447,7 @@ export async function importFile(
         return rect
       }
       case 'frame': {
+        if (scene.states && !inComponent) return buildStates(scene, parent, ox, oy, capture)
         const frame = figma.createFrame()
         parent.appendChild(frame)
         frame.name = nameOf(scene)
@@ -475,11 +490,70 @@ export async function importFile(
         place(frame, scene, ox, oy)
         report.frames++
         const first = scene.fills[0]
-        if (scene.fills.length === 1 && first?.type === 'solid')
+        if (collectRefs && scene.fills.length === 1 && first?.type === 'solid')
           colorRefs.push({ node: frame, kind: 'fill', color: first.color, key: scene.key, capture })
         return frame
       }
     }
+  }
+
+  /**
+   * An element with recorded states becomes a component set (State=Default,
+   * Hover, Focus, Active) and an instance of Default where the element sat, so
+   * the page frame looks exactly as before. The sets go in one "Components"
+   * frame beside their capture, inside the import's section: the page stays a
+   * clean copy, every state is in one place, and each width and theme keeps its
+   * own components because their looks differ.
+   */
+  async function buildStates(
+    scene: SceneFrame,
+    parent: Parent,
+    ox: number,
+    oy: number,
+    capture: Capture,
+  ): Promise<SceneNode> {
+    let container = componentFrames.get(capture)
+    if (!container) {
+      container = figma.createFrame()
+      section.appendChild(container)
+      container.name = `Components · ${capture.label}`
+      container.fills = []
+      container.layoutMode = 'VERTICAL'
+      container.primaryAxisSizingMode = 'AUTO'
+      container.counterAxisSizingMode = 'AUTO'
+      container.itemSpacing = VARIANT_GAP * 2
+      componentFrames.set(capture, container)
+    }
+    const variants: ComponentNode[] = []
+    inComponent = true
+    try {
+      for (const state of ['default', 'hover', 'focus', 'active'] as const) {
+        const overrides = state === 'default' ? {} : scene.states?.[state]
+        if (!overrides) continue
+        collectRefs = state === 'default'
+        const patched = withState(scene, overrides)
+        delete patched.rotation
+        const frame = (await build(patched, container, patched.x, patched.y, capture)) as FrameNode
+        const component = figma.createComponentFromNode(frame)
+        component.name = `State=${state === 'default' ? 'Default' : STATE_NAMES[state]}`
+        variants.push(component)
+      }
+    } finally {
+      inComponent = false
+      collectRefs = true
+    }
+    const set = figma.combineAsVariants(variants, container)
+    set.name = nameOf(scene)
+    set.fills = []
+    set.layoutMode = 'HORIZONTAL'
+    set.primaryAxisSizingMode = 'AUTO'
+    set.counterAxisSizingMode = 'AUTO'
+    set.itemSpacing = VARIANT_GAP
+    set.paddingTop = set.paddingRight = set.paddingBottom = set.paddingLeft = VARIANT_GAP
+    const instance = variants[0]!.createInstance()
+    parent.appendChild(instance)
+    place(instance, scene, ox, oy)
+    return instance
   }
 
   // Lay captures out left to right, each followed by its screenshot reference.
@@ -518,6 +592,13 @@ export async function importFile(
       }
       reference.locked = true
       cursor += REFERENCE_GAP + capture.width
+    }
+    const components = componentFrames.get(capture)
+    if (components) {
+      components.x = cursor + REFERENCE_GAP
+      components.y = 0
+      cursor += REFERENCE_GAP + components.width
+      tallest = Math.max(tallest, components.height)
     }
     cursor += CAPTURE_GAP
   }

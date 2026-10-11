@@ -30,10 +30,10 @@ Everything here is copy you can paste. Assets are in [`assets/store`](../assets/
 
 | Field                        | Value                                                                                                       |
 | ---------------------------- | ----------------------------------------------------------------------------------------------------------- |
-| Name                         | PageRecast — Website to Figma, HTML to design (taken from the manifest)                                     |
+| Name                         | PageRecast — Website to Figma, HTML to design (from `apps/extension/_locales`, one per language)            |
 | Summary                      | Import any website into Figma as editable layers, even behind a login. HTML to design at every width. Free. |
 | Category                     | Developer Tools                                                                                             |
-| Language                     | English                                                                                                     |
+| Language                     | English; French, Romanian, Russian, Spanish and Chinese come from `_locales`                                |
 | Icon                         | `assets/brand/png/icon-128.png`                                                                             |
 | Screenshots (1280 × 800)     | `assets/store/chrome-screenshot-1.png` … `-3.png`                                                           |
 | Small promo tile (440 × 280) | `assets/store/chrome-promo-small.png`                                                                       |
@@ -105,7 +105,7 @@ Source code: https://github.com/Shades-Media-Group/PageRecast
 
 | Field          | Value                                                                                                          |
 | -------------- | -------------------------------------------------------------------------------------------------------------- |
-| Name           | PageRecast — Website to Figma, HTML to design (taken from the manifest)                                        |
+| Name           | PageRecast — Website to Figma, HTML to design (from `apps/extension/_locales`, one per language)               |
 | Add-on URL     | `pagerecast`                                                                                                   |
 | Summary        | Import any website into Figma as editable layers, even behind a login. HTML to design at every width. Free.    |
 | Categories     | Web Development                                                                                                |

@@ -1,0 +1,8 @@
+{
+  "appName": { "message": "PageRecast — Din site în Figma, din HTML în design" },
+  "appDescription": {
+    "message": "Importă orice site în Figma ca straturi editabile, chiar și după autentificare. Din HTML în design, la orice lățime. Gratuit."
+  },
+  "actionTitle": { "message": "Deschide PageRecast" },
+  "commandCapture": { "message": "Capturează pagina curentă" }
+}

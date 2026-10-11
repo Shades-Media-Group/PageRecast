@@ -3,7 +3,7 @@
 import { build as esbuild } from 'esbuild'
 import { build as vite } from 'vite'
 import preact from '@preact/preset-vite'
-import { copyFile, mkdir, readFile, rm, writeFile } from 'node:fs/promises'
+import { copyFile, cp, mkdir, readFile, rm, writeFile } from 'node:fs/promises'
 import { fileURLToPath } from 'node:url'
 
 const root = fileURLToPath(new URL('.', import.meta.url))
@@ -71,16 +71,17 @@ await esbuild({
 let manifest = {
   manifest_version: 3,
   // The store lists by name: the brand first, then the words people search for.
-  name: 'PageRecast — Website to Figma, HTML to design',
+  // Name, description and shortcut texts come from _locales, one folder per language.
+  name: '__MSG_appName__',
   short_name: 'PageRecast',
   version,
-  description:
-    'Import any website into Figma as editable layers, even behind a login. HTML to design at every width. Free.',
+  description: '__MSG_appDescription__',
+  default_locale: 'en',
   homepage_url: 'https://github.com/Shades-Media-Group/PageRecast',
   minimum_chrome_version: '116',
   icons: { 16: 'icons/16.png', 32: 'icons/32.png', 48: 'icons/48.png', 128: 'icons/128.png' },
   action: {
-    default_title: 'Open PageRecast',
+    default_title: '__MSG_actionTitle__',
     default_icon: { 16: 'icons/16.png', 32: 'icons/32.png' },
   },
   side_panel: { default_path: 'sidepanel/index.html' },
@@ -90,10 +91,13 @@ let manifest = {
   // Unlike a content script, this needs no host permission and adds no install warning.
   externally_connectable: { matches: ['https://pagerecast.shades.md/*'] },
   commands: {
-    _execute_action: { suggested_key: { default: 'Alt+Shift+P' }, description: 'Open PageRecast' },
+    _execute_action: {
+      suggested_key: { default: 'Alt+Shift+P' },
+      description: '__MSG_actionTitle__',
+    },
     'capture-page': {
       suggested_key: { default: 'Alt+Shift+C' },
-      description: 'Capture the current page',
+      description: '__MSG_commandCapture__',
     },
   },
 }
@@ -147,6 +151,8 @@ if (firefox) {
   await writeFile(`${dist}capture.js`, inject.outputFiles[0].text)
 }
 await writeFile(`${dist}manifest.json`, `${JSON.stringify(manifest, null, 2)}\n`)
+await cp(`${root}_locales`, `${dist}_locales`, { recursive: true })
+
 for (const size of [16, 32, 48, 128]) {
   await copyFile(`${repo}assets/brand/png/icon-${size}.png`, `${dist}icons/${size}.png`)
 }

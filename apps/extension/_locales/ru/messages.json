@@ -1,0 +1,8 @@
+{
+  "appName": { "message": "PageRecast — сайт в Figma, HTML в дизайн" },
+  "appDescription": {
+    "message": "Импортируйте любой сайт в Figma как редактируемые слои, даже за логином. HTML в дизайн при любой ширине. Бесплатно."
+  },
+  "actionTitle": { "message": "Открыть PageRecast" },
+  "commandCapture": { "message": "Захватить текущую страницу" }
+}

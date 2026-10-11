@@ -1,0 +1,8 @@
+{
+  "appName": { "message": "PageRecast — Site web vers Figma, HTML en design" },
+  "appDescription": {
+    "message": "Importez tout site web dans Figma en calques modifiables, même derrière une connexion. HTML en design à toute largeur. Gratuit."
+  },
+  "actionTitle": { "message": "Ouvrir PageRecast" },
+  "commandCapture": { "message": "Capturer la page actuelle" }
+}

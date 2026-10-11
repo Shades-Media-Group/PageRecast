@@ -1,0 +1,18 @@
+{
+  "appName": {
+    "message": "PageRecast — Website to Figma, HTML to design",
+    "description": "Store and browser name: the brand first, then what people search for. At most 75 characters."
+  },
+  "appDescription": {
+    "message": "Import any website into Figma as editable layers, even behind a login. HTML to design at every width. Free.",
+    "description": "Store summary. At most 132 characters."
+  },
+  "actionTitle": {
+    "message": "Open PageRecast",
+    "description": "Toolbar button tooltip and the keyboard shortcut that opens the panel."
+  },
+  "commandCapture": {
+    "message": "Capture the current page",
+    "description": "Keyboard shortcut description."
+  }
+}

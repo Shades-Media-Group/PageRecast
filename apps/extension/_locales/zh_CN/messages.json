@@ -1,0 +1,8 @@
+{
+  "appName": { "message": "PageRecast — 网页转 Figma，HTML 转设计稿" },
+  "appDescription": {
+    "message": "将任意网站导入 Figma，生成可编辑图层，需要登录的页面也可以。任意宽度的 HTML 转设计稿。免费。"
+  },
+  "actionTitle": { "message": "打开 PageRecast" },
+  "commandCapture": { "message": "捕获当前页面" }
+}

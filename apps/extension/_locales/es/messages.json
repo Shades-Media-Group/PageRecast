@@ -1,0 +1,8 @@
+{
+  "appName": { "message": "PageRecast — De sitio web a Figma, de HTML a diseño" },
+  "appDescription": {
+    "message": "Importa cualquier sitio web a Figma como capas editables, incluso tras iniciar sesión. De HTML a diseño en cualquier ancho. Gratis."
+  },
+  "actionTitle": { "message": "Abrir PageRecast" },
+  "commandCapture": { "message": "Capturar la página actual" }
+}

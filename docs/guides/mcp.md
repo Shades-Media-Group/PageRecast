@@ -82,15 +82,17 @@ From a clone of this repository, `yarn build` (or `node packages/mcp/build.mjs`)
 
 ### `capture_page`
 
-| Input      | Type                         | Default                              |
-| ---------- | ---------------------------- | ------------------------------------ |
-| `url`      | string, required             |                                      |
-| `widths`   | 1 to 8 integers, 240 to 3840 | `[1440]`                             |
-| `theme`    | `light`, `dark` or `both`    | `light`                              |
-| `scope`    | `page` or `viewport`         | `page`                               |
-| `language` | BCP 47 tag such as `de-DE`   | browser default                      |
-| `wait_ms`  | 0 to 60000                   | 0                                    |
-| `out_path` | path ending in `.recast`     | a new file in the system temp folder |
+| Input        | Type                             | Default                              |
+| ------------ | -------------------------------- | ------------------------------------ |
+| `url`        | string, required                 |                                      |
+| `widths`     | 1 to 8 integers, 240 to 3840     | `[1440]`                             |
+| `theme`      | `light`, `dark` or `both`        | `light`                              |
+| `scope`      | `page` or `viewport`             | `page`                               |
+| `language`   | BCP 47 tag such as `de-DE`       | browser default                      |
+| `wait_ms`    | 0 to 60000, waited at each width | 0                                    |
+| `hide`       | CSS selectors to leave out       | none                                 |
+| `max_height` | px, 0 for the whole page         | 0                                    |
+| `out_path`   | path ending in `.recast`         | a new file in the system temp folder |
 
 `url` takes an http(s) URL, a bare host, a `file://` URL or a path to a local HTML file, so an agent can capture the page it is building on `localhost`. The result stays small on purpose; the layers stay in the file:
 

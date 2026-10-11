@@ -165,7 +165,22 @@ export function createServer(options: ServerOptions): McpServer {
           .max(60_000)
           .optional()
           .describe(
-            'Extra wait after the page loads, for slow client-rendered pages. 0 to 60000. Default 0.',
+            'Wait at each width before reading the page, for slow client-rendered pages or animations. 0 to 60000. Default 0.',
+          ),
+        hide: z
+          .array(z.string().min(1))
+          .max(50)
+          .optional()
+          .describe(
+            'CSS selectors of elements to leave out, such as [".chat-widget", "#promo"]. Cookie banners are hidden already.',
+          ),
+        max_height: z
+          .number()
+          .int()
+          .min(0)
+          .optional()
+          .describe(
+            'Cut full-page captures off at this height in CSS px, for endless feeds. 0 keeps the whole page. Default 0.',
           ),
         out_path: z
           .string()
@@ -193,6 +208,8 @@ export function createServer(options: ServerOptions): McpServer {
             ...(args.scope ? { scope: args.scope } : {}),
             ...(args.language ? { language: args.language } : {}),
             ...(args.wait_ms ? { waitMs: args.wait_ms } : {}),
+            ...(args.hide ? { hide: args.hide } : {}),
+            ...(args.max_height ? { maxHeight: args.max_height } : {}),
           },
           extra,
         )

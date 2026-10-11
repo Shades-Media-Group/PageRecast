@@ -42,6 +42,7 @@ test('an agent captures a page over stdio, reads it back and hands it to the plu
           url: 'e2e/fixtures/kitchen-sink.html',
           widths: [1440, 390],
           theme: 'both',
+          max_height: 1200,
           out_path: out,
         },
       },
@@ -60,6 +61,7 @@ test('an agent captures a page over stdio, reads it back and hands it to the plu
       ],
     )
     expect(summary.frames.every((f: { layers: number }) => f.layers > 10)).toBe(true)
+    expect(summary.frames.every((f: { height: number }) => f.height <= 1200)).toBe(true)
     expect((await decode(new Uint8Array(await readFile(out)))).captures).toHaveLength(4)
 
     const info = (await client.callTool({

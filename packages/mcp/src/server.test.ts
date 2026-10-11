@@ -103,6 +103,8 @@ describe('MCP server', () => {
     [{ url: 'example.com', theme: 'sepia' }, /theme/],
     [{ url: 'example.com', scope: 'element' }, /scope/],
     [{ url: 'example.com', wait_ms: 120_000 }, /wait_ms|60000/],
+    [{ url: 'example.com', hide: '.chat' }, /hide/],
+    [{ url: 'example.com', max_height: -1 }, /max_height|0/],
     [{ url: 'example.com', language: 'not a tag!' }, /BCP 47/],
     [{ url: 'example.com', out_path: '/tmp/x.json' }, /\.recast/],
     [{}, /url/],

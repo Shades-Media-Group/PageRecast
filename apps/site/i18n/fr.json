@@ -397,5 +397,37 @@
     },
     "end": "Cette page fait partie de PageRecast, gratuit et open source.",
     "get": "Obtenir PageRecast"
+  },
+  "prefs": {
+    "open": "Affichage et accessibilité",
+    "title": "Affichage",
+    "theme": "Thème",
+    "light": "Clair",
+    "dark": "Sombre",
+    "system": "Auto",
+    "access": "Accessibilité",
+    "text": "Texte plus grand",
+    "contrast": "Plus de contraste",
+    "motion": "Réduire les animations",
+    "links": "Souligner les liens",
+    "reading": "Lecture facilitée",
+    "saved": "Enregistré dans ce navigateur uniquement.",
+    "reset": "Réinitialiser",
+    "close": "Fermer",
+    "privacy": "Choix de confidentialité"
+  },
+  "consent": {
+    "title": "Votre vie privée",
+    "text": "Ce site ne garde que ce dont il a besoin pour fonctionner, comme vos réglages d’affichage. Les outils d’analyse ou de marketing ne fonctionneraient qu’avec votre accord.",
+    "acceptAll": "Tout accepter",
+    "necessaryOnly": "Le nécessaire seulement",
+    "customize": "Personnaliser",
+    "save": "Enregistrer mes choix",
+    "necessary": "Nécessaires",
+    "necessaryText": "Retiennent vos choix d’affichage et de confidentialité. Toujours actifs.",
+    "analytics": "Mesure d’audience",
+    "analyticsText": "Visites comptées de façon anonyme, pour savoir ce qui aide. Non utilisé sur ce site aujourd’hui.",
+    "marketing": "Marketing",
+    "marketingText": "Publicité et mesure des campagnes. Non utilisé sur ce site aujourd’hui."
   }
 }

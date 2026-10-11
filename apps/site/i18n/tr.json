@@ -1,0 +1,433 @@
+{
+  "language": "Dil",
+  "moreLanguages": "Diğer diller",
+  "machine": "Google ile makine çevirisi",
+  "imageAlt": "PageRecast: her web sayfası, gerçek Figma katmanları olarak",
+  "preferred": {
+    "button": "Tercih edilen kaynaklara ekle<span class='visually-hidden'> (Google)</span>",
+    "mention": "PageRecast'i Google Arama'da daha sık gör: <a data-link='preferred' target='_blank'>tercih edilen kaynak olarak ekle</a>."
+  },
+  "nav": {
+    "label": "Ana menü",
+    "home": "Ana sayfa",
+    "homeLabel": "PageRecast ana sayfa",
+    "widths": "Genişlikler",
+    "layers": "Katmanlar",
+    "privacy": "Gizlilik",
+    "gallery": "Galeri",
+    "guides": "Rehberler",
+    "cta": "Ücretsiz kur"
+  },
+  "footer": {
+    "top": "PageRecast, başa dön",
+    "tagline": "Her web sayfası, düzenlenebilir Figma katmanları olarak. Ücretsiz, açık kaynak ve bilgisayarından hiç çıkmaz.",
+    "label": "Alt bilgi",
+    "product": "Ürün",
+    "project": "Proje",
+    "trust": "Güven",
+    "sample": "Test sayfası",
+    "changelog": "Değişiklik günlüğü",
+    "releases": "Sürümler",
+    "issues": "Sorun bildir",
+    "security": "Güvenlik",
+    "license": "MIT lisansı",
+    "format": ".recast formatı",
+    "credit": "Ücretsiz ve açık kaynak. <a data-link='shades'>Shades Media Group</a> tarafından geliştirildi.",
+    "version": "Sürüm"
+  },
+  "home": {
+    "title": "Her web sitesini Figma'ya ücretsiz aktar | PageRecast",
+    "description": "Her web sitesini ücretsiz olarak düzenlenebilir Figma katmanlarına dönüştür. Giriş gerektiren sayfaları her genişlikte, açık ve koyu temada yakalar.",
+    "hero": {
+      "title": "Her web sayfasını Figma'ya dök.",
+      "lead": "Tarayıcının gösterdiğini yakala. Figma'ya, her biri düzenlenebilir katmanlar olarak yapıştır.",
+      "chrome": "Chrome'a ücretsiz ekle",
+      "figma": "Figma eklentisini al",
+      "note": "Sonsuza dek ücretsiz. Giriş gerektiren sayfalarda da çalışır.",
+      "sample": "Test sayfasında dene"
+    },
+    "explode": {
+      "label": "Bu sayfa Figma katmanlarına ayrılıyor",
+      "layers": "katman",
+      "texts": "metin",
+      "images": "görsel",
+      "caption": "Bu sayfa, 1440 px'te yakalandı ve olduğu gibi içe aktarıldı."
+    },
+    "widths": {
+      "title": "Her genişlik.<br />İki tema.<br />Tek yakalama.",
+      "text": "Masaüstü, tablet, mobil ya da 240 ile 3840 arasında herhangi bir genişlik seç; açık, koyu ya da ikisi birden. Her biri Figma'ya kendi frame'i olarak gelir; iki tema da Light ve Dark modlu renk değişkenlerine dönüşür.",
+      "width": "Genişlik",
+      "theme": "Tema",
+      "light": "Açık",
+      "dark": "Koyu"
+    },
+    "layers": {
+      "title": "Resim değil, gerçek katmanlar.",
+      "text": "Metin, kendi fontlarıyla metin olarak kalır. İkonlar vektöre, renkler değişkene dönüşür; flex düzenler ise sonuç sayfadaki yerine tam oturduğunda Auto Layout olur. Değiştirilmesi gereken her font listelenir.",
+      "alt": "Bu sayfanın kurulum bölümü, Figma katmanlarından dördü işaretlenmiş hâlde",
+      "caption": "PageRecast bunu bu sayfadan okudu. Oluşturduğu katmanlar bunlar."
+    },
+    "behind": {
+      "title": "Giriş arkasında. Staging'de. Localhost'ta.",
+      "text": "Uzantı, tarayıcının gösterdiğini birebir yakalar; böylece gerçekten üzerinde çalıştığın sayfaları Figma'ya taşıyabilirsin: panolar, önizlemeler, açık bırakılmış bir menü, yarısı doldurulmuş bir form.",
+      "extensionAlt": "Bir sayfayı yakaladıktan sonra PageRecast yan paneli",
+      "pluginAlt": "PageRecast Figma eklentisi, içe aktarmadan önce yakalamayı gözden geçiriyor"
+    },
+    "privacy": {
+      "title": "Bilgisayarından hiçbir şey çıkmaz.",
+      "text": "PageRecast sunucusu yok. Yakalamalar tarayıcında oluşturulur ve Figma'ya yapıştırana kadar cihazında kalır. Hesap yok, analitik yok, sınır yok, ücret yok."
+    },
+    "open": {
+      "title": "Açık kaynak. Açık format.",
+      "text": "PageRecast MIT lisanslıdır ve yakalamalar <code>.recast</code> dosyalarıdır: okuyabileceğin, yazabileceğin ve üzerine geliştirebileceğin, belgelenmiş bir şemaya sahip gzip'lenmiş JSON.",
+      "github": "GitHub'da gör",
+      "format": "Formatı oku",
+      "codeLabel": "Bir .recast dosyasından alıntı"
+    },
+    "faq": {
+      "title": "Sorular ve cevaplar.",
+      "lead": "İlk web sitelerini Figma'ya taşımadan önce insanların sordukları. Geri kalan her şey rehberlerde.",
+      "howto": {
+        "q": "Bir web sitesini Figma'ya nasıl aktarırım?",
+        "name": "PageRecast ile bir web sitesini Figma'ya aktar",
+        "intro": "Chrome uzantısını ve Figma eklentisini kur, sonra:",
+        "steps": {
+          "capture": {
+            "name": "Sayfayı yakala",
+            "text": "Sayfayı Chrome'da aç, PageRecast yan panelini aç, genişlikleri ve temaları seç ve Yakala'ya bas."
+          },
+          "copy": {
+            "name": "Figma için kopyala",
+            "text": "Figma için kopyala'ya bas ya da paylaşmak veya sonra açmak için bir .recast dosyası kaydet."
+          },
+          "paste": {
+            "name": "Figma'ya yapıştır",
+            "text": "PageRecast eklentisini çalıştır, ⌘ V ya da Ctrl V ile yapıştır, frame'leri kontrol et ve İçe aktar'a bas."
+          }
+        }
+      },
+      "items": {
+        "free": {
+          "q": "PageRecast gerçekten ücretsiz mi?",
+          "a": "Evet. Plan, sınır, deneme süresi, hesap ya da filigran yok ve hiçbir zaman olmayacak. PageRecast, MIT lisansıyla açık kaynaktır."
+        },
+        "login": {
+          "q": "Giriş gerektiren sayfalarda çalışır mı?",
+          "a": "Evet. Uzantı tarayıcının gösterdiğini yakalar; böylece panolar, yönetim panelleri ve oturum açtığın her şey, herkese açık bir sayfa gibi içe aktarılır."
+        },
+        "localhost": {
+          "q": "Localhost'u ya da bir staging sitesini içe aktarabilir miyim?",
+          "a": "Evet. Chrome'da açılan her sayfa yakalanabilir; <code>localhost</code>, staging ve önizleme dağıtımları dahil. Tünel de herkese açık bir URL de gerekmez."
+        },
+        "what": {
+          "q": "PageRecast Figma'ya neleri aktarır?",
+          "a": "Dolguları, kenarlıkları, köşe yarıçapları, gölgeleri ve bulanıklığıyla frame'ler; fontları ve satır içi stilleriyle metinler; görseller; düzenlenebilir vektör olarak SVG ikonlar; Light ve Dark modlu renk değişkenleri; metin stilleri; ve karşılaştırma için her frame'in yanında kilitli bir ekran görüntüsü."
+        },
+        "fonts": {
+          "q": "Sayfanın fontlarına ne olur?",
+          "a": "PageRecast, Figma'da bulunan her fontu kullanır: bilgisayarında kurulu olanları ya da Google Fonts'takileri. Figma'da olmayan bir font en yakın eşiyle değiştirilir ve her değişiklik içe aktarmadan önce ve sonra listelenir."
+        },
+        "autolayout": {
+          "q": "Auto Layout kullanıyor mu?",
+          "a": "Evet, uyduğu her yerde. Flex düzenler, her alt öğe sayfadaki yerine 1.5 px yakınlıkta oturduğunda Auto Layout olur. Geri kalan her şey tam konumunu korur; böylece içe aktarılan sonuç hep sayfa gibi görünür."
+        },
+        "privacy": {
+          "q": "Verilerim gizli mi?",
+          "a": "Evet. PageRecast sunucusu, hesap ya da analitik yok. Yakalamalar tarayıcında oluşturulur ve bilgisayarında kalır. Figma eklentisi yalnızca sayfanın zaten kullandığı görselleri, doğrudan ait oldukları sitelerden indirir."
+        },
+        "firefox": {
+          "q": "Firefox'ta çalışır mı?",
+          "a": "Evet. Firefox için PageRecast, aynı Figma eklentisi için aynı yakalamaları yapar. Sayfayı o an gösterdiği tema ve dilde yakalar; bu yüzden önce bunları değiştir."
+        },
+        "agents": {
+          "q": "Yapay zekâ ajanları PageRecast'i kullanabilir mi?",
+          "a": "Evet. PageRecast MCP sunucusu, Claude Code, Codex ve Cursor gibi ajanların sayfaları yakalamasını, tasarım token'larını okumasını ve yakalamaları Figma'ya göndermesini sağlar. O da bilgisayarında çalışır: <code>npx -y pagerecast-mcp</code>."
+        },
+        "screenshot": {
+          "q": "Ekran görüntüsünden farkı ne?",
+          "a": "Ekran görüntüsü tek bir düz resimdir. PageRecast sayfayı katmanlar olarak yeniden kurar: düzenleyebileceğin metinler, yeniden renklendirebileceğin vektörler, boyutlandırabileceğin frame'ler ve değişken olarak renkler. Ekran görüntüsü yalnızca kilitli bir referans olarak gelir."
+        }
+      }
+    },
+    "install": {
+      "title": "İki parça. İki dakika.",
+      "chrome": "Chrome uzantısı",
+      "chromeText": "Sayfayı her genişlikte, açık ve koyu temada yakalar.",
+      "chromeButton": "Chrome'a ekle",
+      "figma": "Figma eklentisi",
+      "figmaText": "Katmanları Auto Layout, değişkenler ve stillerle oluşturur.",
+      "figmaButton": "Eklentiyi al",
+      "guides": "Rehberler",
+      "guidesText": "İkisini de kur, bir sayfa yakala, yapıştır. İki dakikada başla.",
+      "guidesLink": "Rehberleri oku"
+    },
+    "runtime": {
+      "devices": {
+        "1440": "Masaüstü",
+        "1280": "Dizüstü",
+        "768": "Tablet",
+        "390": "Mobil"
+      },
+      "light": "Açık",
+      "dark": "Koyu",
+      "viewerAlt": {
+        "light": "Örnek sayfa, açık modda {width} px'te yakalandı",
+        "dark": "Örnek sayfa, koyu modda {width} px'te yakalandı"
+      },
+      "viewerCaption": "{theme} · Figma'da tek frame",
+      "notes": {
+        "Vector": {
+          "title": "Vektör",
+          "detail": "Sayfanın SVG'sinden 5 şekil, hâlâ düzenlenebilir"
+        },
+        "Text": {
+          "title": "Metin",
+          "detail": "Hanken Grotesk · 650 · 26 px"
+        },
+        "Auto Layout": {
+          "title": "Auto Layout",
+          "detail": "Yatay · boşluk 10 · iç boşluk 20 · tam yuvarlak"
+        },
+        "Colour variable": {
+          "title": "Renk değişkeni",
+          "detail": "Light #3D3D40 · Dark #C3C3C9"
+        }
+      }
+    }
+  },
+  "gallery": {
+    "title": "Figma'da açmaya hazır site yakalamaları | PageRecast Galeri",
+    "description": "Gerçek web sayfalarının ücretsiz .recast dosyaları, Figma'ya düzenlenebilir katmanlar olarak aktarılmaya hazır. İndir, PageRecast eklentisine bırak, düzenle.",
+    "heading": "Galeri",
+    "intro": "Figma'da hemen açabileceğin hazır yakalamalar. Bir dosya indir, Figma'da PageRecast'i aç ve dosyayı eklentiye bırak. Her birinde açık ve koyu temada üç genişlik var.",
+    "download": ".recast indir",
+    "view": "Sayfayı gör",
+    "sample": {
+      "name": "Test sayfası",
+      "text": "Tipografi, renk, düzen, yüzeyler, vektörler, görseller, kontroller ve bir tablo.",
+      "alt": "PageRecast test sayfası, 1440 px'te yakalandı",
+      "facts": "6 frame · 1,842 katman · 4.1 MB"
+    },
+    "site": {
+      "name": "PageRecast web sitesi",
+      "text": "Yapışkan menü, ürün görselleri ve uzun bir alt bilgi içeren gerçek bir tanıtım sayfası.",
+      "alt": "PageRecast web sitesi, 1440 px'te yakalandı",
+      "facts": "6 frame · 1,206 katman · 4.9 MB"
+    },
+    "share": {
+      "title": "Bir yakalamayı ekibinle paylaş",
+      "step1": "Uzantıda, Figma için kopyala düğmesinin yanındaki indirme düğmesine bas.",
+      "step2": "<code>.recast</code> dosyasını diğer dosyalar gibi gönder.",
+      "step3": "Ekip arkadaşın onu Figma'da PageRecast'e bırakır. Eklenti dışında kurulacak bir şey yok."
+    }
+  },
+  "privacy": {
+    "title": "Gizlilik politikası | PageRecast",
+    "description": "PageRecast hiçbir kişisel veriyi toplamaz, iletmez, satmaz ya da paylaşmaz. Her şey bilgisayarında gerçekleşir.",
+    "heading": "Gizlilik politikası",
+    "updated": "Son güncelleme: 11 Ekim 2026",
+    "intro": "PageRecast, Shades Media Group tarafından geliştirilen, Chrome ve Firefox için bir tarayıcı uzantısı ve bir Figma eklentisidir. Bu politika hepsini kapsar.",
+    "shortTitle": "Kısaca",
+    "short": "PageRecast hiçbir kişisel veriyi toplamaz, iletmez, satmaz ya da paylaşmaz. Her şey bilgisayarında gerçekleşir.",
+    "chromeTitle": "Chrome uzantısının eriştikleri",
+    "chromePage": "<strong>Yakalamayı seçtiğin sayfa.</strong> Yakala'ya bastığında uzantı, Chrome'un <code>debugger</code> iznini kullanarak geçerli sekmenin, yazdığın bir URL'nin ya da Figma eklentisinin yakalama sayfamız üzerinden gönderdiği bir URL'nin (bunu yalnızca o sayfa isteyebilir, o da ancak sen orada Yakala'ya bastıktan sonra) düzenini, stillerini, metnini ve görsellerini okur. Yalnızca o yakalama için bağlanır ve yakalama bitince ayrılır.",
+    "chromeTabs": "<strong>Sekme başlıkları, adresleri ve ikonları</strong>, hangi sayfanın yakalanacağını göstermek için.",
+    "chromeStorage": "<strong>Cihazındaki yerel depolama</strong>, ayarlarını ve son yakalamalarını saklamak için. Herhangi bir yakalamayı panelden silebilirsin; uzantıyı kaldırmak hepsini siler.",
+    "chromeNetwork": "Uzantı, bize ait hiçbir sunucuya istek göndermez. Bir yakalamadaki görseller tarayıcının önbelleğinden okunur ya da sayfanın onları yüklediği şekilde yüklenir.",
+    "firefoxTitle": "Firefox uzantısı",
+    "firefox": "Firefox sürümü aynı şeylere erişir, ancak sayfayı <code>debugger</code> izni yerine Firefox'un <code>tabs</code> ve <code>scripting</code> izinleri ve tüm web sitelerine erişim (<code>&lt;all_urls&gt;</code>) ile okur. Bu erişimi yalnızca yakaladığın sekmede; sayfayı okumak, ekran görüntüsünü almak ve görsellerini yüklemek için kullanır. Chrome'da olduğu gibi, cihazından hiçbir şey çıkmaz.",
+    "pluginTitle": "Figma eklentisinin eriştikleri",
+    "pluginCapture": "<strong>Yapıştırdığın ya da açtığın yakalama</strong>, geçerli Figma dosyasında katmanları oluşturmak için.",
+    "pluginImages": "<strong>Bir yakalamanın başvurduğu görseller</strong>; eklenti bunları doğrudan ait oldukları web sitelerinden indirir.",
+    "pluginStorage": "<strong>Figma'nın eklenti depolaması</strong>, içe aktarma ayarlarını hatırlamak için.",
+    "pluginAgents": "<strong>Bir yapay zekâ ajanının bilgisayarında sıraya koyduğu yakalamalar</strong>, yalnızca ajan içe aktarmalarını açtığında. Eklenti bunları, PageRecast MCP sunucusunun kendi makinende çalıştırdığı bir sunucu olan <code>127.0.0.1</code> adresinden, girdiğin bir eşleştirme koduyla alır.",
+    "pluginWeb": "Eklentinin Web sekmesi, sayfa adresi ve ayarlar bağlantının <code>#</code> işaretinden sonraki kısmında olacak şekilde <code>pagerecast.shades.md/capture/</code> adresini açar; tarayıcılar bu kısmı asla bir sunucuya göndermez. O sayfa bunları tarayıcındaki uzantıya iletir ve yakalama orada panona kopyalanır.",
+    "dataTitle": "Aldığımız veriler",
+    "data": "Hiçbiri. Hesap, analitik, çökme raporu ya da herhangi bir izleme yok.",
+    "childrenTitle": "Çocuklar",
+    "children": "PageRecast bir tasarım aracıdır ve çocuklara yönelik değildir.",
+    "changesTitle": "Değişiklikler",
+    "changes": "Bu politikadaki değişiklikler bu sayfada yayınlanır ve <a data-link='changelog'>değişiklik günlüğünde</a> belirtilir.",
+    "contactTitle": "İletişim"
+  },
+  "capture": {
+    "title": "Figma için bir sayfa yakala | PageRecast",
+    "description": "PageRecast uzantısı, Figma eklentisinde seçtiğin sayfayı yakalar ve Figma için kopyalar.",
+    "heading": "Figma için yakala",
+    "reading": "Bağlantı okunuyor…",
+    "start": "Yakala",
+    "status": "PageRecast sayfayı yakalarken sayfa yeni bir sekmede açılır, ardından kapanır.",
+    "copy": "Figma için kopyala",
+    "installTitle": "Önce uzantıyı kur",
+    "installText": "Hiçbir şey olmadı, çünkü PageRecast uzantısı bu tarayıcıda kurulu değil ya da kapalı. URL ile içe aktarma onun üzerinden çalışır: sayfayı tam burada, bilgisayarında yakalar.",
+    "installButton": "Chrome'a ekle",
+    "installAfter": "Kurduktan sonra bu sayfayı yenile. Firefox ve Safari henüz yakalama bağlantılarını açamıyor.",
+    "note": "Yakaladığın sayfayı bu tarayıcıdaki uzantı okur. PageRecast'e ya da başka birine hiçbir şey gönderilmez.",
+    "runtime": {
+      "invalid": "Bu yakalama bağlantısı eksik. Figma'daki PageRecast eklentisinin Web sekmesinden yeniden başla.",
+      "target": "{host}, {widths} px, {theme} tema{language}.",
+      "and": " ve ",
+      "language": ", dil: {language}",
+      "themes": {
+        "light": "açık",
+        "dark": "koyu",
+        "both": "açık ve koyu"
+      },
+      "starting": "Başlıyor…",
+      "failed": "{message} Yeniden denemek için Yakala'ya bas.",
+      "again": "Yeniden yakala",
+      "frames": {
+        "one": "{n} frame",
+        "other": "{n} frame"
+      },
+      "thePage": "Sayfa",
+      "copied": "Kopyalandı — Figma'ya yapıştır. {title}: {frames}.",
+      "ready": "{frames} yakalandı. Kopyala, sonra Figma'ya yapıştır."
+    }
+  },
+  "sample": {
+    "title": "Web sitesinden Figma'ya aktarım için test sayfası | PageRecast",
+    "description": "PageRecast ile Figma'ya aktarılmak için yapılmış bir sayfa: tipografi, renk, Auto Layout, yüzeyler, vektörler, görseller ve formlar, açık ve koyu temada.",
+    "sections": "Bölümler",
+    "install": "PageRecast'i kur",
+    "heading": "<em>Figma'ya dökülmek</em> için<br />yapılmış bir sayfa.",
+    "intro": "Aşağıdaki her bölüm, PageRecast'in bir Figma özelliğine dönüştürdüğü bir şey kullanır. Bu sayfayı birkaç genişlikte, açık ve koyu temada yakala, Figma'ya yapıştır ve ikisini karşılaştır.",
+    "step1": "PageRecast yan panelini aç",
+    "step2": "Genişlikleri ve iki temayı seç, sonra Yakala",
+    "step3": "Figma'daki PageRecast eklentisine yapıştır",
+    "type": {
+      "title": "Tipografi",
+      "text": "İki aile, dokuz ağırlık, bir optik boyut ekseni ve karışık satır içi stiller.",
+      "becomes": "Metin katmanları ve metin stilleri",
+      "inter": "Değişken sans, optik boyut 14 ile 32 arası",
+      "hanken": "Değişken sans, ağırlık 100 ile 900 arası",
+      "display": "Display 64",
+      "titleSample": "Başlık 40, italik",
+      "headline": "Manşet 24, sans",
+      "body": "Gövde 17; <strong>kalın bölümleri</strong>, <em>italik bölümleri</em>, <a href='#type'>bağlantıları</a>, <code>satır içi kodu</code> ve <mark>vurgulanmış kelimeleri</mark> tek bir metin katmanında, satır sonları tarayıcının koyduğu yerde kalacak şekilde korur.",
+      "weights": "Hanken Grotesk ağırlıkları"
+    },
+    "colour": {
+      "title": "Renk",
+      "text": "Açık ve koyu tema arasında değişen sekiz token. İki temayı da yakala.",
+      "becomes": "Light ve Dark modlu renk değişkenleri"
+    },
+    "layout": {
+      "title": "Düzen",
+      "text": "Satırlar, sütunlar, boşluklar, iç boşluklar, sarma ve hizalama; hepsi flexbox'tan.",
+      "becomes": "Her alt öğesi tek tek kontrol edilen Auto Layout",
+      "frames": "Frame'ler",
+      "framesText": "Dolgusu, kenarlığı, köşe yarıçapı ya da kırpması olan her kutu bir frame olur.",
+      "fill": "Dolgu",
+      "stroke": "Kontur",
+      "clip": "Kırpma",
+      "autoText": "Yalnızca her alt öğe sayfadaki yerine 1.5 px yakınlıkta oturduğunda korunur.",
+      "gap": "Boşluk 12",
+      "padding": "İç boşluk 24",
+      "wrap": "Sarma",
+      "styles": "Metin stilleri",
+      "stylesText": "Tekrarlanan tipografi, tek yerden değiştirebileceğin bir stile dönüşür.",
+      "display": "Display",
+      "titleChip": "Başlık",
+      "body": "Gövde",
+      "alignment": "Hizalama",
+      "start": "Başlangıç",
+      "grow": "Doldur",
+      "end": "Son"
+    },
+    "surfaces": {
+      "title": "Yüzeyler",
+      "text": "Gradyanlar, gölgeler, bulanıklık, kenarlıklar ve tek tek ayarlanan köşeler.",
+      "becomes": "Dolgular, konturlar ve efektler",
+      "linear": "Doğrusal",
+      "radial": "Radyal",
+      "angular": "Açısal",
+      "shadow": "Gölge",
+      "blur": "Arka plan bulanıklığı",
+      "dashed": "Kesikli",
+      "corners": "Köşeler",
+      "inset": "İç gölge"
+    },
+    "media": {
+      "title": "Vektörler ve görseller",
+      "text": "Satır içi SVG vektör olarak kalır. Görseller kırpma ve sığdırma ayarlarını korur.",
+      "becomes": "Vektör katmanları ve görsel dolguları",
+      "artLabel": "Vektör çizim",
+      "shapes": "Üst üste binen şekiller",
+      "svg": "SVG, 7 şekil",
+      "photoAlt": "Kırmızı, gül rengi ve mürekkep tonlarında soyut afiş",
+      "jpeg": "JPEG, cover ile sığdırma",
+      "icons": "İkonlar"
+    },
+    "controls": {
+      "title": "Kontroller",
+      "text": "Form alanları şu anki hâlleriyle yakalanır: yazılmış, işaretlenmiş ya da seçilmiş.",
+      "becomes": "Güncel durumlarıyla frame'ler ve metin",
+      "address": "Sayfa adresi",
+      "width": "Genişlik",
+      "desktop": "Masaüstü · 1440",
+      "tablet": "Tablet · 768",
+      "mobile": "Mobil · 390",
+      "theme": "Tema",
+      "light": "Açık",
+      "dark": "Koyu",
+      "both": "İkisi de",
+      "banners": "Çerez banner'larını gizle",
+      "lazy": "Önce geç yüklenen görselleri yükle",
+      "scrollbar": "Kaydırma çubuğunu koru",
+      "capture": "Yakala",
+      "cancel": "İptal"
+    },
+    "table": {
+      "title": "Tablolar",
+      "text": "Satırlar ve hücreler kenarlıklarını, hizalamalarını ve rakamlarını korur.",
+      "becomes": "Tablo rakamlı iç içe frame'ler",
+      "frame": "Frame",
+      "width": "Genişlik",
+      "sizedFor": "Hedef",
+      "theme": "Tema",
+      "desktop": "Masaüstü",
+      "desktopFor": "Dizüstü bilgisayarlar ve masaüstü ekranlar",
+      "tablet": "Tablet",
+      "tabletFor": "Dik tutulan tabletler",
+      "mobile": "Mobil",
+      "mobileFor": "Güncel telefonların çoğu",
+      "light": "Açık",
+      "dark": "Koyu"
+    },
+    "end": "Bu sayfa, ücretsiz ve açık kaynak PageRecast'in bir parçasıdır.",
+    "get": "PageRecast'i edin"
+  },
+  "prefs": {
+    "open": "Görünüm ve erişilebilirlik",
+    "title": "Görünüm",
+    "theme": "Tema",
+    "light": "Açık",
+    "dark": "Koyu",
+    "system": "Otomatik",
+    "access": "Erişilebilirlik",
+    "text": "Daha büyük metin",
+    "contrast": "Daha fazla kontrast",
+    "motion": "Hareketi azalt",
+    "links": "Bağlantıların altını çiz",
+    "reading": "Daha kolay okuma",
+    "saved": "Yalnızca bu tarayıcıya kaydedildi.",
+    "reset": "Sıfırla",
+    "close": "Kapat",
+    "privacy": "Gizlilik tercihleri"
+  },
+  "consent": {
+    "title": "Gizliliğin",
+    "text": "Bu site yalnızca çalışması için gerekenleri, örneğin görünüm ayarlarını saklar. Analiz veya pazarlama araçları ancak onay verirsen çalışır.",
+    "acceptAll": "Tümünü kabul et",
+    "necessaryOnly": "Yalnızca gerekli",
+    "customize": "Özelleştir",
+    "save": "Seçimleri kaydet",
+    "necessary": "Gerekli",
+    "necessaryText": "Görünüm ve gizlilik seçimlerini hatırlar. Her zaman açık.",
+    "analytics": "Analiz",
+    "analyticsText": "Neyin işe yaradığını görmek için anonim ziyaret sayımı. Şu an bu sitede kullanılmıyor.",
+    "marketing": "Pazarlama",
+    "marketingText": "Reklam ve kampanya ölçümü. Şu an bu sitede kullanılmıyor."
+  }
+}

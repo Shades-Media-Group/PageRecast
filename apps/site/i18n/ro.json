@@ -398,5 +398,37 @@
     },
     "end": "Această pagină face parte din PageRecast, gratuit și open source.",
     "get": "Instalează PageRecast"
+  },
+  "prefs": {
+    "open": "Afișare și accesibilitate",
+    "title": "Afișare",
+    "theme": "Temă",
+    "light": "Luminoasă",
+    "dark": "Întunecată",
+    "system": "Auto",
+    "access": "Accesibilitate",
+    "text": "Text mai mare",
+    "contrast": "Contrast mai mare",
+    "motion": "Mai puține animații",
+    "links": "Linkuri subliniate",
+    "reading": "Citire mai ușoară",
+    "saved": "Salvat doar în acest browser.",
+    "reset": "Resetează",
+    "close": "Închide",
+    "privacy": "Opțiuni de confidențialitate"
+  },
+  "consent": {
+    "title": "Confidențialitatea ta",
+    "text": "Acest site păstrează doar ce îi trebuie ca să funcționeze, cum ar fi setările de afișare. Instrumentele de analiză sau marketing ar rula doar cu acordul tău.",
+    "acceptAll": "Accept tot",
+    "necessaryOnly": "Doar necesare",
+    "customize": "Personalizează",
+    "save": "Salvează alegerile",
+    "necessary": "Necesare",
+    "necessaryText": "Rețin alegerile tale de afișare și confidențialitate. Mereu active.",
+    "analytics": "Analiză",
+    "analyticsText": "Vizite numărate anonim, ca să aflăm ce ajută. Nefolosit pe acest site în prezent.",
+    "marketing": "Marketing",
+    "marketingText": "Reclame și măsurarea campaniilor. Nefolosit pe acest site în prezent."
   }
 }

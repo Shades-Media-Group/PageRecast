@@ -397,5 +397,37 @@
     },
     "end": "This page is part of PageRecast, free and open source.",
     "get": "Get PageRecast"
+  },
+  "prefs": {
+    "open": "Display and accessibility",
+    "title": "Display",
+    "theme": "Theme",
+    "light": "Light",
+    "dark": "Dark",
+    "system": "Auto",
+    "access": "Accessibility",
+    "text": "Larger text",
+    "contrast": "More contrast",
+    "motion": "Reduce motion",
+    "links": "Underline links",
+    "reading": "Easier reading",
+    "saved": "Saved in this browser only.",
+    "reset": "Reset",
+    "close": "Close",
+    "privacy": "Privacy choices"
+  },
+  "consent": {
+    "title": "Your privacy",
+    "text": "This site keeps only what it needs to work, like your display settings. Analytics or marketing tools would run only with your yes.",
+    "acceptAll": "Accept all",
+    "necessaryOnly": "Only necessary",
+    "customize": "Customise",
+    "save": "Save choices",
+    "necessary": "Necessary",
+    "necessaryText": "Remembers your display and privacy choices. Always on.",
+    "analytics": "Analytics",
+    "analyticsText": "Anonymous visit counts, to learn what helps. Not in use on this site today.",
+    "marketing": "Marketing",
+    "marketingText": "Ads and campaign measurement. Not in use on this site today."
   }
 }

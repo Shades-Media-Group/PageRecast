@@ -1,0 +1,433 @@
+{
+  "language": "言語",
+  "moreLanguages": "その他の言語",
+  "machine": "Googleによる機械翻訳",
+  "imageAlt": "PageRecast：あらゆるWebページを、本物のFigmaレイヤーに",
+  "preferred": {
+    "button": "優先するソースに追加<span class='visually-hidden'>（Google）</span>",
+    "mention": "Google検索でPageRecastをもっと見つけやすく。<a data-link='preferred' target='_blank'>優先するソースに追加</a>してください。"
+  },
+  "nav": {
+    "label": "メイン",
+    "home": "ホーム",
+    "homeLabel": "PageRecastホーム",
+    "widths": "幅",
+    "layers": "レイヤー",
+    "privacy": "プライバシー",
+    "gallery": "ギャラリー",
+    "guides": "ガイド",
+    "cta": "無料でインストール"
+  },
+  "footer": {
+    "top": "PageRecast、ページの先頭へ",
+    "tagline": "あらゆるWebページを、編集可能なFigmaレイヤーに。無料、オープンソース、そしてデータはお使いのパソコンから一切出ません。",
+    "label": "フッター",
+    "product": "プロダクト",
+    "project": "プロジェクト",
+    "trust": "安全性",
+    "sample": "テストページ",
+    "changelog": "変更履歴",
+    "releases": "リリース",
+    "issues": "問題を報告",
+    "security": "セキュリティ",
+    "license": "MITライセンス",
+    "format": ".recastフォーマット",
+    "credit": "無料のオープンソース。<a data-link='shades'>Shades Media Group</a>が制作。",
+    "version": "バージョン"
+  },
+  "home": {
+    "title": "WebサイトをFigmaに無料でインポート | PageRecast",
+    "description": "あらゆるWebサイトを、編集可能なFigmaレイヤーに無料で変換。ログインが必要なページも、あらゆる幅で、ライトとダークの両方でキャプチャできるChrome拡張機能とFigmaプラグイン。",
+    "hero": {
+      "title": "どんなWebページも、Figmaのレイヤーに。",
+      "lead": "ブラウザに映っているものをキャプチャ。Figmaに貼り付ければ、ひとつ残らず編集できるレイヤーになります。",
+      "chrome": "Chromeに無料で追加",
+      "figma": "Figmaプラグインを入手",
+      "note": "ずっと無料。ログインが必要なページにも対応。",
+      "sample": "テストページで試す"
+    },
+    "explode": {
+      "label": "このページがFigmaレイヤーに分かれていく様子",
+      "layers": "レイヤー",
+      "texts": "テキスト",
+      "images": "画像",
+      "caption": "このページを1440 pxでキャプチャし、そのままインポートしたもの。"
+    },
+    "widths": {
+      "title": "あらゆる幅。<br />両方のテーマ。<br />キャプチャは1回。",
+      "text": "デスクトップ、タブレット、モバイル、または240から3840までの任意の幅を、ライト、ダーク、または両方で。それぞれがFigmaで個別のフレームになり、2つのテーマはLightとDarkのモードを持つカラー変数になります。",
+      "width": "幅",
+      "theme": "テーマ",
+      "light": "ライト",
+      "dark": "ダーク"
+    },
+    "layers": {
+      "title": "画像ではなく、本物のレイヤー。",
+      "text": "テキストはテキストのまま、元のフォントで。アイコンはベクターに、カラーは変数に。flexレイアウトは、ページと同じ位置に正確に収まる限りAuto Layoutになります。置き換えが必要だったフォントは、すべて一覧で表示されます。",
+      "alt": "このページのインストールセクション。そのFigmaレイヤーのうち4つに印付き",
+      "caption": "PageRecastがこのページから読み取ったもの。これが実際に作られるレイヤーです。"
+    },
+    "behind": {
+      "title": "ログインの先も。ステージングも。localhostも。",
+      "text": "拡張機能は、ブラウザに映っているものをそのままキャプチャします。だから、実際に作業しているページをそのままFigmaに持ち込めます。ダッシュボード、プレビュー、開いたままのメニュー、入力途中のフォームまで。",
+      "extensionAlt": "ページをキャプチャしたあとのPageRecastサイドパネル",
+      "pluginAlt": "インポート前にキャプチャを確認するPageRecastのFigmaプラグイン"
+    },
+    "privacy": {
+      "title": "データは、パソコンから一切出ません。",
+      "text": "PageRecastのサーバーは存在しません。キャプチャはブラウザの中で作られ、Figmaに貼り付けるまでお使いのデバイスに保存されます。アカウントも、アナリティクスも、制限も、料金もありません。"
+    },
+    "open": {
+      "title": "オープンソース。オープンフォーマット。",
+      "text": "PageRecastはMITライセンス。キャプチャは<code>.recast</code>ファイルで、仕様が公開されたgzip圧縮のJSONです。読むことも、書くことも、その上に何かを作ることもできます。",
+      "github": "GitHubで見る",
+      "format": "フォーマットを読む",
+      "codeLabel": ".recastファイルの抜粋"
+    },
+    "faq": {
+      "title": "よくある質問。",
+      "lead": "初めてWebサイトをFigmaに取り込む前に、よく聞かれること。それ以外はすべてガイドで。",
+      "howto": {
+        "q": "WebサイトをFigmaにインポートするには？",
+        "name": "PageRecastでWebサイトをFigmaにインポートする",
+        "intro": "Chrome拡張機能とFigmaプラグインをインストールしたら、次の手順で：",
+        "steps": {
+          "capture": {
+            "name": "ページをキャプチャ",
+            "text": "Chromeでページを開き、PageRecastのサイドパネルを開いて幅とテーマを選び、「Capture」を押します。"
+          },
+          "copy": {
+            "name": "Figma用にコピー",
+            "text": "「Copy for Figma」を押すか、.recastファイルを保存して、共有したりあとで開いたりします。"
+          },
+          "paste": {
+            "name": "Figmaに貼り付け",
+            "text": "PageRecastプラグインを起動し、⌘ VまたはCtrl Vで貼り付け、フレームを確認して「Import」を押します。"
+          }
+        }
+      },
+      "items": {
+        "free": {
+          "q": "PageRecastは本当に無料ですか？",
+          "a": "はい。プランも、制限も、試用期間も、アカウントも、透かしもありません。これからも決してありません。PageRecastはMITライセンスのオープンソースです。"
+        },
+        "login": {
+          "q": "ログインが必要なページでも使えますか？",
+          "a": "はい。拡張機能はブラウザに表示されているものをキャプチャするので、ダッシュボードや管理画面など、サインインしているページも公開ページと同じようにインポートできます。"
+        },
+        "localhost": {
+          "q": "localhostやステージングサイトもインポートできますか？",
+          "a": "はい。Chromeで開けるページなら、<code>localhost</code>、ステージング、プレビューデプロイも含めてキャプチャできます。トンネルも公開URLも不要です。"
+        },
+        "what": {
+          "q": "PageRecastはFigmaに何をインポートしますか？",
+          "a": "塗り、枠線、角丸、シャドウ、ぼかしを持つフレーム。フォントとインラインスタイルを保ったテキスト。画像。編集可能なベクターとしてのSVGアイコン。LightとDarkのモードを持つカラー変数。テキストスタイル。そして比較用に各フレームの横に置かれる、ロックされたスクリーンショットです。"
+        },
+        "fonts": {
+          "q": "ページのフォントはどうなりますか？",
+          "a": "PageRecastは、Figmaで使えるすべてのフォントを利用します。パソコンにインストールされたものも、Google Fontsのものも。Figmaにないフォントはいちばん近いものに置き換えられ、置き換えはすべてインポートの前後に一覧で表示されます。"
+        },
+        "autolayout": {
+          "q": "Auto Layoutは使われますか？",
+          "a": "はい、合う場所ではすべて。flexレイアウトは、すべての子要素がページ上の位置から1.5 px以内に収まる場合にAuto Layoutになります。それ以外は正確な位置を保つので、インポート結果はいつもページどおりに見えます。"
+        },
+        "privacy": {
+          "q": "データのプライバシーは守られますか？",
+          "a": "はい。PageRecastのサーバーも、アカウントも、アナリティクスもありません。キャプチャはブラウザの中で作られ、お使いのパソコンに残ります。Figmaプラグインがダウンロードするのは、ページがすでに使っている画像だけで、それぞれの配信元サイトから直接取得します。"
+        },
+        "firefox": {
+          "q": "Firefoxでも使えますか？",
+          "a": "はい。Firefox版のPageRecastも、同じFigmaプラグイン向けに同じキャプチャを作成します。ページはその時点で表示されているテーマと言語でキャプチャされるので、先に切り替えておいてください。"
+        },
+        "agents": {
+          "q": "AIエージェントはPageRecastを使えますか？",
+          "a": "はい。PageRecast MCPサーバーを使えば、Claude Code、Codex、Cursorなどのエージェントが、ページのキャプチャ、デザイントークンの読み取り、Figmaへのキャプチャ送信を行えます。これもお使いのパソコン上で動きます：<code>npx -y pagerecast-mcp</code>。"
+        },
+        "screenshot": {
+          "q": "スクリーンショットとどう違うのですか？",
+          "a": "スクリーンショットは1枚の平らな画像です。PageRecastはページをレイヤーとして組み立て直します。編集できるテキスト、色を変えられるベクター、サイズを変えられるフレーム、変数になったカラー。スクリーンショットは、ロックされた参照用として添えられるだけです。"
+        }
+      }
+    },
+    "install": {
+      "title": "パーツは2つ。2分で完了。",
+      "chrome": "Chrome拡張機能",
+      "chromeText": "ページを、あらゆる幅で、ライトとダークの両方でキャプチャ。",
+      "chromeButton": "Chromeに追加",
+      "figma": "Figmaプラグイン",
+      "figmaText": "Auto Layout、変数、スタイル付きでレイヤーを組み立てます。",
+      "figmaButton": "プラグインを入手",
+      "guides": "ガイド",
+      "guidesText": "両方をインストールして、ページをキャプチャし、貼り付けるだけ。2分で始められます。",
+      "guidesLink": "ガイドを読む"
+    },
+    "runtime": {
+      "devices": {
+        "1440": "デスクトップ",
+        "1280": "ノートPC",
+        "768": "タブレット",
+        "390": "モバイル"
+      },
+      "light": "ライト",
+      "dark": "ダーク",
+      "viewerAlt": {
+        "light": "ライトモード、{width} pxでキャプチャしたサンプルページ",
+        "dark": "ダークモード、{width} pxでキャプチャしたサンプルページ"
+      },
+      "viewerCaption": "{theme} · Figmaの1フレーム",
+      "notes": {
+        "Vector": {
+          "title": "ベクター",
+          "detail": "ページのSVGから作られた5つのシェイプ。編集可能なまま"
+        },
+        "Text": {
+          "title": "テキスト",
+          "detail": "Hanken Grotesk · 650 · 26 px"
+        },
+        "Auto Layout": {
+          "title": "Auto Layout",
+          "detail": "横方向 · 間隔 10 · パディング 20 · 完全な角丸"
+        },
+        "Colour variable": {
+          "title": "カラー変数",
+          "detail": "Light #3D3D40 · Dark #C3C3C9"
+        }
+      }
+    }
+  },
+  "gallery": {
+    "title": "Figmaで開けるWebサイトのキャプチャ | PageRecastギャラリー",
+    "description": "実在のWebページを収めた無料の.recastファイル。編集可能なレイヤーとしてFigmaにインポートできます。ダウンロードしてPageRecastプラグインにドロップすれば、すぐに編集を始められます。",
+    "heading": "ギャラリー",
+    "intro": "今すぐFigmaで開ける、できあがったキャプチャ。ファイルをダウンロードし、FigmaでPageRecastを開いて、プラグインにドロップするだけ。どれも3つの幅を、ライトとダークの両方で収録しています。",
+    "download": ".recastをダウンロード",
+    "view": "ページを見る",
+    "sample": {
+      "name": "テストページ",
+      "text": "タイポグラフィ、カラー、レイアウト、サーフェス、ベクター、画像、コントロール、そしてテーブル。",
+      "alt": "1440 pxでキャプチャしたPageRecastのテストページ",
+      "facts": "6フレーム · 1,842レイヤー · 4.1 MB"
+    },
+    "site": {
+      "name": "PageRecastのWebサイト",
+      "text": "固定ナビゲーション、プロダクトショット、長いフッターを備えた実際のマーケティングページ。",
+      "alt": "1440 pxでキャプチャしたPageRecastのWebサイト",
+      "facts": "6フレーム · 1,206レイヤー · 4.9 MB"
+    },
+    "share": {
+      "title": "キャプチャをチームと共有",
+      "step1": "拡張機能で、「Copy for Figma」の隣にあるダウンロードボタンを押します。",
+      "step2": "<code>.recast</code>ファイルを、ほかのファイルと同じように送ります。",
+      "step3": "受け取った人は、FigmaのPageRecastにドロップするだけ。インストールが必要なのはプラグインだけです。"
+    }
+  },
+  "privacy": {
+    "title": "プライバシーポリシー | PageRecast",
+    "description": "PageRecastは、個人データを一切収集、送信、販売、共有しません。すべてはお使いのパソコンの中で完結します。",
+    "heading": "プライバシーポリシー",
+    "updated": "最終更新日：2026年10月11日",
+    "intro": "PageRecastは、Shades Media Groupが開発した、ChromeおよびFirefox向けのブラウザ拡張機能とFigmaプラグインです。このポリシーはそのすべてに適用されます。",
+    "shortTitle": "要約",
+    "short": "PageRecastは、個人データを一切収集、送信、販売、共有しません。すべてはお使いのパソコンの中で完結します。",
+    "chromeTitle": "Chrome拡張機能がアクセスするもの",
+    "chromePage": "<strong>キャプチャするために選んだページ。</strong>「Capture」を押すと、拡張機能はChromeの<code>debugger</code>権限を使って、現在のタブ、入力したURL、またはFigmaプラグインが当サイトのキャプチャページ経由で送ったURL（依頼できるのはそのページだけで、そこで「キャプチャ」を押したあとに限ります）のレイアウト、スタイル、テキスト、画像を読み取ります。接続するのはそのキャプチャの間だけで、終わると切断します。",
+    "chromeTabs": "<strong>タブのタイトル、アドレス、アイコン。</strong>どのページがキャプチャされるかを表示するために使います。",
+    "chromeStorage": "<strong>お使いのデバイスのローカルストレージ。</strong>設定と最近のキャプチャを保存するために使います。キャプチャはパネルからいつでも削除でき、拡張機能を削除するとすべて消去されます。",
+    "chromeNetwork": "拡張機能が当社のサーバーにリクエストを送ることは一切ありません。キャプチャ内の画像は、ブラウザのキャッシュから読み込むか、ページと同じ方法で読み込みます。",
+    "firefoxTitle": "Firefox拡張機能",
+    "firefox": "Firefox版も同じものにアクセスしますが、<code>debugger</code>権限の代わりに、Firefoxの<code>tabs</code>および<code>scripting</code>権限と、すべてのWebサイトへのアクセス（<code>&lt;all_urls&gt;</code>）を使ってページを読み取ります。このアクセスを使うのはキャプチャするタブだけで、ページの読み取り、スクリーンショットの撮影、画像の読み込みに限られます。Chromeと同じく、データがデバイスの外に出ることはありません。",
+    "pluginTitle": "Figmaプラグインがアクセスするもの",
+    "pluginCapture": "<strong>貼り付けた、または開いたキャプチャ。</strong>現在のFigmaファイルにレイヤーを組み立てるために使います。",
+    "pluginImages": "<strong>キャプチャが参照する画像。</strong>それぞれの配信元Webサイトから直接ダウンロードします。",
+    "pluginStorage": "<strong>Figmaのプラグインストレージ。</strong>インポート設定を記憶するために使います。",
+    "pluginAgents": "<strong>AIエージェントがお使いのパソコン上でキューに入れたキャプチャ。</strong>エージェントからのインポートをオンにした場合に限ります。プラグインは、入力されたペアリングコードを使い、PageRecast MCPサーバーがお使いのマシン上で動かすサーバー<code>127.0.0.1</code>からそれらを受け取ります。",
+    "pluginWeb": "プラグインの「Web」タブは、ページのアドレスと設定をリンクの<code>#</code>以降に入れて<code>pagerecast.shades.md/capture/</code>を開きます。この部分は、ブラウザがサーバーに送ることのない部分です。そのページがブラウザ内の拡張機能に情報を渡し、キャプチャはそこでクリップボードにコピーされます。",
+    "dataTitle": "当社が受け取るデータ",
+    "data": "ありません。アカウント、アナリティクス、クラッシュレポート、いかなる種類のトラッキングもありません。",
+    "childrenTitle": "お子様について",
+    "children": "PageRecastはデザインツールであり、お子様を対象としたものではありません。",
+    "changesTitle": "変更について",
+    "changes": "このポリシーの変更はこのページで公開し、<a data-link='changelog'>変更履歴</a>に記載します。",
+    "contactTitle": "お問い合わせ"
+  },
+  "capture": {
+    "title": "Figma用にページをキャプチャ | PageRecast",
+    "description": "Figmaプラグインで選んだページを、PageRecast拡張機能がキャプチャし、Figma用にコピーします。",
+    "heading": "Figma用にキャプチャ",
+    "reading": "リンクを読み込み中…",
+    "start": "キャプチャ",
+    "status": "PageRecastがキャプチャする間、ページは新しいタブで開き、終わると閉じます。",
+    "copy": "Figma用にコピー",
+    "installTitle": "まず拡張機能をインストールしてください",
+    "installText": "このブラウザにPageRecast拡張機能がインストールされていないか、無効になっているため、何も起きませんでした。URLからのインポートは拡張機能を通じて行われ、ページはこの場で、お使いのパソコン上でキャプチャされます。",
+    "installButton": "Chromeに追加",
+    "installAfter": "インストール後、このページを再読み込みしてください。FirefoxとSafariは、まだキャプチャリンクに対応していません。",
+    "note": "キャプチャするページは、このブラウザの拡張機能が読み取ります。PageRecastにも、ほかの誰にも、何も送信されません。",
+    "runtime": {
+      "invalid": "このキャプチャリンクは不完全です。FigmaのPageRecastプラグインの「Web」タブからやり直してください。",
+      "target": "{host}、{widths} px、{theme}{language}。",
+      "and": "と",
+      "language": "、{language}",
+      "themes": {
+        "light": "ライト",
+        "dark": "ダーク",
+        "both": "ライトとダーク"
+      },
+      "starting": "開始しています…",
+      "failed": "{message}「キャプチャ」を押して、もう一度お試しください。",
+      "again": "もう一度キャプチャ",
+      "frames": {
+        "one": "{n}フレーム",
+        "other": "{n}フレーム"
+      },
+      "thePage": "ページ",
+      "copied": "コピーしました。Figmaに貼り付けてください。{title}の{frames}。",
+      "ready": "{frames}をキャプチャしました。コピーして、Figmaに貼り付けてください。"
+    }
+  },
+  "sample": {
+    "title": "WebサイトのFigmaインポート用テストページ | PageRecast",
+    "description": "PageRecastでFigmaにインポートするためにつくったページ。タイポグラフィ、カラー、Auto Layout、サーフェス、ベクター、画像、フォームコントロールを、ライトとダークの両方で。",
+    "sections": "セクション",
+    "install": "PageRecastをインストール",
+    "heading": "Figmaで<em>生まれ変わる</em>ために<br />つくられたページ。",
+    "intro": "下のどのセクションにも、PageRecastがFigmaの機能に変換する要素が使われています。このページをいくつかの幅で、ライトとダークの両方でキャプチャし、Figmaに貼り付けて見比べてください。",
+    "step1": "PageRecastのサイドパネルを開く",
+    "step2": "幅と両方のテーマを選び、「Capture」を押す",
+    "step3": "FigmaのPageRecastプラグインに貼り付ける",
+    "type": {
+      "title": "タイポグラフィ",
+      "text": "2つのファミリー、9つのウェイト、オプティカルサイズ軸、そして混在するインラインスタイル。",
+      "becomes": "テキストレイヤーとテキストスタイル",
+      "inter": "可変サンセリフ、オプティカルサイズ14〜32",
+      "hanken": "可変サンセリフ、ウェイト100〜900",
+      "display": "ディスプレイ 64",
+      "titleSample": "タイトル 40、イタリック",
+      "headline": "ヘッドライン 24、サンセリフ",
+      "body": "本文 17は、<strong>太字の部分</strong>、<em>イタリックの部分</em>、<a href='#type'>リンク</a>、<code>インラインコード</code>、<mark>ハイライトした語</mark>をひとつのテキストレイヤーの中に保ち、改行もブラウザが入れた位置そのままです。",
+      "weights": "Hanken Groteskのウェイト"
+    },
+    "colour": {
+      "title": "カラー",
+      "text": "ライトとダークで切り替わる8つのトークン。両方のテーマでキャプチャしてください。",
+      "becomes": "LightとDarkのモードを持つカラー変数"
+    },
+    "layout": {
+      "title": "レイアウト",
+      "text": "行、列、間隔、パディング、折り返し、配置。すべてflexboxで。",
+      "becomes": "子要素ごとに検証したAuto Layout",
+      "frames": "フレーム",
+      "framesText": "塗り、枠線、角丸、クリップを持つボックスは、すべてフレームになります。",
+      "fill": "塗り",
+      "stroke": "線",
+      "clip": "クリップ",
+      "autoText": "すべての子要素がページから1.5 px以内に収まる場合にのみ維持。",
+      "gap": "間隔 12",
+      "padding": "パディング 24",
+      "wrap": "折り返し",
+      "styles": "テキストスタイル",
+      "stylesText": "繰り返し使われる文字設定はスタイルになり、1か所で変更できます。",
+      "display": "ディスプレイ",
+      "titleChip": "タイトル",
+      "body": "本文",
+      "alignment": "配置",
+      "start": "先頭",
+      "grow": "拡大",
+      "end": "末尾"
+    },
+    "surfaces": {
+      "title": "サーフェス",
+      "text": "グラデーション、シャドウ、ぼかし、枠線、そして角ごとに設定した角丸。",
+      "becomes": "塗り、線、エフェクト",
+      "linear": "線形",
+      "radial": "放射状",
+      "angular": "角度",
+      "shadow": "シャドウ",
+      "blur": "背景のぼかし",
+      "dashed": "破線",
+      "corners": "角丸",
+      "inset": "内側のシャドウ"
+    },
+    "media": {
+      "title": "ベクターと画像",
+      "text": "インラインSVGはベクターのまま。画像はトリミングとフィットを保ちます。",
+      "becomes": "ベクターレイヤーと画像の塗り",
+      "artLabel": "ベクターアートワーク",
+      "shapes": "重なり合うシェイプ",
+      "svg": "SVG、7シェイプ",
+      "photoAlt": "赤、ローズ、インクの抽象的なポスター",
+      "jpeg": "JPEG、カバーフィット",
+      "icons": "アイコン"
+    },
+    "controls": {
+      "title": "コントロール",
+      "text": "フォームの入力欄は、今の状態のままキャプチャされます。入力済みでも、チェック済みでも、選択済みでも。",
+      "becomes": "現在の状態のフレームとテキスト",
+      "address": "ページのアドレス",
+      "width": "幅",
+      "desktop": "デスクトップ · 1440",
+      "tablet": "タブレット · 768",
+      "mobile": "モバイル · 390",
+      "theme": "テーマ",
+      "light": "ライト",
+      "dark": "ダーク",
+      "both": "両方",
+      "banners": "Cookieバナーを非表示",
+      "lazy": "遅延読み込みの画像を先に読み込む",
+      "scrollbar": "スクロールバーを残す",
+      "capture": "キャプチャ",
+      "cancel": "キャンセル"
+    },
+    "table": {
+      "title": "テーブル",
+      "text": "行とセルは、枠線、配置、数字を保ちます。",
+      "becomes": "タビュラー数字を使った入れ子のフレーム",
+      "frame": "フレーム",
+      "width": "幅",
+      "sizedFor": "想定デバイス",
+      "theme": "テーマ",
+      "desktop": "デスクトップ",
+      "desktopFor": "ノートPCとデスクトップディスプレイ",
+      "tablet": "タブレット",
+      "tabletFor": "縦向きに持ったタブレット",
+      "mobile": "モバイル",
+      "mobileFor": "ほとんどの最新スマートフォン",
+      "light": "ライト",
+      "dark": "ダーク"
+    },
+    "end": "このページはPageRecastの一部です。無料のオープンソース。",
+    "get": "PageRecastを入手"
+  },
+  "prefs": {
+    "open": "表示とアクセシビリティ",
+    "title": "表示",
+    "theme": "テーマ",
+    "light": "ライト",
+    "dark": "ダーク",
+    "system": "自動",
+    "access": "アクセシビリティ",
+    "text": "文字を大きく",
+    "contrast": "コントラストを強く",
+    "motion": "動きを減らす",
+    "links": "リンクに下線",
+    "reading": "読みやすく",
+    "saved": "このブラウザにのみ保存されます。",
+    "reset": "リセット",
+    "close": "閉じる",
+    "privacy": "プライバシー設定"
+  },
+  "consent": {
+    "title": "プライバシーについて",
+    "text": "このサイトが保存するのは、表示設定など動作に必要な情報だけです。分析やマーケティングのツールは、同意をいただいた場合にのみ動作します。",
+    "acceptAll": "すべて許可",
+    "necessaryOnly": "必要なもののみ",
+    "customize": "カスタマイズ",
+    "save": "選択を保存",
+    "necessary": "必須",
+    "necessaryText": "表示とプライバシーの設定を記憶します。常にオン。",
+    "analytics": "分析",
+    "analyticsText": "役立つ内容を知るための匿名の訪問数カウント。現在このサイトでは使用していません。",
+    "marketing": "マーケティング",
+    "marketingText": "広告とキャンペーンの効果測定。現在このサイトでは使用していません。"
+  }
+}

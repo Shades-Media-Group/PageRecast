@@ -1,0 +1,433 @@
+{
+  "language": "語言",
+  "moreLanguages": "更多語言",
+  "machine": "由 Google 機器翻譯",
+  "imageAlt": "PageRecast：任何網頁，都能變成真正的 Figma 圖層",
+  "preferred": {
+    "button": "新增為偏好來源<span class='visually-hidden'>（Google）</span>",
+    "mention": "想在 Google 搜尋中更常看到 PageRecast？<a data-link='preferred' target='_blank'>將它新增為偏好來源</a>。"
+  },
+  "nav": {
+    "label": "主選單",
+    "home": "首頁",
+    "homeLabel": "PageRecast 首頁",
+    "widths": "寬度",
+    "layers": "圖層",
+    "privacy": "隱私",
+    "gallery": "範例庫",
+    "guides": "指南",
+    "cta": "免費安裝"
+  },
+  "footer": {
+    "top": "PageRecast，回到頂端",
+    "tagline": "任何網頁，都能變成可編輯的 Figma 圖層。免費、開源，資料從不離開你的電腦。",
+    "label": "頁尾",
+    "product": "產品",
+    "project": "專案",
+    "trust": "信任",
+    "sample": "測試頁面",
+    "changelog": "更新紀錄",
+    "releases": "版本發布",
+    "issues": "回報問題",
+    "security": "安全性",
+    "license": "MIT 授權",
+    "format": ".recast 格式",
+    "credit": "免費且開源。由 <a data-link='shades'>Shades Media Group</a> 打造。",
+    "version": "版本"
+  },
+  "home": {
+    "title": "免費將任何網站匯入 Figma | PageRecast",
+    "description": "免費將任何網站轉成可編輯的 Figma 圖層。Chrome 擴充功能加 Figma 外掛，登入後的頁面、任何寬度、淺色與深色都能擷取。",
+    "hero": {
+      "title": "重塑任何網頁。",
+      "lead": "擷取瀏覽器顯示的畫面，貼進 Figma，變成一層層可編輯的圖層，每一層都能改。",
+      "chrome": "免費加到 Chrome",
+      "figma": "取得 Figma 外掛",
+      "note": "永久免費。登入後的頁面也能用。",
+      "sample": "用測試頁面試試看"
+    },
+    "explode": {
+      "label": "本頁拆解成各個 Figma 圖層",
+      "layers": "個圖層",
+      "texts": "段文字",
+      "images": "張圖片",
+      "caption": "本頁以 1440 px 擷取，原樣匯入。"
+    },
+    "widths": {
+      "title": "每種寬度。<br />兩種主題。<br />一次擷取。",
+      "text": "選擇桌機、平板、手機，或 240 到 3840 之間的任何寬度，淺色、深色或兩者皆可。每一種都會在 Figma 中成為獨立的框架，兩種主題則變成具有 Light 與 Dark 模式的顏色變數。",
+      "width": "寬度",
+      "theme": "主題",
+      "light": "淺色",
+      "dark": "深色"
+    },
+    "layers": {
+      "title": "真正的圖層，不是一張圖片。",
+      "text": "文字仍是文字，保留原本的字型。圖示變成向量，顏色變成變數；只要結果與頁面的位置完全吻合，flex 版面就會變成 Auto Layout。每一個必須替換的字型都會列出來。",
+      "alt": "本頁的安裝區段，標出其中四個 Figma 圖層",
+      "caption": "由 PageRecast 從本頁讀取。這些就是它建立的圖層。"
+    },
+    "behind": {
+      "title": "登入後的頁面、測試環境、localhost，都行。",
+      "text": "擴充功能擷取的正是瀏覽器顯示的內容，所以你實際在做的頁面，都能帶進 Figma：儀表板、預覽、展開中的選單、填到一半的表單。",
+      "extensionAlt": "擷取頁面後的 PageRecast 側邊面板",
+      "pluginAlt": "PageRecast Figma 外掛在匯入前檢視擷取內容"
+    },
+    "privacy": {
+      "title": "資料從不離開你的電腦。",
+      "text": "PageRecast 沒有伺服器。擷取內容在你的瀏覽器中產生，並保存在你的裝置上，直到你貼進 Figma。不用帳號，沒有分析工具，沒有限制，也不用付費。"
+    },
+    "open": {
+      "title": "開放原始碼，開放格式。",
+      "text": "PageRecast 採用 MIT 授權，擷取內容存成 <code>.recast</code> 檔案：以 gzip 壓縮的 JSON，附有公開的結構說明，你可以讀取、寫入，並在此基礎上開發。",
+      "github": "在 GitHub 上查看",
+      "format": "閱讀格式說明",
+      "codeLabel": ".recast 檔案的片段"
+    },
+    "faq": {
+      "title": "常見問題，一次解答。",
+      "lead": "第一次把網站帶進 Figma 之前，大家最常問的問題。其他一切都在指南裡。",
+      "howto": {
+        "q": "如何將網站匯入 Figma？",
+        "name": "用 PageRecast 將網站匯入 Figma",
+        "intro": "安裝 Chrome 擴充功能與 Figma 外掛，然後：",
+        "steps": {
+          "capture": {
+            "name": "擷取頁面",
+            "text": "在 Chrome 中開啟頁面，打開 PageRecast 側邊面板，選擇寬度與主題，然後按「擷取」。"
+          },
+          "copy": {
+            "name": "複製到 Figma",
+            "text": "按「複製到 Figma」，或儲存成 .recast 檔案，方便分享或之後開啟。"
+          },
+          "paste": {
+            "name": "貼到 Figma",
+            "text": "執行 PageRecast 外掛，按 ⌘ V 或 Ctrl V 貼上，檢查框架後按「匯入」。"
+          }
+        }
+      },
+      "items": {
+        "free": {
+          "q": "PageRecast 真的免費嗎？",
+          "a": "是的。沒有方案、限制、試用、帳號或浮水印，以後也不會有。PageRecast 以 MIT 授權開源。"
+        },
+        "login": {
+          "q": "需要登入的頁面也能用嗎？",
+          "a": "可以。擴充功能擷取的是瀏覽器顯示的內容，所以儀表板、管理後台，以及任何你已登入的頁面，都能像公開頁面一樣匯入。"
+        },
+        "localhost": {
+          "q": "可以匯入 localhost 或測試環境的網站嗎？",
+          "a": "可以。任何能在 Chrome 開啟的頁面都能擷取，包括 <code>localhost</code>、測試環境與預覽部署，不需要通道，也不需要公開網址。"
+        },
+        "what": {
+          "q": "PageRecast 會把哪些內容匯入 Figma？",
+          "a": "包含填色、邊框、圓角、陰影與模糊的框架；保留字型與行內樣式的文字；圖片；可編輯向量的 SVG 圖示；具有 Light 與 Dark 模式的顏色變數；文字樣式；以及每個框架旁一張鎖定的螢幕截圖，方便比對。"
+        },
+        "fonts": {
+          "q": "頁面的字型會怎麼處理？",
+          "a": "PageRecast 會使用 Figma 能用的所有字型，無論是安裝在你電腦上的，還是來自 Google Fonts。Figma 沒有的字型會換成最接近的字型，每一個替換在匯入前後都會列出。"
+        },
+        "autolayout": {
+          "q": "會使用 Auto Layout 嗎？",
+          "a": "會，只要適合就會用。當每個子元素都落在頁面原位置 1.5 px 以內，flex 版面就會變成 Auto Layout。其他一切保留精確位置，所以匯入結果永遠和頁面一樣。"
+        },
+        "privacy": {
+          "q": "我的資料是私密的嗎？",
+          "a": "是的。PageRecast 沒有伺服器、沒有帳號，也沒有分析工具。擷取內容在你的瀏覽器中產生，並保留在你的電腦上。Figma 外掛只會下載頁面本來就在用的圖片，直接從圖片所屬的網站下載。"
+        },
+        "firefox": {
+          "q": "Firefox 也能用嗎？",
+          "a": "可以。Firefox 版 PageRecast 會為同一個 Figma 外掛產生相同的擷取內容。它會依頁面當下顯示的主題與語言擷取，所以請先切換好。"
+        },
+        "agents": {
+          "q": "AI 代理可以使用 PageRecast 嗎？",
+          "a": "可以。PageRecast MCP 伺服器讓 Claude Code、Codex 與 Cursor 等代理擷取頁面、讀取設計 token，並將擷取內容送到 Figma。它同樣在你的電腦上執行：<code>npx -y pagerecast-mcp</code>。"
+        },
+        "screenshot": {
+          "q": "這和螢幕截圖有什麼不同？",
+          "a": "螢幕截圖只是一張平面圖片。PageRecast 把頁面重建成圖層：可編輯的文字、可重新上色的向量、可調整大小的框架，以及變成變數的顏色。螢幕截圖只會以鎖定的參考圖附上。"
+        }
+      }
+    },
+    "install": {
+      "title": "兩個部分，兩分鐘搞定。",
+      "chrome": "Chrome 擴充功能",
+      "chromeText": "擷取頁面，任何寬度，淺色與深色皆可。",
+      "chromeButton": "加到 Chrome",
+      "figma": "Figma 外掛",
+      "figmaText": "建立圖層，包含 Auto Layout、變數與樣式。",
+      "figmaButton": "取得外掛",
+      "guides": "指南",
+      "guidesText": "兩者都裝好，擷取頁面，貼上。兩分鐘就能開始。",
+      "guidesLink": "閱讀指南"
+    },
+    "runtime": {
+      "devices": {
+        "1440": "桌機",
+        "1280": "筆電",
+        "768": "平板",
+        "390": "手機"
+      },
+      "light": "淺色",
+      "dark": "深色",
+      "viewerAlt": {
+        "light": "以 {width} px、淺色模式擷取的範例頁面",
+        "dark": "以 {width} px、深色模式擷取的範例頁面"
+      },
+      "viewerCaption": "{theme} · Figma 中的一個框架",
+      "notes": {
+        "Vector": {
+          "title": "向量",
+          "detail": "來自頁面 SVG 的 5 個形狀，仍可編輯"
+        },
+        "Text": {
+          "title": "文字",
+          "detail": "Hanken Grotesk · 650 · 26 px"
+        },
+        "Auto Layout": {
+          "title": "Auto Layout",
+          "detail": "水平 · 間距 10 · 內距 20 · 全圓角"
+        },
+        "Colour variable": {
+          "title": "顏色變數",
+          "detail": "Light #3D3D40 · Dark #C3C3C9"
+        }
+      }
+    }
+  },
+  "gallery": {
+    "title": "可在 Figma 開啟的網站擷取檔 | PageRecast 範例庫",
+    "description": "真實網頁的免費 .recast 檔案，可直接匯入 Figma 成為可編輯圖層。下載一個，拖到 PageRecast 外掛上就能開始編輯。",
+    "heading": "範例庫",
+    "intro": "現成的擷取檔，現在就能在 Figma 開啟。下載檔案，在 Figma 開啟 PageRecast，再把檔案拖到外掛上。每一個都有三種寬度，淺色與深色皆備。",
+    "download": "下載 .recast",
+    "view": "查看頁面",
+    "sample": {
+      "name": "測試頁面",
+      "text": "字型、色彩、版面、表面、向量、圖片、控制項與一個表格。",
+      "alt": "PageRecast 測試頁面，以 1440 px 擷取",
+      "facts": "6 個框架 · 1,842 個圖層 · 4.1 MB"
+    },
+    "site": {
+      "name": "PageRecast 網站",
+      "text": "真實的行銷頁面，有固定導覽列、產品照片與長長的頁尾。",
+      "alt": "PageRecast 網站，以 1440 px 擷取",
+      "facts": "6 個框架 · 1,206 個圖層 · 4.9 MB"
+    },
+    "share": {
+      "title": "與團隊分享擷取檔",
+      "step1": "在擴充功能中，按「複製到 Figma」旁邊的下載按鈕。",
+      "step2": "像傳送其他檔案一樣傳送 <code>.recast</code> 檔案。",
+      "step3": "你的同事在 Figma 中把它拖到 PageRecast 上。除了外掛，什麼都不用裝。"
+    }
+  },
+  "privacy": {
+    "title": "隱私權政策 | PageRecast",
+    "description": "PageRecast 不會收集、傳送、出售或分享任何個人資料。一切都在你的電腦上進行。",
+    "heading": "隱私權政策",
+    "updated": "最後更新：2026 年 10 月 11 日",
+    "intro": "PageRecast 是由 Shades Media Group 製作的 Chrome 與 Firefox 瀏覽器擴充功能，以及 Figma 外掛。本政策涵蓋以上所有產品。",
+    "shortTitle": "簡短版本",
+    "short": "PageRecast 不會收集、傳送、出售或分享任何個人資料。一切都在你的電腦上進行。",
+    "chromeTitle": "Chrome 擴充功能會存取什麼",
+    "chromePage": "<strong>你選擇擷取的頁面。</strong>當你按下「擷取」時，擴充功能會透過 Chrome 的 <code>debugger</code> 權限，讀取目前分頁、你輸入的網址，或 Figma 外掛經由我們的擷取頁面傳來的網址（只有該頁面能提出要求，而且只在你於該頁面按下「擷取」之後）的版面、樣式、文字與圖片。它只在這次擷取期間連接，結束後即中斷。",
+    "chromeTabs": "<strong>分頁標題、網址與圖示</strong>，用來顯示將要擷取哪個頁面。",
+    "chromeStorage": "<strong>你裝置上的本機儲存空間</strong>，用來保存你的設定與最近的擷取內容。你可以在面板中刪除任何擷取內容；移除擴充功能會將它們全部刪除。",
+    "chromeNetwork": "擴充功能不會向我們的任何伺服器發出要求。擷取內容中的圖片取自瀏覽器的快取，或以頁面本身載入的方式載入。",
+    "firefoxTitle": "Firefox 擴充功能",
+    "firefox": "Firefox 版本存取相同的內容，但改用 Firefox 的 <code>tabs</code> 與 <code>scripting</code> 權限，以及所有網站的存取權（<code>&lt;all_urls&gt;</code>）讀取頁面，而不是 <code>debugger</code> 權限。它只在你擷取的分頁上使用這項存取權，用來讀取頁面、拍下螢幕截圖並載入圖片。和 Chrome 一樣，任何資料都不會離開你的裝置。",
+    "pluginTitle": "Figma 外掛會存取什麼",
+    "pluginCapture": "<strong>你貼上或開啟的擷取內容</strong>，用來在目前的 Figma 檔案中建立圖層。",
+    "pluginImages": "<strong>擷取內容引用的圖片</strong>，直接從圖片所屬的網站下載。",
+    "pluginStorage": "<strong>Figma 的外掛儲存空間</strong>，用來記住你的匯入設定。",
+    "pluginAgents": "<strong>AI 代理在你電腦上排入佇列的擷取內容</strong>，只在你開啟代理匯入時才會存取。外掛透過你輸入的配對碼，從 <code>127.0.0.1</code> 取得這些內容；那是 PageRecast MCP 伺服器在你自己電腦上執行的伺服器。",
+    "pluginWeb": "外掛的「網頁」分頁會開啟 <code>pagerecast.shades.md/capture/</code>，頁面網址與設定放在連結的 <code>#</code> 之後，瀏覽器從不會把這部分傳送給伺服器。該頁面把它們交給你瀏覽器中的擴充功能，擷取內容會在那裡複製到你的剪貼簿。",
+    "dataTitle": "我們收到的資料",
+    "data": "沒有。沒有帳號、分析工具、當機報告，也沒有任何形式的追蹤。",
+    "childrenTitle": "兒童",
+    "children": "PageRecast 是設計工具，並非以兒童為對象。",
+    "changesTitle": "政策變更",
+    "changes": "本政策的變更會公布在本頁，並記錄在<a data-link='changelog'>更新紀錄</a>中。",
+    "contactTitle": "聯絡我們"
+  },
+  "capture": {
+    "title": "為 Figma 擷取頁面 | PageRecast",
+    "description": "PageRecast 擴充功能會擷取你在 Figma 外掛中選擇的頁面，並複製到 Figma。",
+    "heading": "為 Figma 擷取",
+    "reading": "正在讀取連結…",
+    "start": "擷取",
+    "status": "PageRecast 擷取時，頁面會在新分頁中開啟，完成後自動關閉。",
+    "copy": "複製到 Figma",
+    "installTitle": "請先安裝擴充功能",
+    "installText": "沒有任何反應，是因為這個瀏覽器沒有安裝 PageRecast 擴充功能，或已將它停用。網址匯入要透過它進行：它會在這裡、在你的電腦上擷取頁面。",
+    "installButton": "加到 Chrome",
+    "installAfter": "安裝後請重新載入本頁。Firefox 與 Safari 目前還無法使用擷取連結。",
+    "note": "你擷取的頁面由這個瀏覽器中的擴充功能讀取。不會傳送任何內容給 PageRecast 或其他任何人。",
+    "runtime": {
+      "invalid": "這個擷取連結不完整。請從 Figma 中 PageRecast 外掛的「網頁」分頁重新開始。",
+      "target": "{host}，{widths} px，{theme}{language}。",
+      "and": " 和 ",
+      "language": "，語言：{language}",
+      "themes": {
+        "light": "淺色",
+        "dark": "深色",
+        "both": "淺色與深色"
+      },
+      "starting": "正在開始…",
+      "failed": "{message} 按「擷取」再試一次。",
+      "again": "重新擷取",
+      "frames": {
+        "one": "{n} 個框架",
+        "other": "{n} 個框架"
+      },
+      "thePage": "該頁面",
+      "copied": "已複製，請貼到 Figma。{title}：{frames}。",
+      "ready": "已擷取 {frames}。複製後貼到 Figma。"
+    }
+  },
+  "sample": {
+    "title": "網站匯入 Figma 測試頁 | PageRecast",
+    "description": "專為以 PageRecast 匯入 Figma 打造的頁面：字型、色彩、Auto Layout、表面、向量、圖片與表單控制項，淺色與深色皆備。",
+    "sections": "區段",
+    "install": "安裝 PageRecast",
+    "heading": "一個為<em>重塑</em><br />而生的頁面。",
+    "intro": "下方每個區段都用了 PageRecast 會轉成 Figma 功能的東西。以幾種寬度、淺色與深色擷取本頁，貼進 Figma，再比對兩者。",
+    "step1": "打開 PageRecast 側邊面板",
+    "step2": "選擇寬度與兩種主題，然後按「擷取」",
+    "step3": "貼到 Figma 中的 PageRecast 外掛",
+    "type": {
+      "title": "字型",
+      "text": "兩個字型家族、九種字重、一個光學尺寸軸，以及混合的行內樣式。",
+      "becomes": "文字圖層與文字樣式",
+      "inter": "可變無襯線字型，光學尺寸 14 到 32",
+      "hanken": "可變無襯線字型，字重 100 到 900",
+      "display": "展示字級 64",
+      "titleSample": "標題 40，斜體",
+      "headline": "大標 24，無襯線字型",
+      "body": "內文 17 在同一個文字圖層中保留<strong>粗體段落</strong>、<em>斜體段落</em>、<a href='#type'>連結</a>、<code>行內程式碼</code>與<mark>醒目標示的文字</mark>，換行位置與瀏覽器完全相同。",
+      "weights": "Hanken Grotesk 字重"
+    },
+    "colour": {
+      "title": "色彩",
+      "text": "八個會在淺色與深色之間切換的 token。請擷取兩種主題。",
+      "becomes": "具有 Light 與 Dark 模式的顏色變數"
+    },
+    "layout": {
+      "title": "版面",
+      "text": "列、欄、間距、內距、換行與對齊，全部來自 flexbox。",
+      "becomes": "Auto Layout，逐一檢查每個子元素",
+      "frames": "框架",
+      "framesText": "每個帶有填色、邊框、圓角或裁切的方塊，都會變成框架。",
+      "fill": "填色",
+      "stroke": "描邊",
+      "clip": "裁切",
+      "autoText": "只在每個子元素都落在頁面原位置 1.5 px 以內時保留。",
+      "gap": "間距 12",
+      "padding": "內距 24",
+      "wrap": "換行",
+      "styles": "文字樣式",
+      "stylesText": "重複出現的文字樣式會變成一個樣式，一處修改就全部更新。",
+      "display": "展示",
+      "titleChip": "標題",
+      "body": "內文",
+      "alignment": "對齊",
+      "start": "起點",
+      "grow": "填滿",
+      "end": "終點"
+    },
+    "surfaces": {
+      "title": "表面",
+      "text": "漸層、陰影、模糊、邊框，以及逐一設定的圓角。",
+      "becomes": "填色、描邊與效果",
+      "linear": "線性",
+      "radial": "放射狀",
+      "angular": "角度",
+      "shadow": "陰影",
+      "blur": "背景模糊",
+      "dashed": "虛線",
+      "corners": "圓角",
+      "inset": "內陰影"
+    },
+    "media": {
+      "title": "向量與圖片",
+      "text": "行內 SVG 仍是向量。圖片保留原本的裁切與填滿方式。",
+      "becomes": "向量圖層與圖片填色",
+      "artLabel": "向量圖稿",
+      "shapes": "重疊的形狀",
+      "svg": "SVG，7 個形狀",
+      "photoAlt": "紅色、玫瑰色與墨色的抽象海報",
+      "jpeg": "JPEG，覆蓋填滿",
+      "icons": "圖示"
+    },
+    "controls": {
+      "title": "控制項",
+      "text": "表單欄位會依當下狀態擷取：已輸入、已勾選或已選取。",
+      "becomes": "框架與文字，保持當下狀態",
+      "address": "頁面網址",
+      "width": "寬度",
+      "desktop": "桌機 · 1440",
+      "tablet": "平板 · 768",
+      "mobile": "手機 · 390",
+      "theme": "主題",
+      "light": "淺色",
+      "dark": "深色",
+      "both": "兩者",
+      "banners": "隱藏 Cookie 橫幅",
+      "lazy": "先載入延遲載入的圖片",
+      "scrollbar": "保留捲軸",
+      "capture": "擷取",
+      "cancel": "取消"
+    },
+    "table": {
+      "title": "表格",
+      "text": "列與儲存格保留原本的邊框、對齊與數字。",
+      "becomes": "使用等寬數字的巢狀框架",
+      "frame": "框架",
+      "width": "寬度",
+      "sizedFor": "適用於",
+      "theme": "主題",
+      "desktop": "桌機",
+      "desktopFor": "筆電與桌上型螢幕",
+      "tablet": "平板",
+      "tabletFor": "直拿的平板",
+      "mobile": "手機",
+      "mobileFor": "大多數現行手機",
+      "light": "淺色",
+      "dark": "深色"
+    },
+    "end": "本頁是 PageRecast 的一部分，免費且開源。",
+    "get": "取得 PageRecast"
+  },
+  "prefs": {
+    "open": "顯示與無障礙",
+    "title": "顯示",
+    "theme": "主題",
+    "light": "淺色",
+    "dark": "深色",
+    "system": "自動",
+    "access": "無障礙",
+    "text": "放大文字",
+    "contrast": "提高對比",
+    "motion": "減少動態",
+    "links": "連結加底線",
+    "reading": "更易閱讀",
+    "saved": "只儲存在這個瀏覽器中。",
+    "reset": "重設",
+    "close": "關閉",
+    "privacy": "隱私選項"
+  },
+  "consent": {
+    "title": "你的隱私",
+    "text": "本網站只保存運作所需的資訊，例如你的顯示設定。分析或行銷工具只有在你同意後才會執行。",
+    "acceptAll": "全部接受",
+    "necessaryOnly": "僅必要項目",
+    "customize": "自訂",
+    "save": "儲存選擇",
+    "necessary": "必要",
+    "necessaryText": "記住你的顯示與隱私選擇。永遠開啟。",
+    "analytics": "分析",
+    "analyticsText": "匿名統計造訪次數，了解哪些內容有幫助。本網站目前未使用。",
+    "marketing": "行銷",
+    "marketingText": "廣告與活動成效衡量。本網站目前未使用。"
+  }
+}

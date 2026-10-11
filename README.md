@@ -19,6 +19,7 @@
   <a href="https://pagerecast.shades.md"><b>Website</b></a> ·
   <a href="docs/guides/README.md"><b>Guides</b></a> ·
   <a href="https://pagerecast.shades.md/sample/"><b>Test page</b></a> ·
+  <a href="https://pagerecast.shades.md/gallery/"><b>Gallery</b></a> ·
   <a href="CHANGELOG.md"><b>Changelog</b></a>
 </p>
 

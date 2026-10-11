@@ -215,35 +215,43 @@ function anatomy(data: Demo['anatomy']) {
   image.src = `${base}demo/${data.image}`
   image.width = data.width
   image.height = data.height
-  const pairs = data.notes.map((note, i) => {
+  // Numbered top to bottom, so the margin reads like a spec sheet.
+  const notes = [...data.notes].sort((a, b) => a.box[1] - b.box[1])
+  const pairs = notes.map((note, i) => {
     const box = document.createElement('span')
     box.className = 'anatomy-box'
-    box.innerHTML = `<b>${i + 1}</b>`
-    stage.appendChild(box)
+    const pin = document.createElement('span')
+    pin.className = 'anatomy-pin'
+    pin.innerHTML = `<b>${i + 1}</b><i></i>`
+    stage.append(box, pin)
     const item = document.createElement('li')
     item.innerHTML = `<strong></strong><span></span>`
     item.querySelector('strong')!.textContent = note.title
     item.querySelector('span')!.textContent = note.detail
     list.appendChild(item)
-    return { note, box, item }
+    return { note, box, pin, item }
   })
   const place = () => {
     const scale = image.clientWidth / data.width
-    for (const { note, box } of pairs) {
+    for (const { note, box, pin } of pairs) {
       const [x, y, w, h] = note.box
-      box.style.left = `${image.offsetLeft + x * scale}px`
-      box.style.top = `${image.offsetTop + y * scale}px`
+      const left = image.offsetLeft + x * scale
+      const top = image.offsetTop + y * scale
+      box.style.left = `${left}px`
+      box.style.top = `${top}px`
       box.style.width = `${w * scale}px`
       box.style.height = `${h * scale}px`
+      // The pin sits in the left margin; its leader runs to the element's edge.
+      pin.style.top = `${top + (h * scale) / 2}px`
+      pin.style.width = `${left - 8}px`
     }
   }
-  for (const { box, item } of pairs) {
+  for (const { box, pin, item } of pairs) {
     const on = (state: boolean) => {
       root.classList.toggle('is-hovering', state)
-      box.classList.toggle('is-on', state)
-      item.classList.toggle('is-on', state)
+      for (const el of [box, pin, item]) el.classList.toggle('is-on', state)
     }
-    for (const el of [box, item]) {
+    for (const el of [box, pin, item]) {
       el.addEventListener('mouseenter', () => on(true))
       el.addEventListener('mouseleave', () => on(false))
     }

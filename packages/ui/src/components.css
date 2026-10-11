@@ -108,10 +108,14 @@
 /* Property rows: an 11 px label column, then the control. */
 .pr-prop {
   display: grid;
-  grid-template-columns: 72px minmax(0, 1fr);
+  grid-template-columns: var(--prop-label) minmax(0, 1fr);
   align-items: center;
   gap: 8px;
   min-height: var(--row);
+}
+/* A label too long for the column, such as the interface language, sets its own width. */
+.pr-prop--wide {
+  grid-template-columns: auto minmax(0, 1fr);
 }
 .pr-prop > :first-child {
   color: var(--ink-3);

@@ -51,7 +51,7 @@ body,
   margin-top: 4px;
 }
 .hint--prop {
-  margin: -4px 0 4px 80px;
+  margin: -4px 0 4px calc(var(--prop-label) + 8px);
 }
 
 /* Widths: checkbox, device, name, width in px, and a remove column for custom widths. */

@@ -294,7 +294,7 @@ body,
   min-width: 0;
 }
 .hint--prop {
-  margin: 0 0 0 80px;
+  margin: 0 0 0 calc(var(--prop-label) + 8px);
 }
 
 .code {
@@ -420,7 +420,7 @@ body,
 }
 .pair {
   display: grid;
-  grid-template-columns: 72px minmax(0, 1fr) auto;
+  grid-template-columns: var(--prop-label) minmax(0, 1fr) auto;
   align-items: center;
   gap: 8px;
   margin-top: 8px;

@@ -68,6 +68,15 @@ export function saveSettings(settings: Settings) {
   return chrome.storage.local.set({ settings })
 }
 
+/** A capture asked for from the right-click menu or a shortcut, waiting for the panel. */
+export interface PendingCapture {
+  scope: 'page' | 'element'
+  tabId: number
+  windowId: number
+  /** When it was asked for, so a request the panel never picked up can expire. */
+  at: number
+}
+
 /** A capture kept for re-use: the encoded file plus what the list shows. */
 export interface HistoryEntry {
   id: string

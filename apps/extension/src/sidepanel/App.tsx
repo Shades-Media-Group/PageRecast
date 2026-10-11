@@ -5,6 +5,7 @@ import {
   encodeFile,
   FILE_EXTENSION,
   type SceneNode,
+  type Scope,
 } from '@pagerecast/scene'
 import {
   Button,
@@ -34,6 +35,7 @@ import {
   PRESET_WIDTHS,
   removeHistory,
   saveSettings,
+  type PendingCapture,
   type Settings,
 } from '../store'
 import { frameThumbs, type Entry } from './frames'
@@ -58,6 +60,9 @@ const THEMES = { light: 'Light', dark: 'Dark', both: 'Light and dark' } as const
 
 const countLayers = (node: SceneNode): number =>
   1 + (node.type === 'frame' ? node.children.reduce((n, c) => n + countLayers(c), 0) : 0)
+
+const UNCAPTURABLE =
+  'Chrome doesn’t let extensions capture its own pages or the Web Store. Open a website, then capture.'
 
 const isCapturable = (url = '') =>
   /^(https?|file):/.test(url) &&
@@ -118,6 +123,8 @@ const plural = (n: number, word: string) => `${n.toLocaleString()} ${word}${n ==
 
 export function App() {
   const [settings, setSettings] = useState<Settings>(DEFAULT_SETTINGS)
+  const [loaded, setLoaded] = useState(false)
+  const [pending, setPending] = useState<PendingCapture | null>(null)
   const [tab, setTab] = useState<Tab | null>(null)
   const [status, setStatus] = useState<Status>({ kind: 'idle' })
   const [history, setHistory] = useState<Entry[]>([])
@@ -139,7 +146,10 @@ export function App() {
   }, [])
 
   useEffect(() => {
-    void loadSettings().then(setSettings)
+    void loadSettings().then((loaded) => {
+      setSettings(loaded)
+      setLoaded(true)
+    })
     void listHistory().then(setHistory)
     void refreshTab()
     const onChange = () => void refreshTab()
@@ -151,6 +161,29 @@ export function App() {
       chrome.tabs.onUpdated.removeListener(onChange)
       chrome.windows.onFocusChanged.removeListener(onChange)
     }
+  }, [refreshTab])
+
+  // Captures asked for from the right-click menu or the shortcut, for this window only.
+  useEffect(() => {
+    let windowId: number | undefined
+    const take = async () => {
+      windowId ??= (await chrome.windows.getCurrent()).id
+      const { pending } = (await chrome.storage.session.get('pending')) as {
+        pending?: PendingCapture
+      }
+      if (!pending || pending.windowId !== windowId) return
+      await chrome.storage.session.remove('pending')
+      // A request the panel never picked up should not fire much later.
+      if (Date.now() - pending.at > 15_000) return
+      setPending(pending)
+      void refreshTab()
+    }
+    void take()
+    const onChanged = (changes: Record<string, chrome.storage.StorageChange>) => {
+      if (changes.pending?.newValue) void take()
+    }
+    chrome.storage.session.onChanged.addListener(onChanged)
+    return () => chrome.storage.session.onChanged.removeListener(onChanged)
   }, [refreshTab])
 
   const update = (patch: Partial<Settings>) => {
@@ -193,9 +226,18 @@ export function App() {
   const busy = status.kind === 'capturing'
   const language = LANGUAGES.find((l) => l.value === settings.language)?.label ?? settings.language
 
-  const capture = async (targetUrl?: string) => {
-    if (busy || views === 0) return
-    if (!targetUrl && !tab?.capturable) return
+  const capture = async ({
+    url: targetUrl,
+    scope = settings.scope,
+  }: { url?: string; scope?: Scope } = {}) => {
+    if (busy) return
+    if (!targetUrl && !tab?.capturable)
+      return setStatus({
+        kind: 'error',
+        message: tab ? UNCAPTURABLE : 'Open a website to capture it.',
+      })
+    if (views === 0)
+      return setStatus({ kind: 'error', message: 'Choose at least one width, then capture.' })
     setStatus({
       kind: 'capturing',
       progress: {
@@ -210,7 +252,7 @@ export function App() {
       const file = await captureTab(
         tabId,
         {
-          scope: targetUrl && settings.scope === 'element' ? 'page' : settings.scope,
+          scope: targetUrl && scope === 'element' ? 'page' : scope,
           widths: settings.widths,
           themes: [...themes],
           hideOverlays: settings.hideOverlays,
@@ -283,6 +325,15 @@ export function App() {
   }
 
   useEffect(() => {
+    if (!pending || busy || !loaded || tab?.id !== pending.tabId) return
+    setPending(null)
+    // "Capture this page" keeps a saved visible-area choice; picking always picks.
+    const scope =
+      pending.scope === 'element' || settings.scope !== 'viewport' ? pending.scope : 'viewport'
+    void capture({ scope })
+  })
+
+  useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') void capture()
     }
@@ -345,7 +396,7 @@ export function App() {
             class="pr-field url"
             onSubmit={(e) => {
               e.preventDefault()
-              if (targetUrl) void capture(targetUrl)
+              if (targetUrl) void capture({ url: targetUrl })
             }}
           >
             <Icon name="globe" size={16} />

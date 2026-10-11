@@ -22,6 +22,8 @@ To run a release build instead, download `pagerecast-figma-plugin-*.zip`, unzip 
 2. Choose the **area** (full page, visible area or one element), the **widths** and the **theme**.
 3. Press **Capture this page**, or `⌘ Enter` / `Ctrl Enter`.
 
+You can also start from the page itself: right-click it and choose **Capture this page with PageRecast** or **Pick an element to capture**, or press `Alt+Shift+C`. The side panel opens and captures with your saved settings. Change the shortcut at `chrome://extensions/shortcuts`.
+
 The first time, Chrome shows a bar saying PageRecast started debugging the browser. That is how PageRecast reads the page at other widths; the bar goes away when the capture ends.
 
 ## 4. Paste into Figma

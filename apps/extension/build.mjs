@@ -67,9 +67,13 @@ const manifest = {
   },
   side_panel: { default_path: 'sidepanel/index.html' },
   background: { service_worker: 'background.js', type: 'module' },
-  permissions: ['sidePanel', 'debugger', 'tabs', 'storage', 'unlimitedStorage'],
+  permissions: ['sidePanel', 'debugger', 'tabs', 'storage', 'unlimitedStorage', 'contextMenus'],
   commands: {
     _execute_action: { suggested_key: { default: 'Alt+Shift+P' }, description: 'Open PageRecast' },
+    'capture-page': {
+      suggested_key: { default: 'Alt+Shift+C' },
+      description: 'Capture the current page',
+    },
   },
 }
 await writeFile(`${dist}manifest.json`, `${JSON.stringify(manifest, null, 2)}\n`)

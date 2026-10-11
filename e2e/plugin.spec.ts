@@ -51,6 +51,13 @@ async function open(
 const sent = (page: Page) =>
   page.evaluate(() => (window as unknown as { sent: { type: string; url?: string }[] }).sent)
 
+/** The settings the window last asked the main thread to save. */
+const saved = async (page: Page) =>
+  (
+    (await sent(page)).filter((m) => m.type === 'settings').at(-1) as unknown as
+      { settings: Settings } | undefined
+  )?.settings
+
 // Set PR_SHOTS to a folder to keep screenshots of every tab for design review.
 async function shot(page: Page, name: string) {
   if (process.env.PR_SHOTS)
@@ -76,7 +83,60 @@ test('opens light in dark Figma, and settings switch it to dark', async ({ page 
     settings: { appearance: string }
   }
   expect(saved.settings.appearance).toBe('dark')
+
+  // On dark the red pill keeps a plain shadow: no coloured glow.
+  await page.getByRole('button', { name: 'Back from Import settings' }).click()
+  await page.getByRole('tab', { name: 'Code' }).click()
+  await page.getByLabel('HTML and CSS').fill('<p>Hi</p>')
+  const shadow = await page
+    .getByRole('button', { name: 'Render and review' })
+    .evaluate((button) => getComputedStyle(button).boxShadow)
+  expect(shadow).not.toMatch(/224, 0, 10|120, 0, 5/)
   expect(errors).toEqual([])
+})
+
+test('reset all preferences is off at the defaults and takes two clicks', async ({ page }) => {
+  const errors = await open(page, 'light', DEFAULT_SETTINGS)
+  await page.getByRole('button', { name: 'Import settings' }).click()
+  const reset = page.getByRole('button', { name: 'Reset all preferences' })
+  await expect(reset).toBeDisabled()
+
+  // A change anywhere turns it on.
+  await page.getByRole('switch', { name: /Review before importing/ }).uncheck()
+  await page.getByRole('switch', { name: /HTML layer names/ }).check()
+  await expect(reset).toBeEnabled()
+  await reset.click()
+  const confirm = page.getByRole('button', { name: 'Click again to reset everything' })
+  await expect(confirm).toBeVisible()
+  await shot(page, 'settings-reset-confirm-light')
+  // Moving away is a no.
+  await page.getByRole('switch', { name: /Review before importing/ }).focus()
+  await expect(reset).toBeVisible()
+  await expect.poll(async () => (await saved(page))?.review).toBe(false)
+
+  await reset.click()
+  await confirm.click()
+  await expect(reset).toBeDisabled()
+  await expect.poll(() => saved(page)).toEqual(DEFAULT_SETTINGS)
+  await expect(page.getByRole('switch', { name: /Review before importing/ })).toBeChecked()
+  expect(errors).toEqual([])
+})
+
+test('reset keeps the import count that decides the rating request', async ({ page }) => {
+  await open(page, 'light', {
+    ...DEFAULT_SETTINGS,
+    imports: 9,
+    askedForRating: true,
+    appearance: 'dark',
+    domains: { 'example.com': DEFAULT_SETTINGS.defaults },
+  })
+  await page.getByRole('button', { name: 'Import settings' }).click()
+  await page.getByRole('button', { name: 'Reset all preferences' }).click()
+  await page.getByRole('button', { name: 'Click again to reset everything' }).click()
+  await expect
+    .poll(() => saved(page))
+    .toEqual({ ...DEFAULT_SETTINGS, imports: 9, askedForRating: true })
+  expect(await page.evaluate(() => document.documentElement.dataset.theme)).toBe('light')
 })
 
 test('every tab renders in light and dark without errors', async ({ page }) => {
@@ -107,7 +167,7 @@ test('the Web tab hands the URL and settings to the extension through a capture 
   await expect(page.getByText('Enter a web address')).toBeVisible()
 
   await page.getByRole('button', { name: 'Edit' }).click()
-  await page.getByRole('checkbox', { name: /Mobile/ }).check()
+  await page.getByRole('button', { name: 'Mobile 390' }).click()
   await page.getByRole('button', { name: 'Both' }).click()
   await page.getByLabel('Language').fill('de-DE')
   await page.getByLabel('Page URL').fill('example.com/pricing')
@@ -246,7 +306,12 @@ test('every interface language renders the paste, review, done and settings view
   for (const locale of ['ru', 'ro', 'fr', 'zh-CN'] as const) {
     const words = DICTIONARIES[locale]
     for (const scheme of ['light', 'dark'] as const) {
-      const errors = await open(page, scheme, { ...DEFAULT_SETTINGS, interfaceLanguage: locale })
+      // Dark runs take the automatic theme, which follows dark Figma.
+      const errors = await open(page, scheme, {
+        ...DEFAULT_SETTINGS,
+        interfaceLanguage: locale,
+        appearance: scheme === 'dark' ? 'auto' : 'light',
+      })
       await expect(page.locator('html')).toHaveAttribute('lang', locale)
       await expect(page.getByRole('tab').first()).toHaveText(words['tab.web'])
       await page.getByRole('tab').nth(1).click()

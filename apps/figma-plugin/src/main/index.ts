@@ -1,4 +1,4 @@
-import { DEFAULT_SETTINGS, type MainToUi, type Settings, type UiToMain } from '../shared/messages'
+import { migrateSettings, type MainToUi, type UiToMain } from '../shared/messages'
 import { importFile } from './build'
 import { FontResolver } from './fonts'
 import { updatableKeys } from './update'
@@ -11,15 +11,7 @@ const send = (message: MainToUi) => figma.ui.postMessage(message)
 figma.showUI(__html__, { width: 400, height: 620, themeColors: true, title: 'PageRecast' })
 
 async function start() {
-  const saved = (await figma.clientStorage.getAsync(SETTINGS_KEY)) as Partial<Settings> | undefined
-  const settings: Settings = {
-    ...DEFAULT_SETTINGS,
-    ...saved,
-    defaults: { ...DEFAULT_SETTINGS.defaults, ...saved?.defaults },
-    fonts: { ...saved?.fonts },
-    web: { ...DEFAULT_SETTINGS.web, ...saved?.web },
-    agent: { ...DEFAULT_SETTINGS.agent, ...saved?.agent },
-  }
+  const settings = migrateSettings(await figma.clientStorage.getAsync(SETTINGS_KEY))
   send({ type: 'ready', settings, version: __VERSION__ })
 }
 

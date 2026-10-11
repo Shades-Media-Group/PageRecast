@@ -85,6 +85,76 @@ export const DEFAULT_SETTINGS: Settings = {
 /** Imports after which the plugin asks, once, for a rating. */
 export const RATING_AFTER_IMPORTS = 5
 
+type Saved = { [K in keyof Settings]?: unknown } & Record<string, unknown>
+
+const isObject = (value: unknown): value is Record<string, unknown> =>
+  typeof value === 'object' && value !== null && !Array.isArray(value)
+
+/** Saved options with every option there, each a boolean; anything else takes the default. */
+function migrateOptions(saved: unknown): ImportOptions {
+  const options = { ...DEFAULT_OPTIONS }
+  if (isObject(saved))
+    for (const key of Object.keys(options) as (keyof ImportOptions)[])
+      if (typeof saved[key] === 'boolean') options[key] = saved[key]
+  return options
+}
+
+/**
+ * Settings saved by any earlier version, brought up to date: missing fields
+ * (1.0 had no theme, language, fonts, Web or agent settings) take their
+ * default, and values of the wrong shape fall back to it.
+ */
+export function migrateSettings(input: unknown): Settings {
+  const saved: Saved = isObject(input) ? input : {}
+  const web = isObject(saved.web) ? saved.web : {}
+  const agent = isObject(saved.agent) ? saved.agent : {}
+  const pick = <T>(value: unknown, allowed: readonly T[], fallback: T): T =>
+    allowed.includes(value as T) ? (value as T) : fallback
+  return {
+    interfaceLanguage: typeof saved.interfaceLanguage === 'string' ? saved.interfaceLanguage : '',
+    appearance: pick(saved.appearance, ['light', 'dark', 'auto'] as const, 'light'),
+    defaults: migrateOptions(saved.defaults),
+    domains: Object.fromEntries(
+      Object.entries(isObject(saved.domains) ? saved.domains : {}).map(([domain, options]) => [
+        domain,
+        migrateOptions(options),
+      ]),
+    ),
+    review: typeof saved.review === 'boolean' ? saved.review : DEFAULT_SETTINGS.review,
+    imports: typeof saved.imports === 'number' ? saved.imports : 0,
+    askedForRating: saved.askedForRating === true,
+    fonts: Object.fromEntries(
+      Object.entries(isObject(saved.fonts) ? saved.fonts : {}).filter(
+        (entry): entry is [string, string] => typeof entry[1] === 'string',
+      ),
+    ),
+    web: {
+      widths: Array.isArray(web.widths)
+        ? web.widths.filter((w): w is number => Number.isInteger(w) && w >= 240 && w <= 3840)
+        : DEFAULT_SETTINGS.web.widths,
+      theme: pick(web.theme, ['light', 'dark', 'both'] as const, 'light'),
+      language: typeof web.language === 'string' ? web.language : '',
+    },
+    agent: {
+      listen: agent.listen === true,
+      code: typeof agent.code === 'string' ? agent.code : '',
+    },
+  }
+}
+
+/** Counted, not chosen: kept when the preferences are reset. */
+const counters = ({ imports, askedForRating }: Settings) => ({ imports, askedForRating })
+
+/** The preferences as they are after "Reset all preferences". */
+export const resetSettings = (settings: Settings): Settings => ({
+  ...DEFAULT_SETTINGS,
+  ...counters(settings),
+})
+
+/** Whether any preference differs from its default. */
+export const preferencesChanged = (settings: Settings) =>
+  JSON.stringify(settings) !== JSON.stringify(resetSettings(settings))
+
 export function optionsFor(settings: Settings, domain: string): ImportOptions {
   return { ...DEFAULT_OPTIONS, ...settings.defaults, ...settings.domains[domain] }
 }

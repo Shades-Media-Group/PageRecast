@@ -2,16 +2,7 @@
 import { useState } from 'preact/hooks'
 import { captureLink, webUrl } from '@pagerecast/capture'
 import { deviceName, rich, t, type MessageKey } from '@pagerecast/i18n'
-import {
-  Button,
-  Icon,
-  Message,
-  REPO_URL,
-  Section,
-  Segmented,
-  Toggle,
-  type IconName,
-} from '@pagerecast/ui'
+import { Button, Chips, Icon, Message, REPO_URL, Section, Segmented, Toggle } from '@pagerecast/ui'
 import type { WebCapture } from '../shared/messages'
 import { cleanCode, type AgentState } from './agent'
 
@@ -92,11 +83,11 @@ function DocLink({
   )
 }
 
-const WIDTHS: { width: number; icon: IconName }[] = [
-  { width: 1440, icon: 'desktop' },
-  { width: 1280, icon: 'laptop' },
-  { width: 768, icon: 'tablet' },
-  { width: 390, icon: 'mobile' },
+const WIDTHS: { width: number; device: MessageKey }[] = [
+  { width: 1440, device: 'device.desktop' },
+  { width: 1280, device: 'device.laptop' },
+  { width: 768, device: 'device.tablet' },
+  { width: 390, device: 'device.mobile' },
 ]
 const THEMES = { light: 'theme.light', dark: 'theme.dark', both: 'theme.lightAndDark' } as const
 
@@ -192,20 +183,20 @@ export function WebTab({
       >
         {editing ? (
           <>
-            <div class="width-list" role="group" aria-label={t('common.widths')}>
-              {WIDTHS.map((p) => (
-                <label class="width-option">
-                  <Icon name={p.icon} size={16} />
-                  <span>{deviceName(p.width)}</span>
-                  <span class="num muted">{p.width}</span>
-                  <input
-                    class="pr-check"
-                    type="checkbox"
-                    checked={web.widths.includes(p.width)}
-                    onChange={() => toggleWidth(p.width)}
-                  />
-                </label>
-              ))}
+            <div class="pr-prop">
+              <span>{t('common.widths')}</span>
+              <Chips
+                label={t('common.widths')}
+                items={WIDTHS.map((p) => ({
+                  label: (
+                    <>
+                      {t(p.device)} <span class="num">{p.width}</span>
+                    </>
+                  ),
+                  pressed: web.widths.includes(p.width),
+                  onClick: () => toggleWidth(p.width),
+                }))}
+              />
             </div>
             <div class="pr-prop">
               <span>{t('common.theme')}</span>

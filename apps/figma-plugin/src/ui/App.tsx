@@ -34,6 +34,7 @@ import {
   Message,
   Progress,
   REPO_URL,
+  ResetPreferences,
   Section,
   Segmented,
   Tabs,
@@ -44,7 +45,9 @@ import {
   DEFAULT_SETTINGS,
   importKey,
   optionsFor,
+  preferencesChanged,
   RATING_AFTER_IMPORTS,
+  resetSettings,
   type ImportOptions,
   type ImportReport,
   type MainToUi,
@@ -458,7 +461,6 @@ export function App() {
                   />
                 )}
                 {tab === 'api' && <ApiTab open={openUrl} />}
-                <Credit />
               </>
             )}
             {stage.kind === 'reading' && <Working label={t('plugin.reading')} progress={0.1} />}
@@ -1216,6 +1218,10 @@ function SettingsView({
       <RememberedFonts
         fonts={settings.fonts}
         onChange={(fonts) => onChange({ ...settings, fonts })}
+      />
+      <ResetPreferences
+        changed={preferencesChanged(settings)}
+        onReset={() => onChange(resetSettings(settings))}
       />
       <Section title={t('settings.about')}>
         <dl class="pr-props">

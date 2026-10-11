@@ -55,3 +55,7 @@ apps/site/it/
 apps/site/tr/
 apps/site/hi/
 apps/site/ja/
+
+# The Worker's capture engine, written by apps/site/worker/bundle.mjs, and wrangler's scratch files
+apps/site/worker/capture-bundle.js
+.wrangler/

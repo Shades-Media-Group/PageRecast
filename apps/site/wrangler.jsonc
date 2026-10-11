@@ -1,13 +1,29 @@
 {
   "$schema": "../../node_modules/wrangler/config-schema.json",
-  // The website: static files served by a Worker at pagerecast.shades.md.
+  // The website: static files served by a Worker at pagerecast.shades.md, plus
+  // POST /api/render, the Figma plugin's render service (worker/index.ts).
   "name": "pagerecast-site",
+  "main": "./worker/index.ts",
   "compatibility_date": "2026-10-01",
+  // @cloudflare/puppeteer needs Node's APIs.
+  "compatibility_flags": ["nodejs_compat"],
+  // Writes worker/capture-bundle.js, the capture engine, before dev and deploy.
+  "build": { "command": "node worker/bundle.mjs" },
   "assets": {
     "directory": "./dist",
+    "binding": "ASSETS",
     "not_found_handling": "single-page-application",
     "html_handling": "auto-trailing-slash",
+    // Only the API reaches the Worker's code; every other path is a static file.
+    "run_worker_first": ["/api/*"],
   },
+  // Cloudflare Browser Rendering (Workers Paid plan).
+  "browser": { "binding": "BROWSER" },
+  // Six renders a minute per IP address. namespace_id is any number unique in the account.
+  "ratelimits": [
+    { "name": "RENDER_LIMIT", "namespace_id": "7357", "simple": { "limit": 6, "period": 60 } },
+  ],
   "routes": [{ "pattern": "pagerecast.shades.md", "custom_domain": true }],
+  // Off on purpose: no request logs, so no page address is ever kept.
   "observability": { "enabled": false },
 }

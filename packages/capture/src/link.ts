@@ -55,3 +55,48 @@ export function parseCaptureLink(hash: string): CaptureLink | null {
     return null
   return { url, widths: [...new Set(widths)], theme, language }
 }
+
+/** Hosts that only mean something on the machine or network they are typed on. */
+const LOCAL_SUFFIXES = ['localhost', 'local', 'internal', 'intranet', 'lan', 'home.arpa']
+
+function privateIpv4(host: string): boolean | null {
+  const parts = host.split('.')
+  if (parts.length !== 4 || !parts.every((p) => /^\d{1,3}$/.test(p))) return null
+  const [a, b] = parts.map(Number) as [number, number, number, number]
+  return (
+    a === 0 || // "this network"
+    a === 10 ||
+    a === 127 || // loopback
+    (a === 100 && b >= 64 && b <= 127) || // carrier-grade NAT
+    (a === 169 && b === 254) || // link-local
+    (a === 172 && b >= 16 && b <= 31) ||
+    (a === 192 && b === 168) ||
+    (a === 192 && b === 0) || // IETF protocol assignments
+    (a === 198 && (b === 18 || b === 19)) || // benchmarking
+    a >= 224 // multicast and reserved
+  )
+}
+
+/** Only global unicast (2000::/3) is public; that leaves out ::1, fc00::/7, fe80::/10 and mapped IPv4. */
+function privateIpv6(host: string): boolean | null {
+  if (!host.startsWith('[')) return null
+  const first = host.slice(1).split(':')[0]
+  if (!first) return true // "::" and "::1", "::ffff:…"
+  const value = parseInt(first, 16)
+  return Number.isNaN(value) || (value & 0xe000) !== 0x2000
+}
+
+/**
+ * False for localhost, private, loopback and link-local addresses and single-label intranet
+ * names: pages only the person's own machine or network can open, which the
+ * render service refuses and the extension captures.
+ */
+export function isPublicHost(hostname: string): boolean {
+  const host = hostname.toLowerCase().replace(/\.$/, '')
+  const v6 = privateIpv6(host)
+  if (v6 !== null) return !v6
+  const v4 = privateIpv4(host)
+  if (v4 !== null) return !v4
+  if (!host.includes('.')) return false
+  return !LOCAL_SUFFIXES.some((s) => host === s || host.endsWith(`.${s}`))
+}

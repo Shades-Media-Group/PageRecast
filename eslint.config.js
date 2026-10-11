@@ -12,6 +12,8 @@ export default tseslint.config(
       'graphify-out',
       '.claude',
       'test-results',
+      'apps/site/worker/capture-bundle.js',
+      '**/.wrangler',
     ],
   },
   js.configs.recommended,

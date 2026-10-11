@@ -31,6 +31,9 @@ const paintHex = () => {
 paintHex()
 matchMedia('(prefers-color-scheme: dark)').addEventListener('change', paintHex)
 
+// The demo form never submits; an inline handler would break the CSP.
+document.querySelector('form')?.addEventListener('submit', (event) => event.preventDefault())
+
 for (const group of document.querySelectorAll<HTMLElement>('[role="radiogroup"]')) {
   group.addEventListener('click', (event) => {
     const button = (event.target as HTMLElement).closest('button')

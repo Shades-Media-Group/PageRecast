@@ -36,6 +36,11 @@ type Locale = (typeof LOCALES)[number]
  * translation proxy: a plain link, no script, and nofollow so the copies stay
  * out of search results. [language, Google's code, name].
  */
+// Off until the shades.md zone lets Google's translation proxy through: today
+// Cloudflare answers pagerecast-shades-md.translate.goog with a 403 challenge.
+// Turn on once a request to that host returns the translated page.
+const MACHINE_TRANSLATION = false
+
 const MACHINE = [
   ['de', 'de', 'Deutsch'],
   ['it', 'it', 'Italiano'],
@@ -326,8 +331,8 @@ function render(locale: Locale, page: Page): string {
         <summary><span class="visually-hidden">${t('language')}: </span>${locale.name}</summary>
         <div class="lang-menu">
           <ul>${own}</ul>
-          <p class="lang-more">${t('moreLanguages')}<span>${t('machine')}</span></p>
-          <ul class="lang-machine">${machine}</ul>
+          ${MACHINE_TRANSLATION ? `<p class="lang-more">${t('moreLanguages')}<span>${t('machine')}</span></p>
+          <ul class="lang-machine">${machine}</ul>` : ''}
         </div>
       </details>`
     },
@@ -335,11 +340,11 @@ function render(locale: Locale, page: Page): string {
       const { own, machine } = languages(locale, page)
       return `<nav class="langs" aria-label="${html(t('language'))}">
         <ul>${own}</ul>
-        <details>
+        ${MACHINE_TRANSLATION ? `<details>
           <summary>${t('moreLanguages')}</summary>
           <p>${t('machine')}</p>
           <ul>${machine}</ul>
-        </details>
+        </details>` : ''}
       </nav>`
     },
     // Google's own button, as a plain link: no Google script, no cookie.

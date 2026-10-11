@@ -8,18 +8,20 @@ import type {
   TextNode as SceneText,
   TextStyle,
 } from '@pagerecast/scene'
-import type {
-  ImageBytes,
-  ImageTiles,
-  ImportOptions,
-  ImportReport,
-  MainToUi,
+import {
+  importKey,
+  type ImageBytes,
+  type ImageTiles,
+  type ImportOptions,
+  type ImportReport,
+  type MainToUi,
 } from '../shared/messages'
 import { FontResolver } from './fonts'
 import { rotatedTransform } from './geometry'
 import { hex, imagePaint, solid, toBlend, toEffects, toPaints } from './paints'
 import { differences, findPatterns, type Difference, type Pattern } from './patterns'
 import { withState } from './states'
+import { findImported, mark, replace, usedElsewhere, type Imported } from './update'
 import {
   applyLocalStyles,
   createTextStyles,
@@ -77,6 +79,7 @@ export async function importFile(
   imageBytes: ImageBytes,
   tiles: ImageTiles,
   options: ImportOptions,
+  update: boolean,
   progress: Progress,
 ): Promise<ImportReport> {
   const started = Date.now()
@@ -90,6 +93,7 @@ export async function importFile(
     components: 0,
     instances: 0,
     reusedStyles: 0,
+    updated: 0,
     matchedFromLibrary: 0,
     variables: 0,
     textStyles: 0,
@@ -721,7 +725,46 @@ export async function importFile(
     }
   }
 
+  /**
+   * Puts a fresh import where the earlier one of the same capture is: the page
+   * frame keeps its place and name, the reference and Components frames take
+   * their predecessors' places. Earlier components that other layers use stay.
+   */
+  async function replaceEarlier(
+    earlier: Imported,
+    root: FrameNode,
+    reference: FrameNode | undefined,
+    components: FrameNode | undefined,
+  ) {
+    const page = earlier.pages[0]!
+    const keepComponents = earlier.components
+      ? await usedElsewhere(earlier.components, [page, earlier.components])
+      : false
+    const name = page.name
+    replace(page, root)
+    root.name = name
+    const after = (node: FrameNode, anchor: FrameNode) => {
+      const parent = anchor.parent!
+      parent.insertChild(parent.children.indexOf(anchor) + 1, node)
+      node.x = anchor.x + anchor.width + REFERENCE_GAP
+      node.y = anchor.y
+    }
+    if (reference && earlier.reference) replace(earlier.reference, reference)
+    else if (reference) after(reference, root)
+    else earlier.reference?.remove()
+    if (components && earlier.components && !keepComponents) replace(earlier.components, components)
+    else if (components) after(components, earlier.components ?? reference ?? root)
+    else if (earlier.components && !keepComponents) earlier.components.remove()
+    if (keepComponents)
+      report.warnings.push(
+        `The earlier components of ${name} were kept because other layers use them.`,
+      )
+    report.updated++
+  }
+
   // Lay captures out left to right, each followed by its screenshot reference.
+  const imported = update ? findImported() : new Map<string, Imported>()
+  const updatedRoots: FrameNode[] = []
   const section = figma.createSection()
   section.name = file.source.title || new URL(file.source.url).hostname
   let cursor = 0
@@ -729,6 +772,13 @@ export async function importFile(
   const roots = new Map<Capture, FrameNode>()
   for (const capture of file.captures) {
     if (options.components) patterns.set(capture, findPatterns(capture.root, file.assets))
+    const key = importKey(file.source.url, capture)
+    const earlier = key ? imported.get(key) : undefined
+    if (earlier && earlier.pages.length > 1)
+      report.warnings.push(
+        `${capture.label} is on this page more than once, so it was added as a new frame.`,
+      )
+    const start = cursor
     const root = (await build(capture.root, section, -cursor, 0, capture)) as FrameNode
     root.name = `${section.name} · ${capture.label}`
     root.x = cursor
@@ -738,8 +788,9 @@ export async function importFile(
     tallest = Math.max(tallest, root.height)
 
     const strips = capture.screenshot ? tiles[capture.screenshot] : undefined
+    let reference: FrameNode | undefined
     if (options.screenshot && strips?.length) {
-      const reference = figma.createFrame()
+      reference = figma.createFrame()
       section.appendChild(reference)
       reference.name = `Reference · ${capture.label}`
       size(reference, capture.width, capture.height)
@@ -760,6 +811,17 @@ export async function importFile(
       cursor += REFERENCE_GAP + capture.width
     }
     const components = componentFrames.get(capture)
+    if (key) {
+      mark(root, key, 'page', file.source.capturedAt)
+      if (reference) mark(reference, key, 'reference', file.source.capturedAt)
+      if (components) mark(components, key, 'components', file.source.capturedAt)
+    }
+    if (earlier?.pages.length === 1) {
+      await replaceEarlier(earlier, root, reference, components)
+      updatedRoots.push(root)
+      cursor = start
+      continue
+    }
     if (components) {
       components.x = cursor + REFERENCE_GAP
       components.y = 0
@@ -788,6 +850,16 @@ export async function importFile(
   }
   if (options.textStyles) report.textStyles = await createTextStyles(textRefs, file)
 
+  if (section.children.length === 0) {
+    // Every capture updated an earlier frame: nothing new to place.
+    section.remove()
+    figma.currentPage.selection = updatedRoots
+    figma.viewport.scrollAndZoomIntoView(updatedRoots)
+    report.substitutions = fonts.report()
+    report.durationMs = Date.now() - started
+    return report
+  }
+
   // Put the section beside whatever is already on the page.
   const padding = 120
   section.resizeWithoutConstraints(cursor - CAPTURE_GAP + padding * 2, tallest + padding * 2)
@@ -802,8 +874,8 @@ export async function importFile(
   section.y = others.length
     ? Math.min(...others.map((n) => n.y))
     : Math.round(figma.viewport.center.y)
-  figma.currentPage.selection = [section]
-  figma.viewport.scrollAndZoomIntoView([section])
+  figma.currentPage.selection = [section, ...updatedRoots]
+  figma.viewport.scrollAndZoomIntoView([section, ...updatedRoots])
 
   report.substitutions = fonts.report()
   report.durationMs = Date.now() - started

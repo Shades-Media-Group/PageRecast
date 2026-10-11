@@ -1,5 +1,6 @@
 import { DEFAULT_SETTINGS, type MainToUi, type Settings, type UiToMain } from '../shared/messages'
 import { importFile } from './build'
+import { updatableKeys } from './update'
 
 declare const __VERSION__: string
 
@@ -23,6 +24,9 @@ figma.ui.onmessage = async (message: UiToMain) => {
     case 'settings':
       await figma.clientStorage.setAsync(SETTINGS_KEY, message.settings)
       break
+    case 'find-imported':
+      send({ type: 'imported', keys: updatableKeys(message.keys) })
+      break
     case 'open-url':
       figma.openExternal(message.url)
       break
@@ -33,6 +37,7 @@ figma.ui.onmessage = async (message: UiToMain) => {
           message.images,
           message.tiles,
           message.options,
+          message.update,
           send,
         )
         send({ type: 'done', report })

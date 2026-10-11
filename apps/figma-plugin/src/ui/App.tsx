@@ -19,6 +19,7 @@ import {
 } from '@pagerecast/ui'
 import {
   DEFAULT_SETTINGS,
+  importKey,
   optionsFor,
   RATING_AFTER_IMPORTS,
   type ImportOptions,
@@ -39,6 +40,10 @@ type Stage =
       selected: Set<string>
       bytes: number
       options: ImportOptions
+      /** Import keys of captures already on the current page. */
+      existing: Set<string>
+      /** Replace those frames rather than adding new ones. */
+      update: boolean
     }
   | { kind: 'importing'; label: string; progress: number }
   | { kind: 'done'; report: ImportReport; askRating: boolean }
@@ -90,7 +95,12 @@ export function App() {
     send({ type: 'settings', settings: next })
   }
 
-  const runImport = async (file: RecastFile, selected: Set<string>, options: ImportOptions) => {
+  const runImport = async (
+    file: RecastFile,
+    selected: Set<string>,
+    options: ImportOptions,
+    update = true,
+  ) => {
     const domain = domainOf(file)
     saveSettings({
       ...settingsRef.current,
@@ -108,7 +118,7 @@ export function App() {
         progress: 0.04 + 0.22 * (done / Math.max(total, 1)),
       }),
     )
-    send({ type: 'import', file: chosen, images, tiles, options })
+    send({ type: 'import', file: chosen, images, tiles, options, update })
   }
 
   const load = async (read: () => Promise<RecastFile>, bytes: number) => {
@@ -120,7 +130,9 @@ export function App() {
       const options = optionsFor(settingsRef.current, domainOf(file))
       if (!settingsRef.current.review && !modifier.current)
         return void runImport(file, selected, options)
-      setStage({ kind: 'ready', file, selected, bytes, options })
+      setStage({ kind: 'ready', file, selected, bytes, options, existing: new Set(), update: true })
+      const keys = file.captures.flatMap((c) => importKey(file.source.url, c) ?? [])
+      if (keys.length) send({ type: 'find-imported', keys })
     } catch (error) {
       setStage({
         kind: 'error',
@@ -165,6 +177,10 @@ export function App() {
         const askRating = !current.askedForRating && imports >= RATING_AFTER_IMPORTS
         saveSettings({ ...current, imports, askedForRating: current.askedForRating || askRating })
         setStage({ kind: 'done', report: message.report, askRating })
+      }
+      if (message.type === 'imported') {
+        const keys = message.keys
+        setStage((s) => (s.kind === 'ready' ? { ...s, existing: new Set(keys) } : s))
       }
       if (message.type === 'error') setStage({ kind: 'error', message: message.message })
     }
@@ -292,9 +308,9 @@ export function App() {
                 size="lg"
                 block
                 disabled={stage.selected.size === 0}
-                onClick={() => runImport(stage.file, stage.selected, stage.options)}
+                onClick={() => runImport(stage.file, stage.selected, stage.options, stage.update)}
               >
-                Import {stage.selected.size > 1 ? `${stage.selected.size} frames` : 'into Figma'}
+                {importLabel(stage)}
               </Button>
             </footer>
           ) : stage.kind === 'done' ? (
@@ -404,6 +420,21 @@ function Working({ label, progress }: { label: string; progress: number }) {
       </section>
     </>
   )
+}
+
+/** Captures in the review that were imported onto this page before. */
+function updating(stage: Extract<Stage, { kind: 'ready' }>) {
+  return stage.file.captures.filter((c) => {
+    const key = importKey(stage.file.source.url, c)
+    return stage.selected.has(c.id) && key !== null && stage.existing.has(key)
+  }).length
+}
+
+function importLabel(stage: Extract<Stage, { kind: 'ready' }>) {
+  const n = stage.selected.size
+  if (stage.update && n > 0 && updating(stage) === n)
+    return n > 1 ? `Update ${n} frames` : 'Update in Figma'
+  return n > 1 ? `Import ${n} frames` : 'Import into Figma'
 }
 
 function OptionToggles({
@@ -614,6 +645,31 @@ function Review({
           ))}
         </div>
       </Section>
+      {updating(stage) > 0 && (
+        <Section
+          title="Imported before"
+          aside={
+            <span class="num">
+              {updating(stage)} of {stage.selected.size}
+            </span>
+          }
+        >
+          <Segmented
+            label="Frames imported before"
+            value={stage.update ? 'update' : 'new'}
+            onChange={(value) => onChange({ update: value === 'update' })}
+            options={[
+              { value: 'update', label: 'Update existing' },
+              { value: 'new', label: 'Add as new' },
+            ]}
+          />
+          <p class="hint">
+            {stage.update
+              ? 'Replaces the earlier frames in place, keeping their position and name.'
+              : 'Keeps the earlier frames and adds new ones beside them.'}
+          </p>
+        </Section>
+      )}
       <OptionToggles
         options={stage.options}
         onChange={(patch) => onChange({ options: { ...stage.options, ...patch } })}
@@ -637,6 +693,7 @@ function Done({ report, askRating }: { report: ImportReport; askRating: boolean 
     ['Layers using existing styles', report.reusedStyles],
     ['Layers using library variables', report.matchedFromLibrary],
   ]
+  if (report.updated) rows.unshift(['Frames updated in place', report.updated])
   if (report.rasters) rows.push(['Snapshots of canvas, video and embeds', report.rasters])
   return (
     <>

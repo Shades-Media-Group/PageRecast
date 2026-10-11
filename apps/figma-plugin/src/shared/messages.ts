@@ -1,4 +1,4 @@
-import type { RecastFile } from '@pagerecast/scene'
+import type { Capture, RecastFile } from '@pagerecast/scene'
 
 export interface ImportOptions {
   /** Convert flex containers to Auto Layout where the result matches the page. */
@@ -60,6 +60,20 @@ export function optionsFor(settings: Settings, domain: string): ImportOptions {
   return { ...DEFAULT_OPTIONS, ...settings.defaults, ...settings.domains[domain] }
 }
 
+/**
+ * Identifies a capture across imports: its page, its label (width and theme)
+ * and, for element captures, the element. Null for HTML code, which has no URL.
+ */
+export function importKey(url: string, capture: Capture): string | null {
+  if (!url) return null
+  return JSON.stringify([
+    url,
+    capture.label,
+    capture.scope,
+    capture.scope === 'element' ? capture.root.key : '',
+  ])
+}
+
 export interface FontSubstitution {
   requested: string
   used: string
@@ -81,6 +95,8 @@ export interface ImportReport {
   textStyles: number
   /** Nodes bound to styles or variables that were already in the file. */
   reusedStyles: number
+  /** Page frames replaced in place by a newer capture of the same page. */
+  updated: number
   /** Nodes bound to variables from the file's enabled team libraries. */
   matchedFromLibrary: number
   substitutions: FontSubstitution[]
@@ -104,12 +120,17 @@ export type UiToMain =
       images: ImageBytes
       tiles: ImageTiles
       options: ImportOptions
+      /** Replace frames imported earlier from the same capture instead of adding new ones. */
+      update: boolean
     }
   | { type: 'settings'; settings: Settings }
+  /** Asks which of these import keys already have a frame on the current page. */
+  | { type: 'find-imported'; keys: string[] }
   | { type: 'open-url'; url: string }
 
 export type MainToUi =
   | { type: 'ready'; settings: Settings; version: string }
   | { type: 'progress'; phase: 'fonts' | 'layers' | 'styles'; done: number; total: number }
+  | { type: 'imported'; keys: string[] }
   | { type: 'done'; report: ImportReport }
   | { type: 'error'; message: string }

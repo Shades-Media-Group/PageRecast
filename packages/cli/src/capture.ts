@@ -23,7 +23,7 @@ export type CaptureSettings = Pick<
 const WINDOW = { width: 1440, height: 900 }
 const LAUNCH_ARGS = [`--window-size=${WINDOW.width},${WINDOW.height}`]
 
-async function launch(executablePath?: string): Promise<Browser> {
+async function launch(executablePath = process.env.PAGERECAST_BROWSER): Promise<Browser> {
   if (executablePath) return chromium.launch({ headless: true, executablePath, args: LAUNCH_ARGS })
   try {
     // Chromium installed by Playwright (`npx playwright install chromium`).
@@ -34,7 +34,7 @@ async function launch(executablePath?: string): Promise<Browser> {
       return await chromium.launch({ headless: true, channel: 'chrome', args: LAUNCH_ARGS })
     } catch {
       throw new Error(
-        'No Chromium found. Run `npx playwright install chromium`, or pass --browser with the path to Chrome or Chromium.',
+        'No Chromium found. Run `npx playwright install chromium`, or pass --browser (or set PAGERECAST_BROWSER) with the path to Chrome or Chromium.',
       )
     }
   }

@@ -6,6 +6,11 @@ All notable changes to PageRecast are recorded here. The format follows
 
 ## [Unreleased]
 
+### Added
+
+- The `pagerecast` package is now also a library with types: `capture`, `encode`, `decode`, `tokens` and `info`.
+- `PAGERECAST_BROWSER` picks the Chrome or Chromium the command line and the library run.
+
 ## [1.0.0] - 2026-10-11
 
 The first public release: a Chrome extension that captures pages and a Figma

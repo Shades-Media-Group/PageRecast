@@ -1,11 +1,19 @@
 import { existsSync } from 'node:fs'
 import { mkdir, readFile, stat, writeFile } from 'node:fs/promises'
-import { basename, dirname, extname, resolve } from 'node:path'
-import { pathToFileURL } from 'node:url'
+import { dirname } from 'node:path'
 import { parseArgs } from 'node:util'
-import { decode, encodeFile, type RecastFile, type SceneNode, type Theme } from '@pagerecast/scene'
-import { extractTokens, toCssVariables, toDesignMd, toW3CTokens } from '@pagerecast/tokens'
-import { captureUrl, type CaptureSettings } from './capture'
+import {
+  capture as captureUrl,
+  decode,
+  encode,
+  info as describe,
+  OptionError,
+  recastFileName,
+  tokens as toTokens,
+  type CaptureOptions,
+  type RecastFile,
+  type TokenFormat,
+} from './api'
 
 declare const __VERSION__: string
 
@@ -29,7 +37,8 @@ Capture options
   --hide ".chat, .promo"   Leave out elements matching these CSS selectors
   --wait 2000              Wait this many milliseconds at each width before reading the page
   --max-height 10000       Cut full-page captures off at this height in pixels
-  --browser <path>         Chrome or Chromium to run (default: Playwright's Chromium, then Chrome)
+  --browser <path>         Chrome or Chromium to run (default: $PAGERECAST_BROWSER,
+                           then Playwright's Chromium, then Chrome)
 
   -h, --help               Show this help
   -v, --version            Show the version
@@ -66,58 +75,23 @@ const { values, positionals } = (() => {
   }
 })()
 
-const THEMES: Record<string, Theme[]> = {
-  light: ['light'],
-  dark: ['dark'],
-  both: ['light', 'dark'],
-}
-
 const log = (line: string) => process.stderr.write(`${line}\n`)
 
-function settings(defaultTheme: 'light' | 'both'): CaptureSettings {
-  const widths = values.widths.split(',').map((w) => Number(w.trim()))
-  if (!widths.length || widths.some((w) => !Number.isInteger(w) || w < 240 || w > 3840))
-    throw new UsageError('--widths takes whole numbers from 240 to 3840, such as 1440,390.')
-  const theme = values.theme ?? defaultTheme
-  const themes = THEMES[theme]
-  if (!themes) throw new UsageError('--theme is light, dark or both.')
-  if (values.scope !== 'page' && values.scope !== 'viewport')
-    throw new UsageError('--scope is page or viewport.')
-  const delay = Number(values.wait)
-  if (!Number.isInteger(delay) || delay < 0 || delay > 60_000)
-    throw new UsageError('--wait takes milliseconds from 0 to 60000, such as 2000.')
-  const maxHeight = Number(values['max-height'])
-  if (!Number.isInteger(maxHeight) || maxHeight < 0)
-    throw new UsageError('--max-height takes a whole number of pixels, such as 10000.')
+function settings(defaultTheme: 'light' | 'both'): CaptureOptions {
   return {
-    hide: values.hide,
-    delay,
-    maxHeight,
-    widths: [...new Set(widths)],
-    themes,
-    scope: values.scope,
+    widths: values.widths.split(',').map((w) => Number(w.trim())),
+    theme: (values.theme ?? defaultTheme) as CaptureOptions['theme'],
+    scope: values.scope as CaptureOptions['scope'],
+    hide: values.hide ? [values.hide] : [],
+    waitMs: Number(values.wait),
+    maxHeight: Number(values['max-height']),
     language: values.language,
     preload: values.preload,
     hideOverlays: values['hide-overlays'],
     screenshot: values.screenshot,
+    onProgress: log,
     ...(values.browser ? { browser: values.browser } : {}),
   }
-}
-
-/** Accepts http(s) and file URLs, bare hosts, and paths to local HTML files. */
-function toUrl(input: string): string {
-  if (/^(https?|file):/i.test(input)) return input
-  if (existsSync(input)) return pathToFileURL(resolve(input)).href
-  return `https://${input}`
-}
-
-function defaultName(url: string): string {
-  const parsed = new URL(url)
-  const name =
-    parsed.protocol === 'file:'
-      ? basename(parsed.pathname, extname(parsed.pathname))
-      : parsed.hostname.replace(/^www\./, '')
-  return `${name || 'capture'}.recast`
 }
 
 async function save(path: string, data: Uint8Array | string) {
@@ -130,31 +104,22 @@ async function readRecast(path: string): Promise<RecastFile> {
 }
 
 async function capture(input: string): Promise<void> {
-  const url = toUrl(input)
-  const file = await captureUrl(url, settings('light'), log)
-  const bytes = await encodeFile(file)
+  const file = await captureUrl(input, settings('light'))
+  const bytes = await encode(file)
   await decode(bytes) // Refuse to write anything the plugin would not open.
-  const out = values.out ?? defaultName(file.source.url)
+  const out = values.out ?? recastFileName(file.source.url)
   await save(out, bytes)
   log(`Saved ${out} (${file.captures.length} captures, ${(bytes.length / 1024).toFixed(0)} KB)`)
 }
 
 async function tokens(input: string): Promise<void> {
+  const format = values.format
+  if (!['md', 'css', 'w3c'].includes(format)) throw new UsageError('--format is w3c, css or md.')
   const file =
     existsSync(input) && !/\.html?$/i.test(input)
       ? await readRecast(input)
-      : await captureUrl(toUrl(input), settings('both'), log)
-  const tokens = extractTokens(file)
-  const format = values.format
-  const output =
-    format === 'w3c'
-      ? `${JSON.stringify(toW3CTokens(tokens, file.source), null, 2)}\n`
-      : format === 'css'
-        ? toCssVariables(tokens, file.source)
-        : format === 'md'
-          ? toDesignMd(tokens, file.source)
-          : null
-  if (output === null) throw new UsageError('--format is w3c, css or md.')
+      : await captureUrl(input, settings('both'))
+  const output = toTokens(file, format as TokenFormat)
   if (values.out) {
     await save(values.out, output)
     log(`Saved ${values.out}`)
@@ -163,31 +128,23 @@ async function tokens(input: string): Promise<void> {
 
 const plural = (n: number, word: string) => `${n} ${word}${n === 1 ? '' : 's'}`
 
-function count(node: SceneNode, totals: Record<string, number>) {
-  totals[node.type] = (totals[node.type] ?? 0) + 1
-  if (node.type === 'frame') for (const child of node.children) count(child, totals)
-}
-
 async function info(path: string): Promise<void> {
   const file = await readRecast(path)
-  const { source, generator } = file
-  const rows = file.captures.map((c) => {
-    const totals: Record<string, number> = {}
-    count(c.root, totals)
-    const layers = Object.values(totals).reduce((a, b) => a + b, 0)
-    return [
+  const { title, url, capturedAt, generator, captures, assets } = describe(file)
+  const rows = captures.map((c) =>
+    [
       c.label,
       `${c.width} × ${c.height}`,
       c.scope,
-      layers,
-      totals.frame ?? 0,
-      totals.text ?? 0,
-      totals.image ?? 0,
-      totals.svg ?? 0,
-      totals.raster ?? 0,
+      c.layers,
+      c.frames,
+      c.text,
+      c.images,
+      c.svg,
+      c.raster,
       c.screenshot ? 'yes' : 'no',
-    ].map(String)
-  })
+    ].map(String),
+  )
   const header = [
     'Capture',
     'Size',
@@ -208,21 +165,17 @@ async function info(path: string): Promise<void> {
       .join('  ')
       .trimEnd()
 
-  const assets = Object.values(file.assets)
-  const embedded = assets.filter((a) => a.kind === 'image' && a.data).length
-  const linked = assets.filter((a) => a.kind === 'image' && !a.data).length
-  const svgs = assets.filter((a) => a.kind === 'svg').length
   const { size } = await stat(path)
   console.log(
     [
-      source.title || source.url,
-      source.url,
-      `Captured ${source.capturedAt.replace('T', ' ').slice(0, 16)} UTC by PageRecast ${generator.version} (${generator.surface})`,
+      title || url,
+      url,
+      `Captured ${capturedAt.replace('T', ' ').slice(0, 16)} UTC by PageRecast ${generator.version} (${generator.surface})`,
       '',
       line(header),
       ...rows.map(line),
       '',
-      `Assets: ${plural(embedded, 'embedded image')}, ${plural(linked, 'linked image')}, ${svgs} SVG`,
+      `Assets: ${plural(assets.embeddedImages, 'embedded image')}, ${plural(assets.linkedImages, 'linked image')}, ${assets.svg} SVG`,
       `File: ${(size / 1024).toFixed(0)} KB`,
     ].join('\n'),
   )
@@ -240,7 +193,7 @@ async function main() {
 }
 
 main().catch((error: unknown) => {
-  if (error instanceof UsageError) {
+  if (error instanceof UsageError || error instanceof OptionError) {
     console.error(`${error.message} Run pagerecast --help for usage.`)
     process.exit(2)
   }

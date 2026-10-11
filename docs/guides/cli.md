@@ -10,9 +10,11 @@ Nothing leaves your machine: the command loads the page you name and writes file
 npm install -g pagerecast
 ```
 
-You need Node 22 or later and a Chromium. PageRecast tries, in order: `--browser <path>`, Playwright's Chromium (`npx playwright install chromium`), then Google Chrome.
+You need Node 22 or later and a Chromium. PageRecast tries, in order: `--browser <path>`, the `PAGERECAST_BROWSER` environment variable, Playwright's Chromium (`npx playwright install chromium`), then Google Chrome.
 
 From a clone of this repository, `yarn cli <command>` builds and runs the current source.
+
+The same package is a library for scripts ([the API](api.md)), and AI agents can run it through [the MCP server](mcp.md).
 
 ## Capture
 

@@ -14,5 +14,5 @@
     "apps/site/src",
     "apps/site/vite.config.ts"
   ],
-  "exclude": ["**/dist", "**/node_modules"]
+  "exclude": ["**/dist", "**/node_modules", "e2e/fixtures"]
 }

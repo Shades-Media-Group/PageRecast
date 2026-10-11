@@ -10,7 +10,7 @@ It runs the same capture engine as the PageRecast Chrome extension, in headless 
 npm install -g pagerecast      # or run it once with: npx pagerecast
 ```
 
-Needs Node 22 or later and a Chromium. PageRecast uses Playwright's Chromium if it is installed (`npx playwright install chromium`), then Google Chrome; `--browser <path>` picks any other Chrome or Chromium.
+Needs Node 22 or later and a Chromium. PageRecast uses Playwright's Chromium if it is installed (`npx playwright install chromium`), then Google Chrome; `--browser <path>` or the `PAGERECAST_BROWSER` environment variable picks any other Chrome or Chromium.
 
 ## Capture a page
 
@@ -56,6 +56,18 @@ pagerecast info example.com.recast
 ```
 
 Lists each capture with its size, scope, layer counts and screenshot, and the file's assets.
+
+## Use it from code
+
+```ts
+import { capture, encode, tokens } from 'pagerecast'
+
+const file = await capture('https://example.com', { widths: [1440, 390], theme: 'both' })
+const bytes = await encode(file) // a .recast file
+const designMd = tokens(file, 'md')
+```
+
+Typed, ES module only. The library guide lists every function and option: <https://github.com/Shades-Media-Group/PageRecast/blob/main/docs/guides/api.md>. For AI agents there is an MCP server, `pagerecast-mcp`.
 
 ## Licence
 

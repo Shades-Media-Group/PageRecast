@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "pagerecast": {
+      "command": "npx",
+      "args": ["-y", "pagerecast-mcp"],
+      "env": {
+        "PAGERECAST_BROWSER": "",
+        "PAGERECAST_BRIDGE_PORT": "7357"
+      }
+    }
+  }
+}

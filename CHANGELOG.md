@@ -8,8 +8,10 @@ All notable changes to PageRecast are recorded here. The format follows
 
 ### Added
 
+- `pagerecast-mcp`, an MCP server for AI agents (Claude Code, Claude Desktop, Codex CLI, Cursor and others) with the tools `capture_page`, `page_design_tokens`, `recast_info` and `send_to_figma`, and the `.recast` specification as a resource. It runs locally over stdio.
+- A local bridge on `127.0.0.1` that holds captures for the Figma plugin, guarded by a per-session pairing code, with its protocol documented for the plugin.
 - The `pagerecast` package is now also a library with types: `capture`, `encode`, `decode`, `tokens` and `info`.
-- `PAGERECAST_BROWSER` picks the Chrome or Chromium the command line and the library run.
+- `PAGERECAST_BROWSER` picks the Chrome or Chromium the command line, the library and the MCP server run.
 
 ## [1.0.0] - 2026-10-11
 

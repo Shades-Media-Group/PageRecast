@@ -89,6 +89,17 @@ yarn test:e2e     # Playwright against real pages and the built extension
 
 Load `apps/extension/dist` as an unpacked extension and import `apps/figma-plugin/manifest.json` in Figma. The [architecture notes](docs/architecture.md) explain how the pieces fit, and captures use an open, documented format: [`.recast`](docs/scene-format.md).
 
+## AI agents and code
+
+Agents can capture pages, read their design tokens and send captures to Figma through the PageRecast MCP server, which runs on your machine like everything else:
+
+```bash
+claude mcp add pagerecast -- npx -y pagerecast-mcp     # Claude Code
+codex mcp add pagerecast -- npx -y pagerecast-mcp      # Codex CLI
+```
+
+Claude Desktop, Cursor and other clients: see [AI agents (MCP)](docs/guides/mcp.md). Scripts can use the [command line](docs/guides/cli.md) or the same functions as a [library](docs/guides/api.md).
+
 ## Guides
 
 [Getting started](docs/guides/getting-started.md) ·
@@ -97,7 +108,10 @@ Load `apps/extension/dist` as an unpacked extension and import `apps/figma-plugi
 [Import options](docs/guides/import-options.md) ·
 [Fonts](docs/guides/fonts.md) ·
 [HTML files and code](docs/guides/html-and-code.md) ·
-[Troubleshooting](docs/guides/troubleshooting.md)
+[Troubleshooting](docs/guides/troubleshooting.md) ·
+[Command line](docs/guides/cli.md) ·
+[API](docs/guides/api.md) ·
+[AI agents (MCP)](docs/guides/mcp.md)
 
 ## Contributing and support
 

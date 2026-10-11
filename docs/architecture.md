@@ -23,6 +23,9 @@ Chrome tab ──► extension side panel
   - `walk` reads computed styles and geometry, keeps inline formatting as text runs, serialises SVG with resolved styles, records flex layout and orders children by paint order.
   - `assemble` merges captures and deduplicates assets.
 - **`packages/ui`** and **`packages/icons`**: the shared interface.
+- **`packages/tokens`**: design tokens from a scene, as DESIGN.md, CSS or W3C JSON.
+- **`packages/cli`**: the `pagerecast` npm package. `src/api.ts` is the library (capture in headless Chromium over the DevTools Protocol, encode, decode, tokens, info) and `src/main.ts` the command line on top of it.
+- **`packages/mcp`**: `pagerecast-mcp`, an MCP server whose tools call that API, plus the localhost bridge that hands captures to the Figma plugin.
 
 ## Why the DevTools Protocol
 

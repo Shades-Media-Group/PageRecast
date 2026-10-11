@@ -9,6 +9,8 @@
 7. [Firefox](firefox.md): what differs from Chrome.
 8. [Troubleshooting](troubleshooting.md)
 9. [The command line](cli.md): capture pages and extract design tokens without opening Chrome.
+10. [The API](api.md): the same from JavaScript or TypeScript.
+11. [AI agents (MCP)](mcp.md): let Claude Code, Codex, Cursor and other agents capture pages and send them to Figma.
 
 ## Command line
 

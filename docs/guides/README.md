@@ -7,5 +7,17 @@
 5. [Fonts](fonts.md): how fonts are matched and what to do when one is replaced.
 6. [HTML files and code](html-and-code.md): import without the extension.
 7. [Troubleshooting](troubleshooting.md)
+8. [The command line](cli.md): capture pages and extract design tokens without opening Chrome.
+
+## Command line
+
+`pagerecast` captures pages from a terminal with the extension's engine, and turns any capture into design tokens as CSS variables, W3C Design Tokens JSON or a `DESIGN.md` for AI coding tools. Everything runs locally.
+
+```bash
+npx pagerecast capture https://example.com --widths 1440,390 --theme both
+npx pagerecast tokens example.com.recast --format md --out DESIGN.md
+```
+
+See [the command line guide](cli.md).
 
 Developers: see the [`.recast` format](../scene-format.md) and the [architecture](../architecture.md).

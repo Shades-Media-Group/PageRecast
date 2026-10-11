@@ -42,6 +42,16 @@ async function open(
     })
     window.postMessage({ pluginMessage: { type: 'ready', settings, version: '1.0.0' } }, '*')
   }, settings)
+  // The window listens from an effect that can run after the page loads: until the
+  // settings show, send them again.
+  await expect
+    .poll(() =>
+      page.evaluate((settings) => {
+        window.postMessage({ pluginMessage: { type: 'ready', settings, version: '1.0.0' } }, '*')
+        return document.documentElement.dataset.theme
+      }, settings),
+    )
+    .toBe(settings.appearance)
   // The first tab, Web, is open; its name depends on the interface language.
   await expect(page.getByRole('tab').first()).toHaveAttribute('aria-selected', 'true')
 
@@ -254,7 +264,10 @@ test('the Web tab explains failed renders and keeps local pages on this computer
         status: 504,
         headers: CORS,
         contentType: 'application/json',
-        body: JSON.stringify({ error: 'timeout', message: 'The page took longer than 45 seconds.' }),
+        body: JSON.stringify({
+          error: 'timeout',
+          message: 'The page took longer than 45 seconds.',
+        }),
       })
     })
     await page.getByLabel('Page URL').fill('example.com')

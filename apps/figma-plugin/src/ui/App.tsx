@@ -206,9 +206,16 @@ export function App() {
     >
       <header class="pr-header">
         <Logo height={15} />
-        {view === 'settings' && (
-          <IconButton icon="close" label="Close settings" onClick={() => setView('main')} />
-        )}
+        <div class="pr-header__actions">
+          <IconButton icon="feedback" label="Send feedback" onClick={() => openUrl(feedbackUrl)} />
+          <IconButton icon="help" label="Guides and help" onClick={() => openUrl(DOCS_URL)} />
+          <IconButton
+            icon="sliders"
+            label="Import settings"
+            aria-pressed={view === 'settings'}
+            onClick={() => setView(view === 'settings' ? 'main' : 'settings')}
+          />
+        </div>
       </header>
 
       <input
@@ -224,7 +231,10 @@ export function App() {
       />
 
       {view === 'settings' ? (
-        <SettingsView settings={settings} version={version} onChange={saveSettings} />
+        <>
+          <TitleBar title="Import settings" onBack={() => setView('main')} />
+          <SettingsView settings={settings} version={version} onChange={saveSettings} />
+        </>
       ) : (
         <>
           {stage.kind === 'empty' || stage.kind === 'error' ? (
@@ -238,16 +248,12 @@ export function App() {
               ]}
             />
           ) : (
-            <div class="pr-tabs pr-tabs--title">
-              <button type="button" onClick={reset} aria-label="Back to start">
-                <Icon name="chevronRight" size={14} class="flip" />
-                {stage.kind === 'done'
-                  ? 'Imported'
-                  : stage.kind === 'ready'
-                    ? 'Review'
-                    : 'Importing'}
-              </button>
-            </div>
+            <TitleBar
+              title={
+                stage.kind === 'done' ? 'Imported' : stage.kind === 'ready' ? 'Review' : 'Importing'
+              }
+              onBack={reset}
+            />
           )}
 
           <main class="scroll">
@@ -301,24 +307,23 @@ export function App() {
         </>
       )}
 
-      <footer class="toolbar">
-        <IconButton
-          icon="sliders"
-          label="Import settings"
-          aria-pressed={view === 'settings'}
-          onClick={() => setView(view === 'settings' ? 'main' : 'settings')}
-        />
-        <a href={feedbackUrl} onClick={link(feedbackUrl)}>
-          Send feedback
-        </a>
-        <IconButton icon="help" label="Guides and help" onClick={() => openUrl(DOCS_URL)} />
-      </footer>
-
       {dragging && (
         <div class="drop" aria-hidden="true">
           Drop a .recast or .html file
         </div>
       )}
+    </div>
+  )
+}
+
+/** A title row in place of the tabs, with a way back. */
+function TitleBar({ title, onBack }: { title: string; onBack: () => void }) {
+  return (
+    <div class="pr-tabs pr-tabs--title">
+      <button type="button" onClick={onBack} aria-label={`Back from ${title}`}>
+        <Icon name="chevronRight" size={16} class="flip" />
+        {title}
+      </button>
     </div>
   )
 }
@@ -335,7 +340,7 @@ function PasteTab() {
         <p>Copy a page with the PageRecast extension, then paste it anywhere in this window.</p>
         <a class="link" href={EXTENSION_URL} onClick={link(EXTENSION_URL)}>
           Get the Chrome extension
-          <Icon name="external" size={14} />
+          <Icon name="external" size={16} />
         </a>
       </section>
       <Section title="The extension captures">
@@ -345,13 +350,20 @@ function PasteTab() {
           <li>A whole page, the visible area or one element</li>
         </ul>
       </Section>
-      <p class="credit">
-        Free and open source. Built by{' '}
-        <a href={CREDIT.url} onClick={link(CREDIT.url)}>
-          {CREDIT.company}
-        </a>
-      </p>
+      <Credit />
     </>
+  )
+}
+
+function Credit() {
+  return (
+    <p class="credit">
+      Free and open source. Built by{' '}
+      <a href={CREDIT.url} onClick={link(CREDIT.url)}>
+        {CREDIT.company}
+      </a>
+      . Nothing you import leaves this computer.
+    </p>
   )
 }
 
@@ -366,17 +378,18 @@ function FileTab({ onChoose }: { onChoose: () => void }) {
         </Button>
       </section>
       <Section title="Supported files">
-        <dl class="stats">
-          <div class="pr-row">
+        <dl class="pr-props">
+          <div class="pr-prop">
             <dt>.recast</dt>
-            <dd class="muted">Saved from the extension or sent by a teammate</dd>
+            <dd>Saved from the extension or sent by a teammate</dd>
           </div>
-          <div class="pr-row">
+          <div class="pr-prop">
             <dt>.html, .htm</dt>
-            <dd class="muted">Rendered here, without scripts</dd>
+            <dd>Rendered here, without scripts</dd>
           </div>
         </dl>
       </Section>
+      <Credit />
     </>
   )
 }
@@ -454,6 +467,43 @@ function OptionToggles({
   )
 }
 
+/** One row per captured width, with the light and dark frames of that width. */
+interface WidthGroup {
+  width: number
+  device: string
+  light?: Capture
+  dark?: Capture
+}
+
+function groupByWidth(captures: Capture[]): WidthGroup[] {
+  const groups = new Map<number, WidthGroup>()
+  for (const capture of captures) {
+    const width = capture.viewport.width
+    const group = groups.get(width) ?? {
+      width,
+      device: capture.label.split(' · ')[0] || 'Frame',
+    }
+    group[capture.theme] ??= capture
+    groups.set(width, group)
+  }
+  return [...groups.values()]
+}
+
+/** The frame being previewed, large and scrollable, at its relative width. */
+function Preview({ file, capture }: { file: RecastFile; capture: Capture }) {
+  const src = useMemo(() => screenshotUrl(file, capture), [file, capture])
+  const ref = useRef<HTMLDivElement>(null)
+  useEffect(() => ref.current?.scrollTo({ top: 0 }), [capture.id])
+  if (!src) return null
+  // Desktop fills the stage; narrower frames keep their proportion to it.
+  const share = Math.min(100, Math.max(36, (capture.viewport.width / 1440) * 100))
+  return (
+    <div class="preview" ref={ref} tabIndex={0} aria-label={`Preview of ${capture.label}`}>
+      <img src={src} alt={`Screenshot of ${capture.label}`} style={{ width: `${share}%` }} />
+    </div>
+  )
+}
+
 function Review({
   stage,
   onChange,
@@ -461,52 +511,108 @@ function Review({
   stage: Extract<Stage, { kind: 'ready' }>
   onChange: (patch: Partial<Extract<Stage, { kind: 'ready' }>>) => void
 }) {
-  const { file } = stage
-  const first = file.captures.find((c) => stage.selected.has(c.id)) ?? file.captures[0]
-  const preview = useMemo(() => screenshotUrl(file, first), [file, first])
+  const { file, selected } = stage
+  const groups = useMemo(() => groupByWidth(file.captures), [file])
+  const themes = (['light', 'dark'] as const).filter((t) => groups.some((g) => g[t]))
+  const [previewId, setPreviewId] = useState(file.captures[0]!.id)
+  const shown = file.captures.find((c) => c.id === previewId) ?? file.captures[0]!
+  const shownGroup = groups.find((g) => g.width === shown.viewport.width)!
   const domain = domainOf(file)
+
+  const toggle = (capture: Capture) => {
+    const next = new Set(selected)
+    if (next.has(capture.id)) next.delete(capture.id)
+    else next.add(capture.id)
+    onChange({ selected: next })
+  }
+  const pick = (group: WidthGroup) =>
+    setPreviewId((group[shown.theme] ?? group.light ?? group.dark)!.id)
+
   return (
     <>
-      {preview && (
-        <div class="stage">
-          <img class="preview" src={preview} alt={`Screenshot of ${file.source.title}`} />
-        </div>
-      )}
+      <Preview file={file} capture={shown} />
+      <div class="preview-bar">
+        <span class="truncate">
+          {shownGroup.device}{' '}
+          <span class="num muted">
+            {Math.round(shown.width)} × {Math.round(shown.height)}
+          </span>
+        </span>
+        {shownGroup.light && shownGroup.dark && (
+          <Segmented
+            label="Preview theme"
+            value={shown.theme}
+            onChange={(theme) => setPreviewId(shownGroup[theme]!.id)}
+            options={[
+              { value: 'light', label: 'Light' },
+              { value: 'dark', label: 'Dark' },
+            ]}
+          />
+        )}
+      </div>
+
       <Section>
         <div class="source">
           <h1 class="truncate">{file.source.title || domain}</h1>
-          <p class="muted">
+          <p class="truncate muted">
             {domain} · <span class="num">{formatBytes(stage.bytes)}</span>
           </p>
         </div>
       </Section>
-      <Section title="Frames" aside={`${stage.selected.size} of ${file.captures.length}`}>
-        {file.captures.map((capture) => (
-          <label class="pr-row capture">
-            <input
-              class="pr-check"
-              type="checkbox"
-              checked={stage.selected.has(capture.id)}
-              onChange={() => {
-                const selected = new Set(stage.selected)
-                if (selected.has(capture.id)) selected.delete(capture.id)
-                else selected.add(capture.id)
-                onChange({ selected })
-              }}
-            />
-            <Icon name={deviceIcon(capture.viewport.width)} size={16} class="muted" />
-            <span class="truncate">{capture.label}</span>
-            <span class="num muted">
-              {Math.round(capture.width)} × {Math.round(capture.height)}
-            </span>
-          </label>
-        ))}
+
+      <Section
+        title="Frames"
+        aside={
+          <span class="num">
+            {selected.size} of {file.captures.length} selected
+          </span>
+        }
+      >
+        <div class="frames" style={{ '--themes': themes.length }}>
+          <div class="frames-head" aria-hidden="true">
+            <span>Width</span>
+            {themes.map((t) => (
+              <span>{t === 'dark' ? 'Dark' : 'Light'}</span>
+            ))}
+          </div>
+          {groups.map((group) => (
+            <div class={group === shownGroup ? 'frame-row is-shown' : 'frame-row'}>
+              <button
+                type="button"
+                class="frame-pick"
+                aria-pressed={group === shownGroup}
+                aria-label={`Preview ${group.device} ${group.width}`}
+                onClick={() => pick(group)}
+              >
+                <Icon name={deviceIcon(group.width)} size={16} />
+                <span class="truncate">{group.device}</span>
+                <span class="num">{group.width}</span>
+              </button>
+              {themes.map((theme) => {
+                const capture = group[theme]
+                return (
+                  <span class="frame-cell">
+                    {capture && (
+                      <input
+                        class="pr-check"
+                        type="checkbox"
+                        aria-label={`Import ${capture.label}`}
+                        checked={selected.has(capture.id)}
+                        onChange={() => toggle(capture)}
+                      />
+                    )}
+                  </span>
+                )
+              })}
+            </div>
+          ))}
+        </div>
       </Section>
       <OptionToggles
         options={stage.options}
         onChange={(patch) => onChange({ options: { ...stage.options, ...patch } })}
       />
-      <p class="credit">Remembered for {domain}</p>
+      <p class="credit">These options are remembered for {domain}.</p>
     </>
   )
 }
@@ -526,7 +632,7 @@ function Done({ report, askRating }: { report: ImportReport; askRating: boolean 
   return (
     <>
       <Section>
-        <div class="source">
+        <div class="source source--lead">
           <h1>
             <span class="num">{report.frames}</span> {report.frames === 1 ? 'frame' : 'frames'} on
             the canvas
@@ -539,7 +645,7 @@ function Done({ report, askRating }: { report: ImportReport; askRating: boolean 
       </Section>
       {rating && (
         <Section title="Enjoying PageRecast?">
-          <p class="muted">
+          <p class="body">
             A rating on the Figma Community helps other designers find it. We only ask once.
           </p>
           <div class="actions">
@@ -558,32 +664,32 @@ function Done({ report, askRating }: { report: ImportReport; askRating: boolean 
         </Section>
       )}
       <Section title="Created">
-        <dl class="stats">
+        <dl class="pr-stats">
           {rows.map(([label, value]) => (
-            <div class="pr-row">
+            <div>
               <dt>{label}</dt>
-              <dd class="num">{value.toLocaleString()}</dd>
+              <dd class={value === 0 ? 'is-zero' : undefined}>{value.toLocaleString()}</dd>
             </div>
           ))}
         </dl>
       </Section>
       {report.substitutions.length > 0 && (
         <Section title="Fonts replaced" aside="Install them for an exact match">
-          <dl class="stats">
+          <dl class="pr-stats">
             {report.substitutions.map((s) => (
-              <div class="pr-row">
+              <div>
                 <dt class="truncate">
-                  {s.requested} <span class="muted">→ {s.used}</span>
+                  {s.requested} <span class="muted">as {s.used}</span>
                 </dt>
-                <dd class="num muted">{s.count}</dd>
+                <dd>{s.count.toLocaleString()}</dd>
               </div>
             ))}
           </dl>
         </Section>
       )}
       {report.warnings.length > 0 && (
-        <Section title="Notes" aside={report.warnings.length}>
-          <ul class="facts facts--notes">
+        <Section title="Notes" aside={<span class="num">{report.warnings.length}</span>}>
+          <ul class="facts">
             {report.warnings.slice(0, 40).map((w) => (
               <li>{w}</li>
             ))}
@@ -621,28 +727,31 @@ function SettingsView({
   }
   return (
     <main class="scroll settings">
-      <Section title="Import settings">
-        <div class="pr-row scope">
-          <select
-            class="pr-input"
-            value={scope}
-            onChange={(e) => setScope(e.currentTarget.value)}
-            aria-label="Settings for"
-          >
-            <option value="default">Default, for new sites</option>
-            {domains.length > 0 && (
-              <optgroup label="Sites">
-                {domains.map((d) => (
-                  <option value={d}>{d}</option>
-                ))}
-              </optgroup>
+      <Section>
+        <div class={scope === 'default' ? 'pr-prop' : 'pr-prop scope--site'}>
+          <label for="settings-scope">Options for</label>
+          <div class="scope">
+            <select
+              id="settings-scope"
+              class="pr-input"
+              value={scope}
+              onChange={(e) => setScope(e.currentTarget.value)}
+            >
+              <option value="default">New sites</option>
+              {domains.length > 0 && (
+                <optgroup label="Sites">
+                  {domains.map((d) => (
+                    <option value={d}>{d}</option>
+                  ))}
+                </optgroup>
+              )}
+            </select>
+            {scope !== 'default' && (
+              <IconButton icon="trash" label={`Forget ${scope}`} onClick={forget} />
             )}
-          </select>
-          {scope !== 'default' && (
-            <IconButton icon="trash" label={`Forget ${scope}`} onClick={forget} />
-          )}
+          </div>
         </div>
-        <p class="hint">Each site remembers the options you last imported it with.</p>
+        <p class="hint hint--prop">Each site remembers the options you last imported it with.</p>
       </Section>
       <OptionToggles options={current} onChange={update} />
       <Section title="Workflow">
@@ -654,8 +763,8 @@ function SettingsView({
         />
       </Section>
       <Section title="About">
-        <dl class="stats">
-          <div class="pr-row">
+        <dl class="pr-props">
+          <div class="pr-prop">
             <dt>Version</dt>
             <dd class="num">
               <a href={`${REPO_URL}/releases`} onClick={link(`${REPO_URL}/releases`)}>
@@ -663,7 +772,7 @@ function SettingsView({
               </a>
             </dd>
           </div>
-          <div class="pr-row">
+          <div class="pr-prop">
             <dt>Source code</dt>
             <dd>
               <a href={REPO_URL} onClick={link(REPO_URL)}>
@@ -672,14 +781,8 @@ function SettingsView({
             </dd>
           </div>
         </dl>
-        <p class="hint">
-          Free and open source. Built by{' '}
-          <a href={CREDIT.url} onClick={link(CREDIT.url)}>
-            {CREDIT.company}
-          </a>
-          . Nothing you import leaves this computer.
-        </p>
       </Section>
+      <Credit />
     </main>
   )
 }
@@ -699,25 +802,27 @@ function CodeTab({ onRender }: { onRender: (html: string, width: number) => void
         <textarea
           class="pr-textarea code"
           spellcheck={false}
+          aria-label="HTML and CSS"
           placeholder={
             '<style>\n  .card { padding: 24px; border-radius: 16px; }\n</style>\n<div class="card">Hello</div>'
           }
           value={html}
           onInput={(e) => setHtml(e.currentTarget.value)}
         />
-      </Section>
-      <Section title="Width">
-        <div class="width">
-          <Segmented label="Width preset" value={width} onChange={setWidth} options={WIDTHS} />
-          <input
-            class="pr-input"
-            type="number"
-            min={240}
-            max={3840}
-            aria-label="Width in pixels"
-            value={width}
-            onInput={(e) => setWidth(e.currentTarget.value)}
-          />
+        <div class="pr-prop code-width">
+          <span>Width</span>
+          <div class="width">
+            <Segmented label="Width preset" value={width} onChange={setWidth} options={WIDTHS} />
+            <input
+              class="pr-input"
+              type="number"
+              min={240}
+              max={3840}
+              aria-label="Width in pixels"
+              value={width}
+              onInput={(e) => setWidth(e.currentTarget.value)}
+            />
+          </div>
         </div>
       </Section>
       <Section>

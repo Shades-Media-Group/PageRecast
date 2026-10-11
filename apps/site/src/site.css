@@ -252,7 +252,9 @@ code {
   text-align: center;
 }
 .hero h1 {
-  font-size: clamp(48px, 9vw, 112px);
+  /* Below 355 px the floor shrinks too, so long words such as Romanian
+     "Reconstruiește" still fit a 320 px phone. */
+  font-size: clamp(min(48px, 13.5vw), 9vw, 112px);
   line-height: 0.98;
 }
 .hero-lead {
@@ -1034,6 +1036,14 @@ code {
   gap: 12px;
   margin-top: 32px;
 }
+/* The narrowest phones: longer translations (Russian) keep their buttons on screen. */
+@media (max-width: 360px) {
+  .cta .btn {
+    gap: 8px;
+    padding: 0 16px;
+    font-size: 15px;
+  }
+}
 .cta--left {
   justify-content: flex-start;
 }
@@ -1045,6 +1055,7 @@ code {
 .cta-note a {
   color: var(--ink);
   font-weight: 500;
+  white-space: nowrap;
 }
 .btn {
   display: inline-flex;

@@ -65,11 +65,12 @@ await esbuild({
 
 let manifest = {
   manifest_version: 3,
-  name: 'PageRecast',
+  // The store lists by name: the brand first, then the words people search for.
+  name: 'PageRecast — Website to Figma, HTML to design',
   short_name: 'PageRecast',
   version,
   description:
-    'Capture any web page, even one behind a login, and paste it into Figma as editable layers. Free and open source.',
+    'Import any website into Figma as editable layers, even behind a login. HTML to design at every width. Free.',
   homepage_url: 'https://github.com/Shades-Media-Group/PageRecast',
   minimum_chrome_version: '116',
   icons: { 16: 'icons/16.png', 32: 'icons/32.png', 48: 'icons/48.png', 128: 'icons/128.png' },

@@ -28,23 +28,23 @@ Everything here is copy you can paste. Assets are in [`assets/store`](../assets/
 1. **Add new item** and upload `pagerecast-chrome-extension-X.Y.Z.zip`.
 2. **Store listing**
 
-| Field                        | Value                                                                                                        |
-| ---------------------------- | ------------------------------------------------------------------------------------------------------------ |
-| Name                         | PageRecast (taken from the manifest)                                                                         |
-| Summary                      | Capture any web page, even behind a login, and paste it into Figma as editable layers. Free and open source. |
-| Category                     | Developer Tools                                                                                              |
-| Language                     | English                                                                                                      |
-| Icon                         | `assets/brand/png/icon-128.png`                                                                              |
-| Screenshots (1280 × 800)     | `assets/store/chrome-screenshot-1.png` … `-3.png`                                                            |
-| Small promo tile (440 × 280) | `assets/store/chrome-promo-small.png`                                                                        |
-| Marquee (1400 × 560)         | `assets/store/chrome-promo-marquee.png`                                                                      |
-| Homepage                     | https://github.com/Shades-Media-Group/PageRecast                                                             |
-| Support                      | https://github.com/Shades-Media-Group/PageRecast/issues                                                      |
+| Field                        | Value                                                                                                       |
+| ---------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| Name                         | PageRecast — Website to Figma, HTML to design (taken from the manifest)                                     |
+| Summary                      | Import any website into Figma as editable layers, even behind a login. HTML to design at every width. Free. |
+| Category                     | Developer Tools                                                                                             |
+| Language                     | English                                                                                                     |
+| Icon                         | `assets/brand/png/icon-128.png`                                                                             |
+| Screenshots (1280 × 800)     | `assets/store/chrome-screenshot-1.png` … `-3.png`                                                           |
+| Small promo tile (440 × 280) | `assets/store/chrome-promo-small.png`                                                                       |
+| Marquee (1400 × 560)         | `assets/store/chrome-promo-marquee.png`                                                                     |
+| Homepage                     | https://github.com/Shades-Media-Group/PageRecast                                                            |
+| Support                      | https://github.com/Shades-Media-Group/PageRecast/issues                                                     |
 
 **Description**
 
 ```
-Turn any web page into editable Figma layers. Free, with no limits and no account.
+Import any website into Figma as editable layers: HTML to design, web to Figma, at every width and in light and dark. Free, with no limits and no account.
 
 HOW IT WORKS
 1. Open a page and click PageRecast.
@@ -105,9 +105,9 @@ Source code: https://github.com/Shades-Media-Group/PageRecast
 
 | Field          | Value                                                                                                          |
 | -------------- | -------------------------------------------------------------------------------------------------------------- |
-| Name           | PageRecast (taken from the manifest)                                                                           |
+| Name           | PageRecast — Website to Figma, HTML to design (taken from the manifest)                                        |
 | Add-on URL     | `pagerecast`                                                                                                   |
-| Summary        | Capture any web page, even behind a login, and paste it into Figma as editable layers. Free and open source.   |
+| Summary        | Import any website into Figma as editable layers, even behind a login. HTML to design at every width. Free.    |
 | Categories     | Web Development                                                                                                |
 | Support email  | support@shades.md                                                                                              |
 | Support site   | https://github.com/Shades-Media-Group/PageRecast/issues                                                        |
@@ -166,20 +166,20 @@ The manifest now carries the permanent Community ID `1690893819753299295`. For a
 1. **Plugins → Development → Manage plugins in development**, then **Publish** next to PageRecast.
 2. Fill in:
 
-| Field                   | Value                                               |
-| ----------------------- | --------------------------------------------------- |
-| Name                    | PageRecast                                          |
-| Tagline                 | Turn any web page into editable Figma layers. Free. |
-| Icon (128 × 128)        | `assets/brand/png/app-icon-128.png`                 |
-| Cover art (1920 × 1080) | `assets/store/figma-cover.png`                      |
-| Tags                    | import, website, html, web to figma, capture        |
-| Support contact         | support@shades.md                                   |
-| Publisher               | Shades Media Group                                  |
+| Field                   | Value                                                                   |
+| ----------------------- | ----------------------------------------------------------------------- |
+| Name                    | PageRecast — Import websites to Figma (HTML, CSS, web to design)        |
+| Tagline                 | Import any website into Figma as editable layers. HTML to design, free. |
+| Icon (128 × 128)        | `assets/brand/png/app-icon-128.png`                                     |
+| Cover art (1920 × 1080) | `assets/store/figma-cover.png`                                          |
+| Tags                    | import, website, html, web to figma, capture                            |
+| Support contact         | support@shades.md                                                       |
+| Publisher               | Shades Media Group                                                      |
 
 **Description**
 
 ```
-Turn any web page into editable Figma layers. Free, with no limits and no account.
+Import any website into Figma as editable layers: HTML to design, web to Figma, at every width and in light and dark. Free, with no limits and no account.
 
 HOW TO IMPORT A WEBSITE
 1. Install the PageRecast Chrome extension.

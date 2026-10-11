@@ -1,5 +1,5 @@
 {
-  "name": "PageRecast",
+  "name": "PageRecast — Import websites to Figma (HTML, CSS, web to design)",
   "id": "1690893819753299295",
   "api": "1.0.0",
   "main": "dist/code.js",

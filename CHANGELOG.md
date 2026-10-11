@@ -6,6 +6,22 @@ All notable changes to PageRecast are recorded here. The format follows
 
 ## [Unreleased]
 
+## [1.4.0] - 2026-10-12
+
+The panels get softer controls and the plugin's Web tab takes widths of
+your own.
+
+### Added
+
+- **Custom widths in the plugin's Web tab**, the same as in the extension: add any width from 240 to 3840 px, tick it on and off, remove it.
+- **Reset all preferences** at the bottom of settings in both panels, in two clicks.
+
+### Changed
+
+- Pill controls and rounded corners in both panels: width choices are pills with their device icon, so all four fit on one row.
+- The credit, version and links close the settings page instead of every screen.
+- Saved settings from earlier versions are brought up to date.
+
 ## [1.3.0] - 2026-10-11
 
 The extension and the plugin now open in a light theme, with a theme choice in
@@ -104,7 +120,8 @@ plugin that rebuilds them as editable layers. Free, open source and local.
 - Remember import options per site, with defaults for new sites.
 - Place a locked screenshot beside each frame for comparison.
 
-[Unreleased]: https://github.com/Shades-Media-Group/PageRecast/compare/v1.3.0...HEAD
+[Unreleased]: https://github.com/Shades-Media-Group/PageRecast/compare/v1.4.0...HEAD
+[1.4.0]: https://github.com/Shades-Media-Group/PageRecast/compare/v1.3.0...v1.4.0
 [1.3.0]: https://github.com/Shades-Media-Group/PageRecast/compare/v1.2.0...v1.3.0
 [1.2.0]: https://github.com/Shades-Media-Group/PageRecast/compare/v1.1.1...v1.2.0
 [1.1.1]: https://github.com/Shades-Media-Group/PageRecast/compare/v1.1.0...v1.1.1

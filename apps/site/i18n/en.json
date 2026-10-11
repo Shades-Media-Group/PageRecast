@@ -77,6 +77,71 @@
       "format": "Read the format",
       "codeLabel": "An excerpt of a .recast file"
     },
+    "faq": {
+      "title": "Questions, answered.",
+      "lead": "What people ask before they bring their first website into Figma. The guides cover everything else.",
+      "howto": {
+        "q": "How do I import a website into Figma?",
+        "name": "Import a website into Figma with PageRecast",
+        "intro": "Install the Chrome extension and the Figma plugin, then:",
+        "steps": {
+          "capture": {
+            "name": "Capture the page",
+            "text": "Open the page in Chrome, open the PageRecast side panel, pick the widths and themes, and press Capture."
+          },
+          "copy": {
+            "name": "Copy it for Figma",
+            "text": "Press Copy for Figma, or save a .recast file to share or open later."
+          },
+          "paste": {
+            "name": "Paste it in Figma",
+            "text": "Run the PageRecast plugin, paste with ⌘ V or Ctrl V, check the frames and press Import."
+          }
+        }
+      },
+      "items": {
+        "free": {
+          "q": "Is PageRecast really free?",
+          "a": "Yes. There are no plans, limits, trials, accounts or watermarks, and there never will be. PageRecast is open source under the MIT licence."
+        },
+        "login": {
+          "q": "Does it work on pages behind a login?",
+          "a": "Yes. The extension captures what your browser shows, so dashboards, admin panels and anything else you are signed in to import like any public page."
+        },
+        "localhost": {
+          "q": "Can I import localhost or a staging site?",
+          "a": "Yes. Any page that opens in Chrome can be captured, including <code>localhost</code>, staging and preview deployments, with no tunnel and no public URL."
+        },
+        "what": {
+          "q": "What does PageRecast import into Figma?",
+          "a": "Frames with their fills, borders, radii, shadows and blur; text with its fonts and inline styles; images; SVG icons as editable vectors; colour variables with Light and Dark modes; text styles; and a locked screenshot beside each frame to compare against."
+        },
+        "fonts": {
+          "q": "What happens to the page's fonts?",
+          "a": "PageRecast uses every font Figma has, installed on your computer or from Google Fonts. A font Figma doesn't have is replaced by the closest match, and every replacement is listed before and after you import."
+        },
+        "autolayout": {
+          "q": "Does it use Auto Layout?",
+          "a": "Yes, wherever it fits. Flex layouts become Auto Layout when every child lands within 1.5 px of where the page put it. Everything else keeps its exact position, so the import always looks like the page."
+        },
+        "privacy": {
+          "q": "Is my data private?",
+          "a": "Yes. There is no PageRecast server, no account and no analytics. Captures are built in your browser and stay on your computer. The Figma plugin only downloads the images the page already uses, straight from the sites they belong to."
+        },
+        "firefox": {
+          "q": "Does it work in Firefox?",
+          "a": "Yes. PageRecast for Firefox makes the same captures for the same Figma plugin. It captures a page in the theme and language it shows at the moment, so switch those first."
+        },
+        "agents": {
+          "q": "Can AI agents use PageRecast?",
+          "a": "Yes. The PageRecast MCP server lets agents such as Claude Code, Codex and Cursor capture pages, read their design tokens and send captures to Figma. It runs on your computer too: <code>npx -y pagerecast-mcp</code>."
+        },
+        "screenshot": {
+          "q": "How is this different from a screenshot?",
+          "a": "A screenshot is one flat image. PageRecast rebuilds the page as layers: text you can edit, vectors you can recolour, frames you can resize and colours as variables. The screenshot comes along only as a locked reference."
+        }
+      }
+    },
     "install": {
       "title": "Two parts. Two minutes.",
       "chrome": "Chrome extension",

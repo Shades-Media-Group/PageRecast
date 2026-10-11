@@ -578,6 +578,40 @@ code {
   color: #ffb3c1;
 }
 
+/* Questions: one hairline row each, the question beside its answer. */
+.faq {
+  border-top: 1px solid var(--line);
+}
+.faq-list {
+  max-width: var(--measure);
+  margin: clamp(48px, 7vw, 88px) auto 0;
+  border-bottom: 1px solid var(--line);
+}
+.faq-item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr);
+  gap: 10px clamp(32px, 6vw, 96px);
+  padding: 28px 0;
+  border-top: 1px solid var(--line);
+}
+.faq-item h3 {
+  font-size: 21px;
+  font-weight: 650;
+  line-height: 1.3;
+  letter-spacing: -0.015em;
+  text-wrap: balance;
+}
+.faq-answer {
+  color: var(--ink-2);
+}
+.faq-answer ol {
+  margin-top: 10px;
+  padding-left: 22px;
+}
+.faq-answer li + li {
+  margin-top: 6px;
+}
+
 /* Install */
 .install {
   padding: clamp(80px, 10vw, 128px) var(--gutter);
@@ -764,7 +798,8 @@ code {
   }
   .chapter-head,
   .chapter-head--wide,
-  .chapter--open {
+  .chapter--open,
+  .faq-item {
     grid-template-columns: 1fr;
   }
   .install-row {

@@ -51,6 +51,23 @@ function lookup(dict: Dict, key: string, code: string): string {
 /** Dictionary text is trusted HTML; quotes are escaped so it also fits in attributes. */
 const html = (text: string) => text.replaceAll('"', '&quot;')
 
+const entries = (node: string | Dict | undefined) => Object.values(node as Dict) as Dict[]
+
+/** The home page questions, the how-to first, with HTML answers. */
+function questions(dict: Dict) {
+  const faq = (dict.home as Dict).faq as Dict
+  const howto = faq.howto as Dict
+  return [
+    {
+      q: howto.q as string,
+      a: `<p>${howto.intro}</p><ol>${entries(howto.steps)
+        .map((step) => `<li>${step.text}</li>`)
+        .join('')}</ol>`,
+    },
+    ...entries(faq.items).map((item) => ({ q: item.q as string, a: `<p>${item.a}</p>` })),
+  ]
+}
+
 function render(locale: Locale, page: Page): string {
   const dict = dictionary(locale.code)
   const base = pathOf(locale, PAGES[0])
@@ -71,6 +88,13 @@ function render(locale: Locale, page: Page): string {
         .join('\n    '),
     langs: () => '',
     langlist: () => '',
+    faq: () =>
+      `<div class="faq-list" data-reveal>${questions(dict)
+        .map(
+          ({ q, a }) =>
+            `\n          <div class="faq-item"><h3>${q}</h3><div class="faq-answer">${a}</div></div>`,
+        )
+        .join('')}\n        </div>`,
   }
   return (
     template

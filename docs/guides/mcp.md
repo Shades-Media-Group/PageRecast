@@ -189,7 +189,7 @@ This is the contract the Figma plugin implements. Version 1.
 
 | Method and path         | Auth | Request                                           | Response                                                                     |
 | ----------------------- | ---- | ------------------------------------------------- | ---------------------------------------------------------------------------- |
-| `GET /v1/status`        | no   |                                                   | `200 {"app":"pagerecast-bridge","protocol":1,"version":"1.0.0"}`             |
+| `GET /v1/status`        | no   |                                                   | `200 {"app":"pagerecast-bridge","protocol":1,"version":"1.1.1"}`             |
 | `GET /v1/files`         | yes  |                                                   | `200 {"files":[PendingFile, …]}`, oldest first                               |
 | `GET /v1/files/{id}`    | yes  |                                                   | `200` `application/octet-stream`: the `.recast` bytes (gzip-compressed JSON) |
 | `DELETE /v1/files/{id}` | yes  |                                                   | `204`                                                                        |

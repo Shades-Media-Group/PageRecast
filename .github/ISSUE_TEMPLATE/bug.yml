@@ -21,7 +21,7 @@ body:
     id: version
     attributes:
       label: PageRecast version
-      placeholder: 1.0.0
+      placeholder: 1.1.1
   - type: input
     id: environment
     attributes:

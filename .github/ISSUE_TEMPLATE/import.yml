@@ -27,7 +27,7 @@ body:
     attributes:
       label: PageRecast version
       description: Shown at the bottom of the extension and in the plugin's settings.
-      placeholder: 1.0.0
+      placeholder: 1.1.1
   - type: textarea
     id: file
     attributes:

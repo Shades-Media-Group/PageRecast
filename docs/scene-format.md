@@ -10,7 +10,7 @@ The TypeScript definition in [`packages/scene/src/types.ts`](../packages/scene/s
 {
   "format": "pagerecast/scene",
   "version": 1,
-  "generator": { "name": "PageRecast", "version": "1.0.0", "surface": "extension" },
+  "generator": { "name": "PageRecast", "version": "1.1.1", "surface": "extension" },
   "source": { "url": "https://example.com/", "title": "Example", "capturedAt": "2026-10-10T12:00:00.000Z" },
   "captures": [ … ],
   "assets": { … }

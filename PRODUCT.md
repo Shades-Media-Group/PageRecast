@@ -59,7 +59,7 @@ The plugin can also import `.html` files and pasted HTML/CSS code with no extens
 - **Free forever:** no payments, tiers, limits, trials, upgrade prompts or watermarks, anywhere.
 - **Local only:** no backend and no analytics. The only network use is the Figma plugin fetching images a capture references, and, when agent imports are on, polling the MCP server's bridge on `127.0.0.1`.
 - **Licence:** MIT © Shades Media Group.
-- **Version:** 1.0.0 is the first public release.
+- **Version:** 1.1.1 is the current release; 1.0.0 was the first public one.
 
 **Platform limits**
 

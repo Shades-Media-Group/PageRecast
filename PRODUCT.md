@@ -11,7 +11,7 @@ Two surfaces share one design system:
 - **Chrome extension side panel** (Chromium browsers, Manifest V3), about 360–480 px wide, docked next to the page being captured.
 - **Figma plugin window** inside Figma desktop and Figma in the browser, a fixed iframe of about 360 × 600 px that Figma frames and lets the user resize.
 
-The website, pagerecast.shades.md, is written in English (the default, at `/`), French (`/fr/`), Romanian (`/ro/`), Russian (`/ru/`), Spanish (`/es/`) and Simplified Chinese (`/zh/`). Twenty more languages through Google's machine translation are built but switched off (`MACHINE_TRANSLATION` in `apps/site/pages.ts`) until Cloudflare lets Google's translation proxy reach the site. The extension and plugin speak the same six languages and follow the browser or Figma language.
+The website, pagerecast.shades.md, is written in English (the default, at `/`), French (`/fr/`), Romanian (`/ro/`), Russian (`/ru/`), Spanish (`/es/`), Italian (`/it/`), Turkish (`/tr/`), Hindi (`/hi/`), Japanese (`/ja/`), Simplified Chinese (`/zh/`) and Traditional Chinese (`/zh-hant/`). Sixteen more languages through Google's machine translation are built but switched off (`MACHINE_TRANSLATION` in `apps/site/pages.ts`) until Cloudflare lets Google's translation proxy reach the site. The extension and plugin speak the first six of them and follow the browser or Figma language.
 
 ## Stack
 

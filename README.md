@@ -30,7 +30,12 @@
   <a href="https://pagerecast.shades.md/ro/">Română</a> ·
   <a href="https://pagerecast.shades.md/ru/">Русский</a> ·
   <a href="https://pagerecast.shades.md/es/">Español</a> ·
-  <a href="https://pagerecast.shades.md/zh/">中文</a>
+  <a href="https://pagerecast.shades.md/it/">Italiano</a> ·
+  <a href="https://pagerecast.shades.md/tr/">Türkçe</a> ·
+  <a href="https://pagerecast.shades.md/hi/">हिन्दी</a> ·
+  <a href="https://pagerecast.shades.md/ja/">日本語</a> ·
+  <a href="https://pagerecast.shades.md/zh/">简体中文</a> ·
+  <a href="https://pagerecast.shades.md/zh-hant/">繁體中文</a>
 </p>
 
 <p align="center">

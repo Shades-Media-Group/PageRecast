@@ -6,6 +6,13 @@ All notable changes to PageRecast are recorded here. The format follows
 
 ## [Unreleased]
 
+### Added
+
+- **Website languages:** Italian, Turkish, Hindi, Japanese and Traditional Chinese, for eleven in all.
+- **Display and accessibility panel on the website:** a 20 px dot in the corner opens it. Readers choose light, dark or the system theme, and can turn on larger text, more contrast, reduced motion, underlined links and easier reading.
+  - Choices stay in the browser.
+  - A one-time notice says the site sets no cookies.
+
 ## [1.2.0] - 2026-10-11
 
 PageRecast now speaks English, French, Romanian, Russian, Spanish and Chinese.

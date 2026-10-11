@@ -7,6 +7,7 @@
  * gitignored) and hands them to Rollup as inputs, so crawlers get static,
  * translated HTML and Vite bundles the scripts and styles as usual.
  */
+import { execFileSync } from 'node:child_process'
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -282,6 +283,8 @@ function head(locale: Locale, page: Page, t: (key: string) => string, dict: Dict
       (l) => `<link rel="alternate" hreflang="${l.lang}" href="${SITE}${pathOf(l, page)}" />`,
     ),
     `<link rel="alternate" hreflang="x-default" href="${SITE}${pathOf(LOCALES[0], page)}" />`,
+    '<link rel="alternate" type="text/plain" href="/llms.txt" title="PageRecast for language models" />',
+    '<link rel="sitemap" type="application/xml" href="/sitemap.xml" />',
     '<meta name="color-scheme" content="light dark" />',
     '<meta name="theme-color" content="#fdfdfc" media="(prefers-color-scheme: light)" />',
     '<meta name="theme-color" content="#0b0b0c" media="(prefers-color-scheme: dark)" />',
@@ -371,6 +374,64 @@ function render(locale: Locale, page: Page): string {
   )
 }
 
+/** The last commit that touched the site, so lastmod only moves when a page can have. */
+function lastModified() {
+  try {
+    return execFileSync('git', ['log', '-1', '--format=%cs', '--', root], {
+      encoding: 'utf8',
+    }).trim()
+  } catch {
+    return new Date().toISOString().slice(0, 10)
+  }
+}
+
+/** Every indexable page in every language, each listing all of its languages. */
+function sitemap() {
+  const lastmod = lastModified()
+  const urls = PAGES.filter((page) => !('noindex' in page)).flatMap((page) =>
+    LOCALES.map((locale) =>
+      [
+        '  <url>',
+        `    <loc>${SITE}${pathOf(locale, page)}</loc>`,
+        `    <lastmod>${lastmod}</lastmod>`,
+        ...LOCALES.map(
+          (l) =>
+            `    <xhtml:link rel="alternate" hreflang="${l.lang}" href="${SITE}${pathOf(l, page)}" />`,
+        ),
+        `    <xhtml:link rel="alternate" hreflang="x-default" href="${SITE}${pathOf(LOCALES[0], page)}" />`,
+        '  </url>',
+      ].join('\n'),
+    ),
+  )
+  return `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+${urls.join('\n')}
+</urlset>
+`
+}
+
+/** llms.txt, and llms-full.txt: the same facts plus the how-to and FAQ in English. */
+function llms() {
+  const summary = readFileSync(join(root, 'templates', 'llms.txt'), 'utf8').replace(
+    '{{@version}}',
+    version,
+  )
+  const dict = dictionary('en')
+  const faq = questions(dict)
+    .map(({ q, a }) => {
+      const answer = a.includes('<ol>')
+        ? a
+            .replace(/<\/p><ol><li>/, '\n\n1. ')
+            .split('</li><li>')
+            .map((step, i) => (i ? `${i + 1}. ${step}` : step))
+            .join('\n')
+        : a
+      return `### ${plain(q)}\n\n${plain(answer)}`
+    })
+    .join('\n\n')
+  return { summary, full: `${summary}\n## Frequently asked questions\n\n${faq}\n` }
+}
+
 /** Writes every page in every language and returns them as Rollup inputs. */
 function generate(): Record<string, string> {
   checkDictionaries()
@@ -398,6 +459,10 @@ export function pages(): Plugin {
         ['icon-512.png', 'png/app-icon-512.png'],
       ])
         this.emitFile({ type: 'asset', fileName, source: readFileSync(join(brand, source!)) })
+      const { summary, full } = llms()
+      this.emitFile({ type: 'asset', fileName: 'sitemap.xml', source: sitemap() })
+      this.emitFile({ type: 'asset', fileName: 'llms.txt', source: summary })
+      this.emitFile({ type: 'asset', fileName: 'llms-full.txt', source: full })
     },
     configureServer(server) {
       const sources = [join(root, 'templates'), join(root, 'i18n')]

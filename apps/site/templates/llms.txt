@@ -1,0 +1,55 @@
+# PageRecast
+
+> PageRecast imports any web page into Figma as editable layers. It is a free, open-source Chrome extension (also for Firefox) and Figma plugin that runs entirely on the user's computer: no account, no server, no analytics and no limits. Made by Shades Media Group.
+
+## Facts
+
+- Price: free forever. No plans, limits, trials, accounts, upgrade prompts or watermarks. MIT licence.
+- Parts: a browser extension that captures the page, and a Figma plugin that builds the layers. Both are needed for a website; the plugin alone imports `.html` files and pasted HTML and CSS.
+- Browsers: Chrome and other Chromium browsers (Manifest V3); Firefox 142 or later on desktop.
+- Figma: the plugin runs in Figma desktop and Figma in the browser.
+- Capture scope: the full page, the visible area or one picked element.
+- Widths: desktop, laptop, tablet, mobile or any width from 240 to 3840 px, several in one capture, each imported as its own frame.
+- Themes: light, dark or both. Both themes become colour variables with a Light and a Dark mode.
+- Private pages: captures exactly what the browser shows, so pages behind a login, staging sites and localhost work like public pages.
+- Imported into Figma: frames with fills, gradients, borders, per-corner radii, shadows and blur; text with its fonts and inline styles; images; SVG as editable vectors; colour variables; text styles; Auto Layout wherever every child lands within 1.5 px of the page; a locked screenshot beside each frame to compare against.
+- Fonts: uses every font Figma has (installed or Google Fonts); missing fonts are replaced by the closest match and listed before and after import.
+- Privacy: captures are built in the browser and stay on the computer. The only network requests are the Figma plugin downloading images the page already uses, from the sites they belong to.
+- File format: `.recast`, gzipped JSON with a documented, open schema.
+- Automation: a command line (`npm install -g pagerecast`), a library, and an MCP server for AI agents (`npx -y pagerecast-mcp`) that capture pages, read design tokens and send captures to Figma, all locally.
+- Languages of this site: English, French, Romanian, Russian, Spanish and Simplified Chinese.
+- Current version: {{@version}}.
+
+## Install
+
+- [Chrome extension (Chrome Web Store)](https://chromewebstore.google.com/detail/iidlcnlnejbmdihmbfiojpikhgaggkel): captures pages in Chrome.
+- [Figma plugin (Figma Community)](https://www.figma.com/community/plugin/1690893819753299295): builds the layers in Figma.
+- [Firefox](https://github.com/Shades-Media-Group/PageRecast/blob/main/docs/guides/firefox.md): the Firefox version and how it differs.
+- [Command line on npm](https://www.npmjs.com/package/pagerecast): `pagerecast capture <url>`.
+- [MCP server on npm](https://www.npmjs.com/package/pagerecast-mcp): for Claude Code, Codex, Cursor and other agents.
+
+## Guides
+
+- [Getting started](https://github.com/Shades-Media-Group/PageRecast/blob/main/docs/guides/getting-started.md): install both parts and import a first page in two minutes.
+- [Private pages and localhost](https://github.com/Shades-Media-Group/PageRecast/blob/main/docs/guides/private-pages.md)
+- [Widths, themes and languages](https://github.com/Shades-Media-Group/PageRecast/blob/main/docs/guides/widths-themes-language.md)
+- [Import options](https://github.com/Shades-Media-Group/PageRecast/blob/main/docs/guides/import-options.md)
+- [Fonts](https://github.com/Shades-Media-Group/PageRecast/blob/main/docs/guides/fonts.md)
+- [HTML files and code](https://github.com/Shades-Media-Group/PageRecast/blob/main/docs/guides/html-and-code.md)
+- [Troubleshooting](https://github.com/Shades-Media-Group/PageRecast/blob/main/docs/guides/troubleshooting.md)
+- [Command line](https://github.com/Shades-Media-Group/PageRecast/blob/main/docs/guides/cli.md)
+- [AI agents (MCP)](https://github.com/Shades-Media-Group/PageRecast/blob/main/docs/guides/mcp.md)
+- [The .recast format](https://github.com/Shades-Media-Group/PageRecast/blob/main/docs/scene-format.md)
+
+## Site
+
+- [Home](https://pagerecast.shades.md/): what PageRecast does, with a FAQ.
+- [Test page](https://pagerecast.shades.md/sample/): a page built to exercise every feature of an import.
+- [Gallery](https://pagerecast.shades.md/gallery/): ready `.recast` files to open in Figma.
+- [Privacy policy](https://pagerecast.shades.md/privacy/)
+
+## Optional
+
+- [Source code on GitHub](https://github.com/Shades-Media-Group/PageRecast)
+- [Changelog](https://github.com/Shades-Media-Group/PageRecast/blob/main/CHANGELOG.md)
+- [Full text for language models](https://pagerecast.shades.md/llms-full.txt): these facts plus the FAQ.

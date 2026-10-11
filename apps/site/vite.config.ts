@@ -1,6 +1,7 @@
 import { defineConfig } from 'vite'
 import { readFileSync } from 'node:fs'
 import { pages } from './pages'
+import { theme } from './theme'
 
 const { version } = JSON.parse(readFileSync(new URL('../../package.json', import.meta.url), 'utf8'))
 
@@ -9,7 +10,7 @@ const { version } = JSON.parse(readFileSync(new URL('../../package.json', import
 export default defineConfig({
   base: '/',
   define: { __VERSION__: JSON.stringify(version) },
-  plugins: [pages()],
+  plugins: [pages(), theme()],
   // `vite preview` sends the production CSP, so a page that breaks it fails locally too.
   preview: {
     headers: {

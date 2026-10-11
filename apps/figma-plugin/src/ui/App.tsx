@@ -474,7 +474,7 @@ function FileTab({ onChoose }: { onChoose: () => void }) {
         <h1>Open a file</h1>
         <p>Drop files anywhere in this window, or choose them. Several files import together.</p>
         <Button icon="file" onClick={onChoose}>
-          Choose file
+          Choose files
         </Button>
       </section>
       <Section title="Supported files">

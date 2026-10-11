@@ -8,6 +8,7 @@ export const es: Messages = {
   'common.copied': 'Copiado',
   'common.delete': 'Eliminar',
   'common.dismiss': 'Cerrar',
+  'common.cancel': 'Cancelar',
   'common.width': 'Ancho',
   'common.widths': 'Anchos',
   'common.theme': 'Tema',
@@ -24,7 +25,8 @@ export const es: Messages = {
   'count.frames': { one: '{count} marco', other: '{count} marcos' },
   'count.layers': { one: '{count} capa', other: '{count} capas' },
   'credit.built': 'Gratis y de código abierto. Creado por {company}.',
-  'credit.local': 'Nada de lo que importas sale de este ordenador.',
+  'credit.local':
+    'Sin seguimiento. La pestaña Web solo envía la dirección que escribes y no se guarda nada.',
   'reset.saved': 'Tus elecciones se guardan en este ordenador y se usan la próxima vez.',
   'reset.label': 'Restablecer todas las preferencias',
   'reset.confirm': 'Haz clic otra vez para restablecerlo todo',
@@ -213,19 +215,28 @@ export const es: Messages = {
 
   'web.title': 'Importar una página por URL',
   'web.body':
-    'La extensión PageRecast abre la página en tu navegador, la captura y la copia. Después, pégala aquí.',
+    'El servidor de PageRecast abre la página pública y devuelve sus capas. No se guarda nada.',
   'web.url': 'URL de la página',
   'web.invalid': 'Escribe una dirección web, por ejemplo example.com.',
+  'web.import': 'Importar página',
+  'web.opening': 'Abriendo {host}…',
+  'web.browser': '{button} para páginas con inicio de sesión, en staging o en localhost.',
   'web.capture': 'Capturar en el navegador',
   'web.sent': 'Se abrió {host} en tu navegador. Pulsa {button} allí y pega aquí con ⌘V.',
   'web.captureButton': 'Capturar',
   'web.languagePlaceholder': 'El del navegador, o de-DE',
   'web.languageInvalid': 'Usa un código de idioma como de-DE o fr.',
   'web.browserDefault': 'El del navegador',
-  'web.without': 'Sin la extensión',
-  'web.withoutBody':
-    'Por ahora, importar por URL requiere la extensión. Sin ella, guarda la página en tu navegador como página web o archivo .mhtml y ábrela en Archivo.',
   'web.getExtension': 'Obtener la extensión',
+  'web.errorLocal': 'Las páginas en localhost o con inicio de sesión necesitan la extensión.',
+  'web.errorUnreachable': '{host} no cargó. Revisa la dirección.',
+  'web.errorTimeout': '{host} tardó más de 45 segundos. Prueba con menos anchos.',
+  'web.errorLimit': 'Demasiadas páginas en este minuto. Vuelve a intentarlo en un momento.',
+  'web.errorUnavailable':
+    'El servidor no puede abrir páginas ahora. Vuelve a intentarlo en un minuto.',
+  'web.errorOffline': 'No se pudo contactar con el servidor de PageRecast. Revisa tu conexión.',
+  'web.errorFailed':
+    '{host} se abrió, pero no se pudo capturar. Prueba a capturarla en tu navegador.',
 
   'ext.title': 'La extensión PageRecast',
   'ext.body':

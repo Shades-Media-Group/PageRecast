@@ -15,6 +15,7 @@ export const en = {
   'common.copied': 'Copied',
   'common.delete': 'Delete',
   'common.dismiss': 'Dismiss',
+  'common.cancel': 'Cancel',
   'common.width': 'Width',
   'common.widths': 'Widths',
   'common.theme': 'Theme',
@@ -31,7 +32,8 @@ export const en = {
   'count.frames': { one: '{count} frame', other: '{count} frames' },
   'count.layers': { one: '{count} layer', other: '{count} layers' },
   'credit.built': 'Free and open source. Built by {company}.',
-  'credit.local': 'Nothing you import leaves this computer.',
+  'credit.local':
+    'No tracking. The Web tab sends only the address you type, and nothing is stored.',
   'reset.saved': 'Your choices are saved on this computer and used next time.',
   'reset.label': 'Reset all preferences',
   'reset.confirm': 'Click again to reset everything',
@@ -224,19 +226,26 @@ export const en = {
   // Plugin: Web tab
   'web.title': 'Import a page by URL',
   'web.body':
-    'The PageRecast extension opens the page in your browser, captures it and copies it. Then paste it here.',
+    'PageRecast’s server opens the public page and sends back its layers. Nothing is stored.',
   'web.url': 'Page URL',
   'web.invalid': 'Enter a web address, such as example.com.',
+  'web.import': 'Import page',
+  'web.opening': 'Opening {host}…',
+  'web.browser': '{button} for pages behind a login, on staging or on localhost.',
   'web.capture': 'Capture in browser',
   'web.sent': 'Opened {host} in your browser. Press {button} there, then paste here with ⌘V.',
   'web.captureButton': 'Capture',
   'web.languagePlaceholder': 'Browser default, or de-DE',
   'web.languageInvalid': 'Use a language tag such as de-DE or fr.',
   'web.browserDefault': 'Browser default',
-  'web.without': 'Without the extension',
-  'web.withoutBody':
-    'URL import needs the extension for now. Without it, save the page in your browser as a web page or .mhtml file and open it in File.',
   'web.getExtension': 'Get the extension',
+  'web.errorLocal': 'Pages on localhost or behind a login need the extension.',
+  'web.errorUnreachable': '{host} did not load. Check the address.',
+  'web.errorTimeout': '{host} took longer than 45 seconds. Try fewer widths.',
+  'web.errorLimit': 'Too many pages this minute. Try again shortly.',
+  'web.errorUnavailable': 'The server cannot open pages right now. Try again in a minute.',
+  'web.errorOffline': 'Could not reach PageRecast’s server. Check your connection.',
+  'web.errorFailed': '{host} opened but could not be captured. Try capturing it in your browser.',
 
   // Plugin: Extension tab
   'ext.title': 'The PageRecast extension',

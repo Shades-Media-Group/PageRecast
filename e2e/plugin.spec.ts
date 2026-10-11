@@ -205,6 +205,84 @@ test('the Web tab hands the URL and settings to the extension through a capture 
   })
 })
 
+const RENDER = 'https://pagerecast.shades.md/api/render'
+const CORS = { 'access-control-allow-origin': '*' }
+
+test('the Web tab imports a public page through the render service', async ({ page }) => {
+  for (const scheme of ['light', 'dark'] as const) {
+    const errors = await open(page, scheme)
+    let release!: () => void
+    const held = new Promise<void>((resolve) => (release = resolve))
+    const bodies: unknown[] = []
+    await page.route(RENDER, async (route) => {
+      bodies.push(route.request().postDataJSON())
+      await held
+      await route.fulfill({
+        headers: { ...CORS, 'content-type': 'application/octet-stream' },
+        body: Buffer.from(await encodeFile(minimalFile())),
+      })
+    })
+    await page.getByLabel('Page URL').fill('example.com')
+    await page.waitForTimeout(300) // the pill eases into its enabled colour
+    await shot(page, `web-cloud-idle-${scheme}`)
+    await page.getByRole('button', { name: 'Import page' }).click()
+    await expect(page.getByText('Opening example.com…')).toBeVisible()
+    await expect(page.getByRole('button', { name: 'Import page' })).toBeDisabled()
+    await shot(page, `web-cloud-rendering-${scheme}`)
+
+    release()
+    await expect(page.getByRole('button', { name: 'Back from Review' })).toBeVisible()
+    await expect(page.getByRole('heading', { name: 'From an agent' })).toBeVisible()
+    // Only the address and the capture settings go to the server.
+    expect(bodies).toEqual([
+      { url: 'https://example.com/', widths: [1440], theme: 'light', language: '' },
+    ])
+    await page.unroute(RENDER)
+    expect(errors).toEqual([])
+  }
+})
+
+test('the Web tab explains failed renders and keeps local pages on this computer', async ({
+  page,
+}) => {
+  for (const scheme of ['light', 'dark'] as const) {
+    const errors = await open(page, scheme)
+    let calls = 0
+    await page.route(RENDER, async (route) => {
+      calls++
+      await route.fulfill({
+        status: 504,
+        headers: CORS,
+        contentType: 'application/json',
+        body: JSON.stringify({ error: 'timeout', message: 'The page took longer than 45 seconds.' }),
+      })
+    })
+    await page.getByLabel('Page URL').fill('example.com')
+    await page.getByRole('button', { name: 'Import page' }).click()
+    await expect(
+      page.getByText('example.com took longer than 45 seconds. Try fewer widths.'),
+    ).toBeVisible()
+    await shot(page, `web-cloud-error-${scheme}`)
+
+    // localhost is refused before anything is sent, and points to the extension.
+    await page.getByLabel('Page URL').fill('http://localhost:3000')
+    await page.getByRole('button', { name: 'Import page' }).click()
+    await expect(
+      page.getByText('Pages on localhost or behind a login need the extension.'),
+    ).toBeVisible()
+    await shot(page, `web-cloud-local-${scheme}`)
+    expect(calls).toBe(1)
+    await page.getByRole('button', { name: 'Get the extension' }).click()
+    await expect(page.getByRole('tab', { name: 'Extension' })).toHaveAttribute(
+      'aria-selected',
+      'true',
+    )
+    await page.unroute(RENDER)
+    // The browser logs the deliberate 504; nothing else may fail.
+    expect(errors.filter((e) => !e.includes('status of 504'))).toEqual([])
+  }
+})
+
 test('a capture pasted into a field imports instead of filling it', async ({ page }) => {
   await open(page)
   const file: RecastFile = minimalFile()

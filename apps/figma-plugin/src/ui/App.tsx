@@ -435,6 +435,7 @@ export function App() {
                     onChange={(web) => saveSettings({ ...settingsRef.current, web })}
                     open={openUrl}
                     onExtension={() => setTab('extension')}
+                    onImport={(bytes) => void load(() => decode(bytes), bytes.length)}
                   />
                 )}
                 {tab === 'extension' && <ExtensionTab open={openUrl} />}

@@ -9,6 +9,7 @@ export const ro: Messages = {
   'common.copied': 'Copiat',
   'common.delete': 'Șterge',
   'common.dismiss': 'Închide',
+  'common.cancel': 'Anulează',
   'common.width': 'Lățime',
   'common.widths': 'Lățimi',
   'common.theme': 'Temă',
@@ -29,7 +30,8 @@ export const ro: Messages = {
     other: '{count} de straturi',
   },
   'credit.built': 'Gratuit și open source. Creat de {company}.',
-  'credit.local': 'Nimic din ce imporți nu părăsește acest computer.',
+  'credit.local':
+    'Fără urmărire. Fila Web trimite doar adresa pe care o scrii și nu se păstrează nimic.',
   'reset.saved': 'Alegerile tale sunt salvate pe acest computer și folosite data viitoare.',
   'reset.label': 'Resetează toate preferințele',
   'reset.confirm': 'Apasă din nou pentru a reseta tot',
@@ -235,19 +237,28 @@ export const ro: Messages = {
 
   'web.title': 'Importă o pagină după URL',
   'web.body':
-    'Extensia PageRecast deschide pagina în browser, o capturează și o copiază. Apoi lipește-o aici.',
+    'Serverul PageRecast deschide pagina publică și trimite înapoi straturile ei. Nu se păstrează nimic.',
   'web.url': 'URL-ul paginii',
   'web.invalid': 'Introdu o adresă web, de exemplu example.com.',
+  'web.import': 'Importă pagina',
+  'web.opening': 'Se deschide {host}…',
+  'web.browser': '{button} pentru pagini cu autentificare, de staging sau de pe localhost.',
   'web.capture': 'Capturează în browser',
   'web.sent': 'Am deschis {host} în browser. Apasă {button} acolo, apoi lipește aici cu ⌘V.',
   'web.captureButton': 'Capturează',
   'web.languagePlaceholder': 'Cea a browserului sau de-DE',
   'web.languageInvalid': 'Folosește un cod de limbă, de exemplu de-DE sau fr.',
   'web.browserDefault': 'Cea a browserului',
-  'web.without': 'Fără extensie',
-  'web.withoutBody':
-    'Deocamdată, importul după URL are nevoie de extensie. Fără ea, salvează pagina din browser ca pagină web sau fișier .mhtml și deschide-o în Fișier.',
   'web.getExtension': 'Obține extensia',
+  'web.errorLocal': 'Paginile de pe localhost sau cu autentificare au nevoie de extensie.',
+  'web.errorUnreachable': '{host} nu s-a încărcat. Verifică adresa.',
+  'web.errorTimeout': '{host} a durat mai mult de 45 de secunde. Încearcă mai puține lățimi.',
+  'web.errorLimit': 'Prea multe pagini în acest minut. Încearcă din nou puțin mai târziu.',
+  'web.errorUnavailable':
+    'Serverul nu poate deschide pagini acum. Încearcă din nou peste un minut.',
+  'web.errorOffline': 'Serverul PageRecast nu răspunde. Verifică conexiunea.',
+  'web.errorFailed':
+    '{host} s-a deschis, dar nu a putut fi capturat. Încearcă să-l capturezi în browser.',
 
   'ext.title': 'Extensia PageRecast',
   'ext.body':

@@ -362,7 +362,25 @@ body,
 .sent {
   margin-top: 8px;
 }
-.text-button--gap {
+/* The render in progress: what is opening, and a way out. */
+.rendering {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  margin-top: 8px;
+  color: var(--ink-2);
+  font-size: 11px;
+  line-height: 16px;
+}
+.rendering .text-button {
+  margin-left: auto;
+}
+.hint--error .text-button {
+  color: var(--ink);
+}
+/* The extension route, for pages the server cannot open. */
+.web-browser {
   margin-top: 8px;
 }
 

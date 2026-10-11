@@ -8,6 +8,7 @@ export const fr: Messages = {
   'common.copied': 'Copié',
   'common.delete': 'Supprimer',
   'common.dismiss': 'Fermer',
+  'common.cancel': 'Annuler',
   'common.width': 'Largeur',
   'common.widths': 'Largeurs',
   'common.theme': 'Thème',
@@ -24,7 +25,8 @@ export const fr: Messages = {
   'count.frames': { one: '{count} frame', other: '{count} frames' },
   'count.layers': { one: '{count} calque', other: '{count} calques' },
   'credit.built': 'Gratuit et open source. Créé par {company}.',
-  'credit.local': 'Rien de ce que vous importez ne quitte cet ordinateur.',
+  'credit.local':
+    'Aucun suivi. L’onglet Web n’envoie que l’adresse saisie, et rien n’est conservé.',
   'reset.saved': 'Vos choix sont enregistrés sur cet ordinateur et repris la prochaine fois.',
   'reset.label': 'Réinitialiser toutes les préférences',
   'reset.confirm': 'Cliquez encore pour tout réinitialiser',
@@ -213,9 +215,13 @@ export const fr: Messages = {
 
   'web.title': 'Importer une page par URL',
   'web.body':
-    'L’extension PageRecast ouvre la page dans votre navigateur, la capture et la copie. Collez-la ensuite ici.',
+    'Le serveur de PageRecast ouvre la page publique et renvoie ses calques. Rien n’est conservé.',
   'web.url': 'URL de la page',
   'web.invalid': 'Saisissez une adresse web, par exemple example.com.',
+  'web.import': 'Importer la page',
+  'web.opening': 'Ouverture de {host}…',
+  'web.browser':
+    '{button} pour les pages derrière une connexion, en préproduction ou sur localhost.',
   'web.capture': 'Capturer dans le navigateur',
   'web.sent':
     '{host} est ouvert dans votre navigateur. Appuyez sur {button}, puis collez ici avec ⌘V.',
@@ -223,10 +229,16 @@ export const fr: Messages = {
   'web.languagePlaceholder': 'Celle du navigateur, ou de-DE',
   'web.languageInvalid': 'Utilisez un code de langue comme de-DE ou fr.',
   'web.browserDefault': 'Celle du navigateur',
-  'web.without': 'Sans l’extension',
-  'web.withoutBody':
-    'Pour l’instant, l’import par URL passe par l’extension. Sans elle, enregistrez la page depuis votre navigateur en page web ou en fichier .mhtml, puis ouvrez-la dans Fichier.',
   'web.getExtension': 'Obtenir l’extension',
+  'web.errorLocal': 'Les pages sur localhost ou derrière une connexion nécessitent l’extension.',
+  'web.errorUnreachable': '{host} ne s’est pas chargé. Vérifiez l’adresse.',
+  'web.errorTimeout': '{host} a mis plus de 45 secondes. Essayez avec moins de largeurs.',
+  'web.errorLimit': 'Trop de pages cette minute. Réessayez dans un instant.',
+  'web.errorUnavailable':
+    'Le serveur ne peut pas ouvrir de pages pour le moment. Réessayez dans une minute.',
+  'web.errorOffline': 'Impossible de joindre le serveur de PageRecast. Vérifiez votre connexion.',
+  'web.errorFailed':
+    '{host} s’est ouvert mais n’a pas pu être capturé. Essayez de le capturer dans votre navigateur.',
 
   'ext.title': 'L’extension PageRecast',
   'ext.body':

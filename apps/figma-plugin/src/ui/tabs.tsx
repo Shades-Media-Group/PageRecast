@@ -1,6 +1,6 @@
 /** The Web, Extension, MCP and API tabs: ways in that start outside this window. */
-import { useState } from 'preact/hooks'
-import { captureLink, webUrl } from '@pagerecast/capture'
+import { useEffect, useRef, useState } from 'preact/hooks'
+import { captureLink, isPublicHost, webUrl } from '@pagerecast/capture'
 import { deviceName, rich, t, type MessageKey } from '@pagerecast/i18n'
 import {
   Button,
@@ -15,6 +15,7 @@ import {
 } from '@pagerecast/ui'
 import type { WebCapture } from '../shared/messages'
 import { cleanCode, type AgentState } from './agent'
+import { RenderFailed, renderPage, type RenderFailure } from './render'
 
 export const CHROME_URL =
   'https://chromewebstore.google.com/detail/iidlcnlnejbmdihmbfiojpikhgaggkel'
@@ -106,28 +107,76 @@ const widthsLabel = (widths: number[]) =>
     .map((w) => `${WIDTHS.some((p) => p.width === w) ? deviceName(w) : t('device.custom')} ${w}`)
     .join(', ') || t('common.none')
 
+const FAILURES: Record<RenderFailure, MessageKey> = {
+  'needs-extension': 'web.errorLocal',
+  'bad-url': 'web.invalid',
+  unreachable: 'web.errorUnreachable',
+  timeout: 'web.errorTimeout',
+  'rate-limited': 'web.errorLimit',
+  unavailable: 'web.errorUnavailable',
+  offline: 'web.errorOffline',
+  failed: 'web.errorFailed',
+}
+
 export function WebTab({
   web,
   onChange,
   open,
   onExtension,
+  onImport,
 }: {
   web: WebCapture
   onChange: (web: WebCapture) => void
   open: (url: string) => void
   /** Shows the Extension tab. */
   onExtension: () => void
+  /** Opens a `.recast` file the render service returned, as a drop would. */
+  onImport: (bytes: Uint8Array) => void
 }) {
   const [input, setInput] = useState('')
   const [editing, setEditing] = useState(false)
   const [sent, setSent] = useState<string | null>(null)
+  const [rendering, setRendering] = useState<string | null>(null)
+  const [failure, setFailure] = useState<{ reason: RenderFailure; host: string } | null>(null)
+  const request = useRef<AbortController | null>(null)
+  // Leaving the tab stops the render.
+  useEffect(() => () => request.current?.abort(), [])
   const url = webUrl(input)
   const invalid = input.trim() !== '' && !url
   const language = /^[A-Za-z]{2,3}(-[A-Za-z0-9]{2,8})*$/.test(web.language) ? web.language : ''
+  const ready = !!url && web.widths.length > 0 && !rendering
+
+  const importPage = async () => {
+    if (!url || !ready) return
+    const { host, hostname } = new URL(url)
+    setSent(null)
+    // Local and private addresses never leave this window: only the extension can open them.
+    if (!isPublicHost(hostname)) return setFailure({ reason: 'needs-extension', host })
+    const controller = new AbortController()
+    request.current = controller
+    setFailure(null)
+    setRendering(host)
+    try {
+      const bytes = await renderPage(
+        { url, widths: web.widths, theme: web.theme, language },
+        controller.signal,
+      )
+      onImport(bytes)
+    } catch (error) {
+      if (!controller.signal.aborted)
+        setFailure({ reason: error instanceof RenderFailed ? error.reason : 'failed', host })
+    } finally {
+      if (request.current === controller) {
+        request.current = null
+        setRendering(null)
+      }
+    }
+  }
 
   const capture = () => {
     if (!url || !web.widths.length) return
     open(captureLink({ url, widths: web.widths, theme: web.theme, language }))
+    setFailure(null)
     setSent(new URL(url).host)
   }
 
@@ -142,7 +191,7 @@ export function WebTab({
           class="url-form"
           onSubmit={(e) => {
             e.preventDefault()
-            capture()
+            void importPage()
           }}
         >
           <div class="pr-field">
@@ -160,14 +209,50 @@ export function WebTab({
               onInput={(e) => {
                 setInput(e.currentTarget.value)
                 setSent(null)
+                setFailure(null)
               }}
             />
           </div>
           {invalid && <p class="hint hint--error">{t('web.invalid')}</p>}
-          <Button type="submit" variant="primary" block disabled={!url || !web.widths.length}>
-            {t('web.capture')}
+          <Button type="submit" variant="primary" block disabled={!ready}>
+            {t('web.import')}
           </Button>
         </form>
+        {rendering ? (
+          <div class="rendering" aria-live="polite">
+            <span class="pr-spinner" />
+            <span class="truncate">{t('web.opening', { host: rendering })}</span>
+            <button type="button" class="text-button" onClick={() => request.current?.abort()}>
+              {t('common.cancel')}
+            </button>
+          </div>
+        ) : failure ? (
+          <p class="hint hint--error" role="alert">
+            {t(FAILURES[failure.reason], { host: failure.host })}
+            {failure.reason === 'needs-extension' && (
+              <>
+                {' '}
+                <button type="button" class="text-button" onClick={onExtension}>
+                  {t('web.getExtension')}
+                </button>
+              </>
+            )}
+          </p>
+        ) : null}
+        <p class="hint web-browser">
+          {rich('web.browser', {
+            button: (
+              <button
+                type="button"
+                class="text-button"
+                disabled={!url || !web.widths.length}
+                onClick={capture}
+              >
+                {t('web.capture')}
+              </button>
+            ),
+          })}
+        </p>
         {sent && (
           <div class="sent">
             <Message tone="success">
@@ -241,17 +326,6 @@ export function WebTab({
             </div>
           </dl>
         )}
-      </Section>
-      <Section title={t('web.without')}>
-        {/*
-         * TODO(renderer): a hosted render endpoint (Cloudflare) would capture public URLs
-         * without the extension. When it exists, call it here and keep the extension path
-         * for pages behind a login. Until then this text is the honest answer.
-         */}
-        <p class="body">{t('web.withoutBody')}</p>
-        <button type="button" class="text-button text-button--gap" onClick={onExtension}>
-          {t('web.getExtension')}
-        </button>
       </Section>
     </>
   )

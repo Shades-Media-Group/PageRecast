@@ -93,7 +93,7 @@ test('captures a page at two widths from the side panel', async () => {
   const panel = await openPanel()
   await shot(panel, 'start')
   // Desktop and Mobile.
-  await panel.getByRole('checkbox').nth(3).check()
+  await panel.getByRole('button', { name: 'Mobile 390' }).click()
   await panel.getByRole('button', { name: /Capture 2 frames/ }).click()
   await expect(panel.getByRole('button', { name: 'Copy for Figma' })).toBeVisible({
     timeout: 30_000,
@@ -275,6 +275,48 @@ test('the panel speaks the chosen interface language', async () => {
   }
   // Back to the language of the browser.
   await setSettings({ interfaceLanguage: '' })
+  expect(errors).toEqual([])
+  await panel.close()
+})
+
+test('reset all preferences clears the settings and every site in two clicks', async () => {
+  const panel = await openPanel()
+  const errors: string[] = []
+  panel.on('pageerror', (e) => errors.push(e.message))
+  const stored = () =>
+    panel.evaluate(
+      async () =>
+        (await chrome.storage.local.get(['settings', 'sites'])) as {
+          settings: Record<string, unknown>
+          sites?: Record<string, unknown>
+        },
+    )
+  if (!(await panel.getByRole('heading', { name: 'Before capturing' }).isVisible()))
+    await panel.getByRole('button', { name: 'Capture settings' }).click()
+  // Earlier tests left this site's widths behind, so there is something to reset.
+  const reset = panel.getByRole('button', { name: 'Reset all preferences' })
+  await expect(reset).toBeEnabled()
+  await panel.getByRole('switch', { name: /Hide cookie banners/ }).uncheck()
+  await panel
+    .getByRole('group', { name: 'Interface theme' })
+    .getByRole('button', { name: 'Dark' })
+    .click()
+  await expect(panel.locator('html')).toHaveAttribute('data-theme', 'dark')
+  await reset.scrollIntoViewIfNeeded()
+  await shot(panel, 'settings-reset')
+
+  await reset.click()
+  await panel.getByRole('button', { name: 'Click again to reset everything' }).click()
+  await expect(reset).toBeDisabled()
+  await expect(panel.locator('html')).toHaveAttribute('data-theme', 'light')
+  await expect(panel.getByRole('switch', { name: /Hide cookie banners/ })).toBeChecked()
+  const after = await stored()
+  expect(after.sites).toBeUndefined()
+  expect(after.settings).toMatchObject({ hideOverlays: true, appearance: 'light', widths: [1440] })
+  // The note about Chrome's debugging bar stays seen.
+  expect(after.settings.seenDebuggerNote).toBe(true)
+  // The credit closes the settings.
+  await expect(panel.locator('.credit')).toBeVisible()
   expect(errors).toEqual([])
   await panel.close()
 })

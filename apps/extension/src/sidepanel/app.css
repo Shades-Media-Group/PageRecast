@@ -39,7 +39,7 @@ body,
   border-radius: 4px;
 }
 .target-title {
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 600;
   line-height: 16px;
 }
@@ -54,24 +54,17 @@ body,
   margin: -4px 0 4px calc(var(--prop-label) + 8px);
 }
 
-/* Widths: checkbox, device, name, width in px, and a remove column for custom widths. */
-.width-row {
-  display: grid;
-  grid-template-columns: 16px 16px minmax(0, 1fr) auto;
+/* Widths: a pill chip each; a custom width has its own way out beside it. */
+.custom-width {
+  display: inline-flex;
   align-items: center;
-  gap: 8px;
-  min-height: var(--row);
-  cursor: pointer;
 }
-.widths--custom .width-row {
-  grid-template-columns: 16px 16px minmax(0, 1fr) auto 24px;
-}
-.width-row .pr-icon-button {
+.custom-width .pr-icon-button {
   width: 24px;
   height: 24px;
 }
 .add-width {
-  margin-top: 4px;
+  margin-top: 8px;
 }
 
 /* The latest capture: its frames on the stage, then the facts in one line. */
@@ -80,18 +73,18 @@ body,
   animation: pr-enter 240ms var(--ease) both;
 }
 .result-stage {
-  padding: 16px var(--pad) 12px;
+  margin: 12px var(--pad) 0;
+  padding: 16px 16px 12px;
+  border-radius: 12px;
   background: var(--stage);
-  border-bottom: 1px solid var(--line);
 }
 .result-text {
   padding: 12px var(--pad);
 }
 .result-text h1 {
-  font-size: 15px;
+  font-size: 12px;
   font-weight: 600;
-  line-height: 20px;
-  letter-spacing: -0.01em;
+  line-height: 16px;
 }
 .result-text p {
   display: flex;
@@ -131,7 +124,7 @@ body,
   display: block;
   width: 48px;
   height: 32px;
-  border-radius: 2px;
+  border-radius: 4px;
   object-fit: cover;
   object-position: top;
   background: var(--raised);

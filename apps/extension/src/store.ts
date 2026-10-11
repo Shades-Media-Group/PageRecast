@@ -77,9 +77,59 @@ export const LANGUAGES = [
   { value: 'ar', label: 'العربية' },
 ] as const
 
+const isObject = (value: unknown): value is Record<string, unknown> =>
+  typeof value === 'object' && value !== null && !Array.isArray(value)
+
+/** Whole CSS pixel widths PageRecast can capture, widest first, each once. */
+const validWidths = (value: unknown): number[] | undefined =>
+  Array.isArray(value)
+    ? [
+        ...new Set(value.filter((w): w is number => Number.isInteger(w) && w >= 240 && w <= 3840)),
+      ].sort((a, b) => b - a)
+    : undefined
+
+/**
+ * Settings saved by any earlier version, brought up to date: fields it did
+ * not have yet (1.0 had no states, wait, hidden elements, maximum height or
+ * panel theme) take their default, and values of the wrong shape fall back.
+ */
+export function migrateSettings(input: unknown): Settings {
+  const saved = isObject(input) ? input : {}
+  const settings = { ...DEFAULT_SETTINGS }
+  for (const key of Object.keys(settings) as (keyof Settings)[]) {
+    const value = saved[key]
+    if (typeof value === typeof DEFAULT_SETTINGS[key] && !Array.isArray(value))
+      Object.assign(settings, { [key]: value })
+  }
+  settings.widths = validWidths(saved.widths) ?? DEFAULT_SETTINGS.widths
+  settings.customWidths = validWidths(saved.customWidths) ?? []
+  const pick = <T>(value: T, allowed: readonly T[], fallback: T) =>
+    allowed.includes(value) ? value : fallback
+  settings.appearance = pick(settings.appearance, ['light', 'dark', 'auto'], 'light')
+  settings.scope = pick(settings.scope, ['page', 'viewport', 'element'], 'page')
+  settings.theme = pick(settings.theme, ['light', 'dark', 'both'], 'light')
+  settings.delay = pick(settings.delay, [0, 1000, 3000, 5000], 0)
+  settings.maxHeight = Math.max(0, Math.round(settings.maxHeight) || 0)
+  return settings
+}
+
+/**
+ * The preferences after "Reset all preferences". Whether the debugging note
+ * was seen and whether the settings are open are not preferences, so they stay.
+ */
+export const resetSettings = ({ seenDebuggerNote, editing }: Settings): Settings => ({
+  ...DEFAULT_SETTINGS,
+  seenDebuggerNote,
+  editing,
+})
+
+/** Whether any preference differs from its default. */
+export const preferencesChanged = (settings: Settings) =>
+  JSON.stringify(settings) !== JSON.stringify(resetSettings(settings))
+
 export async function loadSettings(): Promise<Settings> {
   const { settings } = await chrome.storage.local.get('settings')
-  return { ...DEFAULT_SETTINGS, ...(settings as Partial<Settings> | undefined) }
+  return migrateSettings(settings)
 }
 
 export function saveSettings(settings: Settings) {
@@ -93,6 +143,20 @@ export const SITE_KEYS = ['scope', 'widths', 'theme', 'hide'] as const
 export async function loadSite(host: string): Promise<Partial<SitePrefs>> {
   const { sites } = await chrome.storage.local.get('sites')
   return (sites as Record<string, SitePrefs> | undefined)?.[host] ?? {}
+}
+
+/** How many sites have a remembered area, widths, theme or hidden elements. */
+export async function countSites(): Promise<number> {
+  const { sites } = await chrome.storage.local.get('sites')
+  return Object.keys((sites as object | undefined) ?? {}).length
+}
+
+/** Back to the defaults: the settings, and everything remembered per site. */
+export async function resetPreferences(settings: Settings): Promise<Settings> {
+  const next = resetSettings(settings)
+  await chrome.storage.local.set({ settings: next })
+  await chrome.storage.local.remove('sites')
+  return next
 }
 
 export async function saveSite(host: string, prefs: SitePrefs) {

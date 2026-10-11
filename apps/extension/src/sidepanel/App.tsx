@@ -21,6 +21,7 @@ import {
 } from '@pagerecast/i18n'
 import {
   Button,
+  Chips,
   CREDIT,
   DOCS_URL,
   FrameLineup,
@@ -33,10 +34,10 @@ import {
   Message,
   Progress,
   REPO_URL,
+  ResetPreferences,
   Section,
   Segmented,
   Toggle,
-  type IconName,
   type LineupFrame,
 } from '@pagerecast/ui'
 import { splitTopLevel } from '@pagerecast/capture'
@@ -51,13 +52,16 @@ import {
 
 import {
   addHistory,
+  countSites,
   DEFAULT_SETTINGS,
   LANGUAGES,
   listHistory,
   loadSettings,
   loadSite,
+  preferencesChanged,
   PRESET_WIDTHS,
   removeHistory,
+  resetPreferences,
   saveSettings,
   saveSite,
   SITE_KEYS,
@@ -193,6 +197,9 @@ export function App() {
   const [copied, setCopied] = useState<string | null>(null)
   const [customWidth, setCustomWidth] = useState('')
   const [url, setUrl] = useState('')
+  /** Sites with remembered choices, which "Reset all preferences" also clears. */
+  const [sites, setSites] = useState(0)
+  useEffect(() => void countSites().then(setSites), [settings.editing])
 
   const refreshTab = useCallback(async () => {
     const [active] = await chrome.tabs.query({ active: true, lastFocusedWindow: true })
@@ -650,37 +657,36 @@ export function App() {
                 <span class="num">{t('panel.selected', { count: settings.widths.length })}</span>
               }
             >
-              <div class={settings.customWidths.length ? 'widths widths--custom' : 'widths'}>
-                {[
-                  ...PRESET_WIDTHS,
-                  ...settings.customWidths.map((width) => ({
-                    width,
-                    custom: true,
-                    icon: 'width' as const,
-                  })),
-                ].map((p) => (
-                  <label class="width-row">
-                    <input
-                      class="pr-check"
-                      type="checkbox"
-                      checked={settings.widths.includes(p.width)}
-                      onChange={() => toggleWidth(p.width)}
+              <Chips
+                label={t('common.widths')}
+                items={PRESET_WIDTHS.map((p) => ({
+                  label: (
+                    <>
+                      {t(DEVICES[p.icon])} <span class="num">{p.width}</span>
+                    </>
+                  ),
+                  pressed: settings.widths.includes(p.width),
+                  onClick: () => toggleWidth(p.width),
+                }))}
+              >
+                {settings.customWidths.map((width) => (
+                  <span class="custom-width">
+                    <button
+                      type="button"
+                      class="pr-chip"
+                      aria-pressed={settings.widths.includes(width)}
+                      onClick={() => toggleWidth(width)}
+                    >
+                      {t('device.custom')} <span class="num">{width}</span>
+                    </button>
+                    <IconButton
+                      icon="close"
+                      label={t('panel.removeWidth', { width: String(width) })}
+                      onClick={() => removeCustomWidth(width)}
                     />
-                    <Icon name={p.icon as IconName} size={16} class="muted" />
-                    <span>{'custom' in p ? t('device.custom') : t(DEVICES[p.icon])}</span>
-                    <span class="num muted">{p.width}</span>
-                    {'custom' in p ? (
-                      <IconButton
-                        icon="close"
-                        label={t('panel.removeWidth', { width: String(p.width) })}
-                        onClick={() => removeCustomWidth(p.width)}
-                      />
-                    ) : (
-                      settings.customWidths.length > 0 && <span />
-                    )}
-                  </label>
+                  </span>
                 ))}
-              </div>
+              </Chips>
               <form
                 class="pr-field add-width"
                 onSubmit={(e) => {
@@ -774,6 +780,13 @@ export function App() {
                 onChange={(appearance) => update({ appearance })}
               />
             </Section>
+            <ResetPreferences
+              changed={preferencesChanged(settings) || sites > 0}
+              onReset={async () => {
+                setSettings(await resetPreferences(settings))
+                setSites(0)
+              }}
+            />
           </>
         ) : (
           <Section
@@ -855,16 +868,18 @@ export function App() {
           </Section>
         )}
 
-        <p class="credit">
-          {rich('credit.built', {
-            company: (
-              <a href={CREDIT.url} target="_blank" rel="noreferrer">
-                {CREDIT.company}
-              </a>
-            ),
-          })}{' '}
-          <span class="num">v{__VERSION__}</span>
-        </p>
+        {settings.editing && (
+          <p class="credit">
+            {rich('credit.built', {
+              company: (
+                <a href={CREDIT.url} target="_blank" rel="noreferrer">
+                  {CREDIT.company}
+                </a>
+              ),
+            })}{' '}
+            <span class="num">v{__VERSION__}</span>
+          </p>
+        )}
       </main>
 
       <footer class="dock">

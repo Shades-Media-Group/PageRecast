@@ -23,6 +23,12 @@ export interface CaptureSettings {
   states: boolean
   /** BCP 47 tag such as `de-DE`; empty keeps the browser's language. */
   language: string
+  /** CSS selectors, comma separated, of elements to leave out. */
+  hide: string
+  /** Milliseconds to wait at each width before reading the page, for late content. */
+  delay: number
+  /** Full-page captures stop at this height in CSS pixels; 0 for no limit. */
+  maxHeight: number
 }
 
 export type CaptureProgress = { label: string; step: number; steps: number }
@@ -360,6 +366,10 @@ export async function captureTab(
         report('loading lazy content')
         await driver.run(() => (window.__pagerecast as PageApi).preload(document))
       }
+      if (settings.delay > 0) {
+        report('waiting for the page')
+        await wait(settings.delay)
+      }
       report('reading layout')
       await driver.run(
         (options) => {
@@ -368,18 +378,20 @@ export async function captureTab(
           api.restore = api.prepare(document, options)
           window.scrollTo(0, 0)
         },
-        { hideOverlays: settings.hideOverlays, freezeAnimations: true },
+        { hideOverlays: settings.hideOverlays, freezeAnimations: true, hide: settings.hide },
       )
       await wait(60)
       const walk: WalkResult = await driver.run(
-        (scope, states) =>
+        (scope, states, maxHeight) =>
           (window.__pagerecast as PageApi).walk(document, {
             scope,
             target: document.querySelector('[data-pagerecast-target]'),
             states,
+            maxHeight,
           }),
         settings.scope,
         settings.states,
+        settings.maxHeight,
       )
 
       report('saving images')

@@ -6,7 +6,11 @@
 
 **Parts of the page are missing.** Turn on **Load lazy content** so PageRecast scrolls the page first. For content that appears on hover or click, open it before capturing.
 
-**A cookie banner or pop-up is in the capture.** Turn on **Hide cookie banners**, or close the pop-up yourself before capturing.
+**Content arrives late.** Some pages fill in after they load: prices, reviews, animations started by scripts. Set **Wait** under **Before capturing** to 1, 3 or 5 seconds.
+
+**A cookie banner or pop-up is in the capture.** Turn on **Hide cookie banners**, or close the pop-up yourself before capturing. For anything else you don't want, such as a chat bubble or a promotion bar, type its CSS selector in **Hide** (for example `.chat-widget, #promo`). The selectors are remembered for that site.
+
+**A page is extremely long.** Set **Max height** under **Capture** to stop a full-page capture at that many pixels; everything that starts below it is left out.
 
 **Text wraps differently in Figma.** The font was replaced or renders slightly wider. See [Fonts](fonts.md).
 

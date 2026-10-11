@@ -11,6 +11,12 @@ export interface Settings {
   /** Hover, focus and active looks, imported as component variants. */
   states: boolean
   language: string
+  /** CSS selectors, comma separated, of elements to leave out; remembered per site. */
+  hide: string
+  /** Milliseconds to wait before reading the page, for content that arrives late. */
+  delay: number
+  /** Full-page captures stop at this height in CSS pixels; 0 for no limit. */
+  maxHeight: number
   seenDebuggerNote: boolean
   /** Settings stay folded into a summary once the user has captured. */
   editing: boolean
@@ -33,6 +39,9 @@ export const DEFAULT_SETTINGS: Settings = {
   screenshot: true,
   states: true,
   language: '',
+  hide: '',
+  delay: 0,
+  maxHeight: 0,
   seenDebuggerNote: false,
   editing: true,
 }
@@ -68,9 +77,9 @@ export function saveSettings(settings: Settings) {
   return chrome.storage.local.set({ settings })
 }
 
-/** Area, widths and theme are remembered per site; everything else is global. */
-export type SitePrefs = Pick<Settings, 'scope' | 'widths' | 'theme'>
-export const SITE_KEYS = ['scope', 'widths', 'theme'] as const
+/** Area, widths, theme and hidden elements are remembered per site; the rest is global. */
+export type SitePrefs = Pick<Settings, 'scope' | 'widths' | 'theme' | 'hide'>
+export const SITE_KEYS = ['scope', 'widths', 'theme', 'hide'] as const
 
 export async function loadSite(host: string): Promise<Partial<SitePrefs>> {
   const { sites } = await chrome.storage.local.get('sites')

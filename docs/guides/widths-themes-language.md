@@ -1,6 +1,6 @@
 # Widths, themes and languages
 
-Each site remembers the area, widths and theme you last captured it with. A site you haven't captured yet starts from the settings you used most recently.
+Each site remembers the area, widths, theme and hidden elements you last captured it with. A site you haven't captured yet starts from the settings you used most recently.
 
 This is how it works in Chrome. Firefox captures the theme and language the page shows, and resizes the window for each width; see [Firefox](firefox.md).
 

@@ -25,6 +25,7 @@ import {
   type IconName,
   type LineupFrame,
 } from '@pagerecast/ui'
+import { splitTopLevel } from '@pagerecast/capture'
 import { canEmulate, CaptureError, captureTab, openTab, type CaptureProgress } from '../capture'
 import { mergeFiles } from '../merge'
 import {
@@ -61,6 +62,25 @@ type Status =
 
 const SCOPES = { page: 'Full page', viewport: 'Visible area', element: 'One element' } as const
 const THEMES = { light: 'Light', dark: 'Dark', both: 'Light and dark' } as const
+const DELAYS = [
+  { value: '0', label: 'None' },
+  { value: '1000', label: '1 s' },
+  { value: '3000', label: '3 s' },
+  { value: '5000', label: '5 s' },
+]
+
+/** The selectors in a comma-separated list that the browser rejects. */
+function invalidSelectors(list: string): string[] {
+  const probe = document.createDocumentFragment()
+  return splitTopLevel(list).filter((selector) => {
+    try {
+      probe.querySelector(selector)
+      return false
+    } catch {
+      return true
+    }
+  })
+}
 
 const countLayers = (node: SceneNode): number =>
   1 + (node.type === 'frame' ? node.children.reduce((n, c) => n + countLayers(c), 0) : 0)
@@ -192,7 +212,14 @@ export function App() {
     void Promise.all([loadSettings(), host ? loadSite(host) : {}]).then(([global, site]) => {
       if (!live) return
       setSettings((s) => {
-        const next = { ...s, scope: global.scope, widths: global.widths, theme: global.theme }
+        const next = {
+          ...s,
+          scope: global.scope,
+          widths: global.widths,
+          theme: global.theme,
+          // Elements to hide belong to one site; a new site starts with none.
+          hide: '',
+        }
         Object.assign(next, site)
         const known = [...PRESET_WIDTHS.map((p) => p.width), ...s.customWidths]
         return { ...next, widths: next.widths.filter((w) => known.includes(w)) }
@@ -233,7 +260,12 @@ export function App() {
     if (!('editing' in patch)) setLatest(null)
     void saveSettings(next)
     if (host && SITE_KEYS.some((key) => key in patch))
-      void saveSite(host, { scope: next.scope, widths: next.widths, theme: next.theme })
+      void saveSite(host, {
+        scope: next.scope,
+        widths: next.widths,
+        theme: next.theme,
+        hide: next.hide,
+      })
   }
 
   const toggleWidth = (width: number) => {
@@ -269,6 +301,7 @@ export function App() {
   const views = settings.widths.length * (canEmulate ? themes.length : 1)
   const busy = status.kind === 'capturing'
   const language = LANGUAGES.find((l) => l.value === settings.language)?.label ?? settings.language
+  const invalid = invalidSelectors(settings.hide)
 
   const capture = async ({
     url: targetUrl,
@@ -305,6 +338,9 @@ export function App() {
           screenshot: settings.screenshot,
           states: settings.states,
           language: settings.language,
+          hide: settings.hide,
+          delay: settings.delay,
+          maxHeight: settings.maxHeight,
         },
         (progress) => setStatus({ kind: 'capturing', progress }),
       )
@@ -332,6 +368,7 @@ export function App() {
           scope: settings.scope,
           widths: settings.widths,
           theme: settings.theme,
+          hide: settings.hide,
         })
       setLatest(entry.id)
       setUrl('')
@@ -503,6 +540,24 @@ export function App() {
                   After you press Capture, click the part of the page you want.
                 </p>
               )}
+              {settings.scope === 'page' && (
+                <label class="pr-prop">
+                  <span>Max height</span>
+                  <input
+                    class="pr-input"
+                    type="number"
+                    min={0}
+                    step={500}
+                    placeholder="No limit"
+                    value={settings.maxHeight || ''}
+                    onInput={(e) =>
+                      update({
+                        maxHeight: Math.max(0, Math.round(Number(e.currentTarget.value) || 0)),
+                      })
+                    }
+                  />
+                </label>
+              )}
               {canEmulate ? (
                 <>
                   <div class="pr-prop">
@@ -624,6 +679,37 @@ export function App() {
                 checked={settings.screenshot}
                 onChange={(screenshot) => update({ screenshot })}
               />
+              <div class="pr-prop">
+                <span>Wait</span>
+                <Segmented
+                  label="Wait before reading the page"
+                  value={String(settings.delay)}
+                  onChange={(delay) => update({ delay: Number(delay) })}
+                  options={DELAYS}
+                />
+              </div>
+              {settings.delay > 0 && (
+                <p class="hint hint--prop">For content that arrives after the page loads.</p>
+              )}
+              <label class="pr-prop">
+                <span>Hide</span>
+                <input
+                  class="pr-input"
+                  type="text"
+                  spellcheck={false}
+                  placeholder=".chat-widget, .promo-bar"
+                  aria-describedby="hide-hint"
+                  value={settings.hide}
+                  onInput={(e) => update({ hide: e.currentTarget.value })}
+                />
+              </label>
+              <p class="hint hint--prop" id="hide-hint">
+                {invalid.length
+                  ? `Not a CSS selector: ${invalid.join(', ')}`
+                  : host
+                    ? `CSS selectors left out of the capture, remembered for ${host}.`
+                    : 'CSS selectors left out of the capture, remembered per site.'}
+              </p>
             </Section>
           </>
         ) : (
@@ -652,6 +738,24 @@ export function App() {
                 <dt>Language</dt>
                 <dd class="truncate">{canEmulate ? language : 'As shown'}</dd>
               </div>
+              {settings.hide.trim() && (
+                <div class="pr-prop">
+                  <dt>Hide</dt>
+                  <dd class="truncate">{settings.hide}</dd>
+                </div>
+              )}
+              {settings.delay > 0 && (
+                <div class="pr-prop">
+                  <dt>Wait</dt>
+                  <dd class="num">{settings.delay / 1000} s</dd>
+                </div>
+              )}
+              {settings.scope === 'page' && settings.maxHeight > 0 && (
+                <div class="pr-prop">
+                  <dt>Max height</dt>
+                  <dd class="num">{settings.maxHeight.toLocaleString()} px</dd>
+                </div>
+              )}
             </dl>
           </Section>
         )}

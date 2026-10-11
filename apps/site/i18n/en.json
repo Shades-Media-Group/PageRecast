@@ -1,0 +1,329 @@
+{
+  "language": "Language",
+  "nav": {
+    "label": "Main",
+    "home": "Home",
+    "homeLabel": "PageRecast home",
+    "widths": "Widths",
+    "layers": "Layers",
+    "privacy": "Privacy",
+    "gallery": "Gallery",
+    "guides": "Guides",
+    "cta": "Install free"
+  },
+  "footer": {
+    "top": "PageRecast, back to top",
+    "tagline": "Any web page, as editable Figma layers. Free, open source, and it never leaves your computer.",
+    "label": "Footer",
+    "product": "Product",
+    "project": "Project",
+    "trust": "Trust",
+    "sample": "Test page",
+    "changelog": "Changelog",
+    "releases": "Releases",
+    "issues": "Report an issue",
+    "security": "Security",
+    "license": "MIT licence",
+    "format": "The .recast format",
+    "credit": "Free and open source. Built by <a data-link='shades'>Shades Media Group</a>.",
+    "version": "Version"
+  },
+  "home": {
+    "title": "PageRecast — Import any website into Figma | HTML to design, free",
+    "description": "A free, open-source Chrome extension and Figma plugin. Capture any web page, even behind a login, at every width and in light and dark, and paste it into Figma as editable layers.",
+    "hero": {
+      "title": "Recast any web page.",
+      "lead": "Capture what your browser shows. Paste it into Figma as layers you can edit, every one of them.",
+      "chrome": "Add to Chrome, free",
+      "figma": "Get the Figma plugin",
+      "note": "Free forever. Works behind a login.",
+      "sample": "Try it on the test page"
+    },
+    "explode": {
+      "label": "This page separating into its Figma layers",
+      "layers": "layers",
+      "texts": "text",
+      "images": "images",
+      "caption": "This page, captured at 1440 px and imported as is."
+    },
+    "widths": {
+      "title": "Every width.<br />Both themes.<br />One capture.",
+      "text": "Pick desktop, tablet, mobile or any width between 240 and 3840, in light, dark or both. Each one arrives in Figma as its own frame, and both themes become colour variables with a Light and a Dark mode.",
+      "width": "Width",
+      "theme": "Theme",
+      "light": "Light",
+      "dark": "Dark"
+    },
+    "layers": {
+      "title": "Real layers, not a picture.",
+      "text": "Text stays text, in its own fonts. Icons become vectors, colours become variables, and flex layouts become Auto Layout wherever the result lands exactly where the page put it. Every font that had to be replaced is listed.",
+      "alt": "The install section of this page, with four of its Figma layers marked",
+      "caption": "Read from this page by PageRecast. These are the layers it builds."
+    },
+    "behind": {
+      "title": "Behind a login. On staging. On localhost.",
+      "text": "The extension captures exactly what your browser shows, so the pages you actually work on are the ones you can bring into Figma: dashboards, previews, a menu left open, a form half filled.",
+      "extensionAlt": "The PageRecast side panel after capturing a page",
+      "pluginAlt": "The PageRecast Figma plugin reviewing the capture before import"
+    },
+    "privacy": {
+      "title": "Nothing leaves your computer.",
+      "text": "There is no PageRecast server. Captures are built in your browser and kept on your device until you paste them into Figma. No account, no analytics, no limits, and no price."
+    },
+    "open": {
+      "title": "Open source. Open format.",
+      "text": "PageRecast is MIT licensed, and captures are <code>.recast</code> files: gzipped JSON with a documented schema you can read, write and build on.",
+      "github": "View on GitHub",
+      "format": "Read the format",
+      "codeLabel": "An excerpt of a .recast file"
+    },
+    "install": {
+      "title": "Two parts. Two minutes.",
+      "chrome": "Chrome extension",
+      "chromeText": "Captures the page, at every width, in light and dark.",
+      "chromeButton": "Add to Chrome",
+      "figma": "Figma plugin",
+      "figmaText": "Builds the layers, with Auto Layout, variables and styles.",
+      "figmaButton": "Get the plugin",
+      "guides": "Guides",
+      "guidesText": "Install both, capture a page, paste it. Start in two minutes.",
+      "guidesLink": "Read the guides"
+    },
+    "runtime": {
+      "devices": {
+        "1440": "Desktop",
+        "1280": "Laptop",
+        "768": "Tablet",
+        "390": "Mobile"
+      },
+      "light": "Light",
+      "dark": "Dark",
+      "viewerAlt": {
+        "light": "The sample page captured at {width} px in light mode",
+        "dark": "The sample page captured at {width} px in dark mode"
+      },
+      "viewerCaption": "{theme} · one frame in Figma",
+      "notes": {
+        "Vector": {
+          "title": "Vector",
+          "detail": "5 shapes from the page's SVG, still editable"
+        },
+        "Text": {
+          "title": "Text",
+          "detail": "Hanken Grotesk · 650 · 26 px"
+        },
+        "Auto Layout": {
+          "title": "Auto Layout",
+          "detail": "Horizontal · gap 10 · padding 20 · fully rounded"
+        },
+        "Colour variable": {
+          "title": "Colour variable",
+          "detail": "Light #3D3D40 · Dark #C3C3C9"
+        }
+      }
+    }
+  },
+  "gallery": {
+    "title": "Gallery · PageRecast",
+    "description": "Ready PageRecast captures to open in Figma: download a .recast file and drop it into the plugin.",
+    "heading": "Gallery",
+    "intro": "Ready captures you can open in Figma right now. Download a file, open PageRecast in Figma, and drop it on the plugin. Every one has three widths in light and dark.",
+    "download": "Download .recast",
+    "view": "View the page",
+    "sample": {
+      "name": "Test page",
+      "text": "Type, colour, layout, surfaces, vectors, images, controls and a table.",
+      "alt": "The PageRecast test page, captured at 1440 px",
+      "facts": "6 frames · 1,842 layers · 4.1 MB"
+    },
+    "site": {
+      "name": "PageRecast website",
+      "text": "A real marketing page with sticky navigation, product shots and a long footer.",
+      "alt": "The PageRecast website, captured at 1440 px",
+      "facts": "6 frames · 1,206 layers · 4.9 MB"
+    },
+    "share": {
+      "title": "Share a capture with your team",
+      "step1": "In the extension, press the download button next to Copy for Figma.",
+      "step2": "Send the <code>.recast</code> file like any other file.",
+      "step3": "Your teammate drops it on PageRecast in Figma. Nothing to install but the plugin."
+    }
+  },
+  "privacy": {
+    "title": "Privacy policy · PageRecast",
+    "description": "PageRecast does not collect, transmit, sell or share any personal data. Everything happens on your computer.",
+    "heading": "Privacy policy",
+    "updated": "Last updated 11 October 2026",
+    "intro": "PageRecast is a browser extension for Chrome and Firefox and a Figma plugin, made by Shades Media Group. This policy covers all of them.",
+    "shortTitle": "The short version",
+    "short": "PageRecast does not collect, transmit, sell or share any personal data. Everything happens on your computer.",
+    "chromeTitle": "What the Chrome extension accesses",
+    "chromePage": "<strong>The page you choose to capture.</strong> When you press Capture, the extension reads the layout, styles, text and images of the current tab, of a URL you type, or of a URL the Figma plugin sent through our capture page (only that page can ask, and only after you press Capture there), using Chrome's <code>debugger</code> permission. It attaches only for that capture and detaches when it ends.",
+    "chromeTabs": "<strong>Tab titles, addresses and icons</strong>, to show which page will be captured.",
+    "chromeStorage": "<strong>Local storage on your device</strong>, to keep your settings and recent captures. You can delete any capture from the panel; removing the extension deletes all of them.",
+    "chromeNetwork": "The extension makes no requests to any server of ours. Images in a capture are read from your browser's cache or loaded the same way the page loads them.",
+    "firefoxTitle": "The Firefox extension",
+    "firefox": "The Firefox version accesses the same things, but reads the page with Firefox's <code>tabs</code> and <code>scripting</code> permissions and access to all websites (<code>&lt;all_urls&gt;</code>) instead of the <code>debugger</code> permission. It uses that access only on the tab you capture, to read the page, take its screenshot and load its images. As in Chrome, nothing leaves your device.",
+    "pluginTitle": "What the Figma plugin accesses",
+    "pluginCapture": "<strong>The capture you paste or open</strong>, to build layers in the current Figma file.",
+    "pluginImages": "<strong>Images referenced by a capture</strong>, which it downloads directly from the websites they belong to.",
+    "pluginStorage": "<strong>Figma's plugin storage</strong>, to remember your import settings.",
+    "pluginAgents": "<strong>Captures an AI agent queued on your computer</strong>, only when you turn on agent imports. The plugin collects them from <code>127.0.0.1</code>, a server on your own machine that the PageRecast MCP server runs, using a pairing code you enter.",
+    "pluginWeb": "The plugin's Web tab opens <code>pagerecast.shades.md/capture/</code> with the page address and settings after the <code>#</code> of the link, a part browsers never send to a server. That page passes them to the extension in your browser, and the capture is copied to your clipboard there.",
+    "dataTitle": "Data we receive",
+    "data": "None. There are no accounts, analytics, crash reports or tracking of any kind.",
+    "childrenTitle": "Children",
+    "children": "PageRecast is a design tool and is not directed at children.",
+    "changesTitle": "Changes",
+    "changes": "Changes to this policy are published on this page and noted in the <a data-link='changelog'>changelog</a>.",
+    "contactTitle": "Contact"
+  },
+  "capture": {
+    "title": "Capture a page · PageRecast",
+    "description": "The PageRecast extension captures a page you chose in the Figma plugin and copies it for Figma.",
+    "heading": "Capture for Figma",
+    "reading": "Reading the link…",
+    "start": "Capture",
+    "status": "The page opens in a new tab while PageRecast captures it, then closes.",
+    "copy": "Copy for Figma",
+    "installTitle": "Install the extension first",
+    "installText": "Nothing happened because the PageRecast extension is not installed in this browser, or is turned off. URL import runs through it: it captures the page right here, on your computer.",
+    "installButton": "Add to Chrome",
+    "installAfter": "After installing, reload this page. Firefox and Safari cannot take capture links yet.",
+    "note": "The page you capture is read by the extension in this browser. Nothing is sent to PageRecast or anyone else.",
+    "runtime": {
+      "invalid": "This capture link is incomplete. Start again from the Web tab of the PageRecast plugin in Figma.",
+      "target": "{host} at {widths} px, {theme}{language}.",
+      "and": " and ",
+      "language": ", in {language}",
+      "themes": {
+        "light": "light",
+        "dark": "dark",
+        "both": "light and dark"
+      },
+      "starting": "Starting…",
+      "failed": "{message} Press Capture to try again.",
+      "again": "Capture again",
+      "frames": {
+        "one": "{n} frame",
+        "other": "{n} frames"
+      },
+      "thePage": "the page",
+      "copied": "Copied — paste in Figma. {frames} of {title}.",
+      "ready": "Captured {frames}. Copy it, then paste in Figma."
+    }
+  },
+  "sample": {
+    "title": "Test page · PageRecast",
+    "description": "A page made to be captured with PageRecast: type, colour, layout, surfaces, vectors, images and controls, in light and dark.",
+    "sections": "Sections",
+    "install": "Install PageRecast",
+    "heading": "A page made<br />to be <em>recast.</em>",
+    "intro": "Every section below uses something PageRecast turns into a Figma feature. Capture this page at a few widths, in light and dark, paste it into Figma and compare the two.",
+    "step1": "Open the PageRecast side panel",
+    "step2": "Pick widths and both themes, then Capture",
+    "step3": "Paste into the PageRecast plugin in Figma",
+    "type": {
+      "title": "Type",
+      "text": "Two families, nine weights, an optical-size axis and mixed inline styles.",
+      "becomes": "Text layers and text styles",
+      "inter": "Variable sans, optical size 14 to 32",
+      "hanken": "Variable sans, weights 100 to 900",
+      "display": "Display 64",
+      "titleSample": "Title 40 in italic",
+      "headline": "Headline 24 in the sans",
+      "body": "Body 17 keeps <strong>bold runs</strong>, <em>italic runs</em>, <a href='#type'>links</a>, <code>inline code</code> and <mark>highlighted words</mark> inside one text layer, with the line breaks exactly where the browser put them.",
+      "weights": "Hanken Grotesk weights"
+    },
+    "colour": {
+      "title": "Colour",
+      "text": "Eight tokens that change between light and dark. Capture both themes.",
+      "becomes": "Colour variables with Light and Dark modes"
+    },
+    "layout": {
+      "title": "Layout",
+      "text": "Rows, columns, gaps, padding, wrapping and alignment, all from flexbox.",
+      "becomes": "Auto Layout, checked child by child",
+      "frames": "Frames",
+      "framesText": "Every box with a fill, border, radius or clip becomes a frame.",
+      "fill": "Fill",
+      "stroke": "Stroke",
+      "clip": "Clip",
+      "autoText": "Kept only where every child lands within 1.5 px of the page.",
+      "gap": "Gap 12",
+      "padding": "Padding 24",
+      "wrap": "Wrap",
+      "styles": "Text styles",
+      "stylesText": "Repeated type becomes a style you can change in one place.",
+      "display": "Display",
+      "titleChip": "Title",
+      "body": "Body",
+      "alignment": "Alignment",
+      "start": "Start",
+      "grow": "Fill",
+      "end": "End"
+    },
+    "surfaces": {
+      "title": "Surfaces",
+      "text": "Gradients, shadows, blur, borders and corners set one by one.",
+      "becomes": "Fills, strokes and effects",
+      "linear": "Linear",
+      "radial": "Radial",
+      "angular": "Angular",
+      "shadow": "Shadow",
+      "blur": "Background blur",
+      "dashed": "Dashed",
+      "corners": "Corners",
+      "inset": "Inner shadow"
+    },
+    "media": {
+      "title": "Vectors and images",
+      "text": "Inline SVG stays vector. Images keep their crop and fit.",
+      "becomes": "Vector layers and image fills",
+      "artLabel": "Vector artwork",
+      "shapes": "Overlapping shapes",
+      "svg": "SVG, 7 shapes",
+      "photoAlt": "Abstract poster in red, rose and ink",
+      "jpeg": "JPEG, cover fit",
+      "icons": "Icons"
+    },
+    "controls": {
+      "title": "Controls",
+      "text": "Form fields are captured as they are right now: typed, checked or chosen.",
+      "becomes": "Frames and text, at their current state",
+      "address": "Page address",
+      "width": "Width",
+      "desktop": "Desktop · 1440",
+      "tablet": "Tablet · 768",
+      "mobile": "Mobile · 390",
+      "theme": "Theme",
+      "light": "Light",
+      "dark": "Dark",
+      "both": "Both",
+      "banners": "Hide cookie banners",
+      "lazy": "Load lazy images first",
+      "scrollbar": "Keep the scrollbar",
+      "capture": "Capture",
+      "cancel": "Cancel"
+    },
+    "table": {
+      "title": "Tables",
+      "text": "Rows and cells keep their borders, alignment and numbers.",
+      "becomes": "Nested frames with tabular figures",
+      "frame": "Frame",
+      "width": "Width",
+      "sizedFor": "Sized for",
+      "theme": "Theme",
+      "desktop": "Desktop",
+      "desktopFor": "Laptops and desktop displays",
+      "tablet": "Tablet",
+      "tabletFor": "Tablets held upright",
+      "mobile": "Mobile",
+      "mobileFor": "Most current phones",
+      "light": "Light",
+      "dark": "Dark"
+    },
+    "end": "This page is part of PageRecast, free and open source.",
+    "get": "Get PageRecast"
+  }
+}

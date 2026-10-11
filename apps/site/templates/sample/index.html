@@ -1,0 +1,287 @@
+<!doctype html>
+<html lang="{{@lang}}">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    {{@head}}
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  </head>
+  <body>
+    <header class="bar">
+      <a class="bar-logo" href="{{@base}}" aria-label="{{nav.homeLabel}}" data-logo></a>
+      <nav aria-label="{{sample.sections}}">
+        <a href="#type">{{sample.type.title}}</a>
+        <a href="#colour">{{sample.colour.title}}</a>
+        <a href="#layout">{{sample.layout.title}}</a>
+        <a href="#surfaces">{{sample.surfaces.title}}</a>
+        <a href="#controls">{{sample.controls.title}}</a>
+      </nav>
+      <a class="pill pill--ink" href="{{@base}}#install">{{sample.install}}</a>
+    </header>
+
+    <main>
+      <section class="intro">
+        <h1>{{sample.heading}}</h1>
+        <div class="intro-side">
+          <p>{{sample.intro}}</p>
+          <ol class="steps">
+            <li><b>1</b>{{sample.step1}}</li>
+            <li><b>2</b>{{sample.step2}}</li>
+            <li><b>3</b>{{sample.step3}}</li>
+          </ol>
+        </div>
+      </section>
+
+      <section class="spec" id="type">
+        <div class="spec-head">
+          <h2>{{sample.type.title}}</h2>
+          <p>{{sample.type.text}}</p>
+          <p class="becomes">{{sample.type.becomes}}</p>
+        </div>
+        <div class="spec-body type">
+          <div class="type-hero">
+            <span class="glyphs" aria-hidden="true">Ag</span>
+            <dl>
+              <div>
+                <dt>Inter</dt>
+                <dd>{{sample.type.inter}}</dd>
+              </div>
+              <div>
+                <dt>Hanken Grotesk</dt>
+                <dd>{{sample.type.hanken}}</dd>
+              </div>
+            </dl>
+          </div>
+          <div class="scale">
+            <p class="t-display">{{sample.type.display}}</p>
+            <p class="t-title">{{sample.type.titleSample}}</p>
+            <p class="t-head">{{sample.type.headline}}</p>
+            <p class="t-body">{{sample.type.body}}</p>
+          </div>
+          <ul class="weights" aria-label="{{sample.type.weights}}">
+            <li style="font-weight: 200">200</li>
+            <li style="font-weight: 300">300</li>
+            <li style="font-weight: 400">400</li>
+            <li style="font-weight: 500">500</li>
+            <li style="font-weight: 600">600</li>
+            <li style="font-weight: 700">700</li>
+            <li style="font-weight: 800">800</li>
+            <li style="font-weight: 900">900</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="spec" id="colour">
+        <div class="spec-head">
+          <h2>{{sample.colour.title}}</h2>
+          <p>{{sample.colour.text}}</p>
+          <p class="becomes">{{sample.colour.becomes}}</p>
+        </div>
+        <ul class="spec-body swatches">
+          <li style="--c: var(--signal)"><span></span><b>Signal</b><code data-hex></code></li>
+          <li style="--c: var(--rose)"><span></span><b>Rose</b><code data-hex></code></li>
+          <li style="--c: var(--sun)"><span></span><b>Sun</b><code data-hex></code></li>
+          <li style="--c: var(--moss)"><span></span><b>Moss</b><code data-hex></code></li>
+          <li style="--c: var(--sea)"><span></span><b>Sea</b><code data-hex></code></li>
+          <li style="--c: var(--sky)"><span></span><b>Sky</b><code data-hex></code></li>
+          <li style="--c: var(--ink)"><span></span><b>Ink</b><code data-hex></code></li>
+          <li style="--c: var(--paper)"><span></span><b>Paper</b><code data-hex></code></li>
+        </ul>
+      </section>
+
+      <section class="spec" id="layout">
+        <div class="spec-head">
+          <h2>{{sample.layout.title}}</h2>
+          <p>{{sample.layout.text}}</p>
+          <p class="becomes">{{sample.layout.becomes}}</p>
+        </div>
+        <div class="spec-body layout">
+          <article class="card">
+            <span class="card-icon" style="--c: var(--signal)" data-icon="layers"></span>
+            <h3>{{sample.layout.frames}}</h3>
+            <p>{{sample.layout.framesText}}</p>
+            <div class="chips">
+              <span>{{sample.layout.fill}}</span><span>{{sample.layout.stroke}}</span
+              ><span>{{sample.layout.clip}}</span>
+            </div>
+          </article>
+          <article class="card">
+            <span class="card-icon" style="--c: var(--sea)" data-icon="autolayout"></span>
+            <h3>Auto Layout</h3>
+            <p>{{sample.layout.autoText}}</p>
+            <div class="chips">
+              <span>{{sample.layout.gap}}</span><span>{{sample.layout.padding}}</span
+              ><span>{{sample.layout.wrap}}</span>
+            </div>
+          </article>
+          <article class="card">
+            <span class="card-icon" style="--c: var(--sun)" data-icon="font"></span>
+            <h3>{{sample.layout.styles}}</h3>
+            <p>{{sample.layout.stylesText}}</p>
+            <div class="chips">
+              <span>{{sample.layout.display}}</span><span>{{sample.layout.titleChip}}</span
+              ><span>{{sample.layout.body}}</span>
+            </div>
+          </article>
+          <div class="row-demo" aria-label="{{sample.layout.alignment}}">
+            <span>{{sample.layout.start}}</span><span class="grow">{{sample.layout.grow}}</span
+            ><span>{{sample.layout.end}}</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="spec" id="surfaces">
+        <div class="spec-head">
+          <h2>{{sample.surfaces.title}}</h2>
+          <p>{{sample.surfaces.text}}</p>
+          <p class="becomes">{{sample.surfaces.becomes}}</p>
+        </div>
+        <div class="spec-body surfaces">
+          <div class="s s--linear"><span>{{sample.surfaces.linear}}</span></div>
+          <div class="s s--radial"><span>{{sample.surfaces.radial}}</span></div>
+          <div class="s s--conic"><span>{{sample.surfaces.angular}}</span></div>
+          <div class="s s--shadow"><span>{{sample.surfaces.shadow}}</span></div>
+          <div class="s s--glass">
+            <div class="glass"><span>{{sample.surfaces.blur}}</span></div>
+          </div>
+          <div class="s s--dashed"><span>{{sample.surfaces.dashed}}</span></div>
+          <div class="s s--corners"><span>{{sample.surfaces.corners}}</span></div>
+          <div class="s s--inset"><span>{{sample.surfaces.inset}}</span></div>
+        </div>
+      </section>
+
+      <section class="spec" id="media">
+        <div class="spec-head">
+          <h2>{{sample.media.title}}</h2>
+          <p>{{sample.media.text}}</p>
+          <p class="becomes">{{sample.media.becomes}}</p>
+        </div>
+        <div class="spec-body media">
+          <figure class="art" aria-label="{{sample.media.artLabel}}">
+            <svg viewBox="0 0 320 240" role="img" aria-label="{{sample.media.shapes}}">
+              <rect width="320" height="240" fill="var(--sea)" />
+              <circle cx="232" cy="78" r="44" fill="var(--sun)" />
+              <path d="M0 176c54-40 106-40 160 0s106 40 160 0v64H0z" fill="var(--sky)" />
+              <path
+                d="M0 200c54-30 106-30 160 0s106 30 160 0v40H0z"
+                fill="var(--paper)"
+                opacity=".9"
+              />
+              <rect x="40" y="56" width="92" height="112" rx="16" fill="var(--signal)" />
+              <rect x="88" y="32" width="92" height="112" rx="16" fill="var(--rose)" />
+              <path d="M88 56h28a16 16 0 0 1 16 16v72H104a16 16 0 0 1-16-16z" fill="var(--ink)" />
+            </svg>
+            <figcaption>{{sample.media.svg}}</figcaption>
+          </figure>
+          <figure class="photo">
+            <img
+              src="/sample/poster.jpg"
+              alt="{{sample.media.photoAlt}}"
+              width="640"
+              height="800"
+            />
+            <figcaption>{{sample.media.jpeg}}</figcaption>
+          </figure>
+          <div class="icons" aria-label="{{sample.media.icons}}">
+            <span data-icon="capture"></span>
+            <span data-icon="layers"></span>
+            <span data-icon="font"></span>
+            <span data-icon="image"></span>
+            <span data-icon="vector"></span>
+            <span data-icon="variable"></span>
+          </div>
+        </div>
+      </section>
+
+      <section class="spec" id="controls">
+        <div class="spec-head">
+          <h2>{{sample.controls.title}}</h2>
+          <p>{{sample.controls.text}}</p>
+          <p class="becomes">{{sample.controls.becomes}}</p>
+        </div>
+        <form class="spec-body controls" onsubmit="return false">
+          <label class="field">
+            <span>{{sample.controls.address}}</span>
+            <input type="text" value="https://staging.example.com/pricing" />
+          </label>
+          <label class="field">
+            <span>{{sample.controls.width}}</span>
+            <select>
+              <option>{{sample.controls.desktop}}</option>
+              <option>{{sample.controls.tablet}}</option>
+              <option>{{sample.controls.mobile}}</option>
+            </select>
+          </label>
+          <div class="segmented" role="radiogroup" aria-label="{{sample.controls.theme}}">
+            <button type="button" role="radio" aria-checked="false">
+              {{sample.controls.light}}
+            </button>
+            <button type="button" role="radio" aria-checked="false">
+              {{sample.controls.dark}}
+            </button>
+            <button type="button" role="radio" aria-checked="true">{{sample.controls.both}}</button>
+          </div>
+          <label class="switch">
+            <input type="checkbox" checked />
+            <span class="switch-track"></span>
+            {{sample.controls.banners}}
+          </label>
+          <label class="check"><input type="checkbox" checked /> {{sample.controls.lazy}}</label>
+          <label class="check"><input type="checkbox" /> {{sample.controls.scrollbar}}</label>
+          <div class="buttons">
+            <button type="submit" class="pill pill--signal">{{sample.controls.capture}}</button>
+            <button type="button" class="pill pill--line">{{sample.controls.cancel}}</button>
+          </div>
+        </form>
+      </section>
+
+      <section class="spec" id="table">
+        <div class="spec-head">
+          <h2>{{sample.table.title}}</h2>
+          <p>{{sample.table.text}}</p>
+          <p class="becomes">{{sample.table.becomes}}</p>
+        </div>
+        <div class="spec-body">
+          <table class="widths">
+            <thead>
+              <tr>
+                <th>{{sample.table.frame}}</th>
+                <th class="n">{{sample.table.width}}</th>
+                <th>{{sample.table.sizedFor}}</th>
+                <th>{{sample.table.theme}}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>{{sample.table.desktop}}</td>
+                <td class="n">1440</td>
+                <td>{{sample.table.desktopFor}}</td>
+                <td><span class="tag">{{sample.table.light}}</span></td>
+              </tr>
+              <tr>
+                <td>{{sample.table.tablet}}</td>
+                <td class="n">768</td>
+                <td>{{sample.table.tabletFor}}</td>
+                <td><span class="tag tag--dark">{{sample.table.dark}}</span></td>
+              </tr>
+              <tr>
+                <td>{{sample.table.mobile}}</td>
+                <td class="n">390</td>
+                <td>{{sample.table.mobileFor}}</td>
+                <td><span class="tag">{{sample.table.light}}</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+
+    <footer class="end">
+      <p>{{sample.end}}</p>
+      {{@langlist}}
+      <a class="pill pill--signal" href="{{@base}}#install">{{sample.get}}</a>
+    </footer>
+
+    <script type="module" src="/sample/sample.ts"></script>
+  </body>
+</html>

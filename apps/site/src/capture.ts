@@ -5,6 +5,25 @@
  * to a server; the hash never leaves the browser.
  */
 import { parseCaptureLink } from '@pagerecast/capture'
+import { fill, lang, strings } from './strings'
+
+/** The capture page's translated strings (i18n/<lang>.json, capture.runtime). */
+interface CaptureStrings {
+  invalid: string
+  target: string
+  and: string
+  language: string
+  themes: Record<'light' | 'dark' | 'both', string>
+  starting: string
+  failed: string
+  again: string
+  frames: Partial<Record<Intl.LDMLPluralRule, string>> & { other: string }
+  thePage: string
+  copied: string
+  ready: string
+}
+const t = strings<CaptureStrings>()
+const plural = new Intl.PluralRules(lang)
 
 /** The Chrome Web Store build; `?extension=<id>` points at an unpacked one. */
 const EXTENSION_ID =
@@ -27,7 +46,6 @@ const install = document.getElementById('capture-install')!
 
 const runtime = (globalThis as { chrome?: typeof chrome }).chrome?.runtime
 const link = parseCaptureLink(location.hash)
-const THEMES = { light: 'light', dark: 'dark', both: 'light and dark' }
 
 function show(state: string) {
   main.dataset.state = state
@@ -65,34 +83,36 @@ function capture() {
   start.disabled = true
   copyButton.hidden = true
   show('capturing')
-  status.textContent = 'Starting…'
+  status.textContent = t.starting
   const port = runtime.connect(EXTENSION_ID, { name: 'capture-link' })
   port.onMessage.addListener(async (reply: Reply) => {
     if (reply.type === 'progress') status.textContent = reply.label
     if (reply.type === 'error') {
       show('error')
-      status.textContent = `${reply.message} Press Capture to try again.`
+      status.textContent = fill(t.failed, { message: reply.message })
       start.disabled = false
     }
     if (reply.type === 'done') {
       port.disconnect()
       start.disabled = false
-      start.textContent = 'Capture again'
-      const frames = `${reply.frames} ${reply.frames === 1 ? 'frame' : 'frames'}`
+      start.textContent = t.again
+      const n = reply.frames
+      const frames = fill(t.frames[plural.select(n)] ?? t.frames.other, { n })
+      const copied = fill(t.copied, { frames, title: reply.title || t.thePage })
       // The tab is focused again after the capture, so copying usually just works;
       // when the browser wants a click first, the button asks for one.
       if (await copy(reply.payload)) {
         show('copied')
-        status.textContent = `Copied — paste in Figma. ${frames} of ${reply.title || 'the page'}.`
+        status.textContent = copied
       } else {
         show('ready')
-        status.textContent = `Captured ${frames}. Copy it, then paste in Figma.`
+        status.textContent = fill(t.ready, { frames })
         copyButton.hidden = false
         copyButton.onclick = async () => {
           if (await copy(reply.payload)) {
             show('copied')
             copyButton.hidden = true
-            status.textContent = `Copied — paste in Figma. ${frames} of ${reply.title || 'the page'}.`
+            status.textContent = copied
           }
         }
       }
@@ -103,11 +123,14 @@ function capture() {
 
 if (!link) {
   show('invalid')
-  target.textContent =
-    'This capture link is incomplete. Start again from the Web tab of the PageRecast plugin in Figma.'
+  target.textContent = t.invalid
 } else {
-  const language = link.language ? `, in ${link.language}` : ''
-  target.textContent = `${new URL(link.url).host} at ${link.widths.join(' and ')} px, ${THEMES[link.theme]}${language}.`
+  target.textContent = fill(t.target, {
+    host: new URL(link.url).host,
+    widths: link.widths.join(t.and),
+    theme: t.themes[link.theme],
+    language: link.language ? fill(t.language, { language: link.language }) : '',
+  })
   target.title = link.url
   void findExtension().then((found) => {
     show(found ? 'found' : 'missing')

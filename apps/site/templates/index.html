@@ -1,0 +1,271 @@
+<!doctype html>
+<html lang="{{@lang}}">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    {{@head}}
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  </head>
+  <body>
+    <header class="nav">
+      <a class="nav-logo" href="#top" aria-label="PageRecast" data-logo></a>
+      <nav aria-label="{{nav.label}}">
+        <a href="#widths">{{nav.widths}}</a>
+        <a href="#layers">{{nav.layers}}</a>
+        <a href="#privacy">{{nav.privacy}}</a>
+        <a href="{{@base}}gallery/">{{nav.gallery}}</a>
+        <a data-link="docs">{{nav.guides}}</a>
+        <a data-link="repo">GitHub</a>
+      </nav>
+      {{@langs}}
+      <a class="nav-cta" href="#install">{{nav.cta}}</a>
+    </header>
+
+    <main id="top">
+      <section class="hero">
+        <h1>{{home.hero.title}}</h1>
+        <p class="hero-lead">{{home.hero.lead}}</p>
+        <p class="cta">
+          <a class="btn btn--primary" data-link="chrome"
+            >{{home.hero.chrome}}<span class="btn-arrow" aria-hidden="true"></span
+          ></a>
+          <a class="btn btn--secondary" data-link="figma">{{home.hero.figma}}</a>
+        </p>
+        <p class="cta-note">
+          {{home.hero.note}} <a href="{{@base}}sample/">{{home.hero.sample}}</a>
+        </p>
+      </section>
+
+      <section class="explode" data-explode aria-label="{{home.explode.label}}">
+        <div class="explode-sticky">
+          <div class="explode-stage"></div>
+          <div class="explode-stats">
+            <div><b data-stat="layers">—</b><span>{{home.explode.layers}}</span></div>
+            <div><b data-stat="texts">—</b><span>{{home.explode.texts}}</span></div>
+            <div><b data-stat="images">—</b><span>{{home.explode.images}}</span></div>
+            <p>{{home.explode.caption}}</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="chapter chapter--ink" id="widths">
+        <div class="chapter-head" data-reveal>
+          <h2>{{home.widths.title}}</h2>
+          <p>{{home.widths.text}}</p>
+        </div>
+        <div class="viewer" data-viewer data-reveal>
+          <div class="viewer-controls">
+            <div
+              class="seg"
+              role="radiogroup"
+              aria-label="{{home.widths.width}}"
+              data-viewer-widths
+            ></div>
+            <div class="seg" role="radiogroup" aria-label="{{home.widths.theme}}">
+              <button type="button" role="radio" aria-checked="true" data-theme="light">
+                {{home.widths.light}}
+              </button>
+              <button type="button" role="radio" aria-checked="false" data-theme="dark">
+                {{home.widths.dark}}
+              </button>
+            </div>
+          </div>
+          <div class="viewer-stage">
+            <div class="viewer-frame"><img alt="" data-viewer-image /></div>
+          </div>
+          <p class="viewer-caption" aria-live="polite" data-viewer-caption></p>
+        </div>
+      </section>
+
+      <section class="chapter" id="layers">
+        <div class="chapter-head" data-reveal>
+          <h2>{{home.layers.title}}</h2>
+          <p>{{home.layers.text}}</p>
+        </div>
+        <figure class="anatomy" data-anatomy data-reveal>
+          <div class="anatomy-stage">
+            <img alt="{{home.layers.alt}}" data-anatomy-image />
+          </div>
+          <ol class="anatomy-notes" data-anatomy-notes></ol>
+          <figcaption>{{home.layers.caption}}</figcaption>
+        </figure>
+      </section>
+
+      <section class="chapter chapter--behind">
+        <div class="chapter-head chapter-head--wide" data-reveal>
+          <h2>{{home.behind.title}}</h2>
+          <p>{{home.behind.text}}</p>
+        </div>
+        <figure class="panel panel--wide" data-reveal>
+          <img
+            src="/shots/ext-captured-light.png"
+            alt="{{home.behind.extensionAlt}}"
+            width="380"
+            height="860"
+            loading="lazy"
+          />
+          <img
+            src="/shots/plugin-review-dark.png"
+            alt="{{home.behind.pluginAlt}}"
+            width="400"
+            height="640"
+            loading="lazy"
+          />
+        </figure>
+      </section>
+
+      <section class="chapter chapter--red" id="privacy">
+        <h2 data-reveal>{{home.privacy.title}}</h2>
+        <p>{{home.privacy.text}}</p>
+      </section>
+
+      <section class="chapter chapter--open">
+        <div class="chapter-head" data-reveal>
+          <h2>{{home.open.title}}</h2>
+          <p>{{home.open.text}}</p>
+          <p class="cta cta--left">
+            <a class="btn btn--dark" data-link="repo"
+              >{{home.open.github}}<span class="btn-arrow" aria-hidden="true"></span
+            ></a>
+            <a class="link" data-link="format"
+              >{{home.open.format}} <span aria-hidden="true">›</span></a
+            >
+          </p>
+        </div>
+        <pre class="code" data-reveal aria-label="{{home.open.codeLabel}}"><code>{
+  <span class="k">"format"</span>: <span class="s">"pagerecast/scene"</span>,
+  <span class="k">"version"</span>: <span class="n">1</span>,
+  <span class="k">"captures"</span>: [{
+    <span class="k">"label"</span>: <span class="s">"Mobile · 390 · Dark"</span>,
+    <span class="k">"root"</span>: {
+      <span class="k">"type"</span>: <span class="s">"frame"</span>,
+      <span class="k">"layout"</span>: { <span class="k">"direction"</span>: <span class="s">"column"</span>, <span class="k">"gap"</span>: [<span class="n">24</span>, <span class="n">24</span>] },
+      <span class="k">"children"</span>: [ … ]
+    }
+  }]
+}</code></pre>
+      </section>
+
+      <section class="install" id="install">
+        <h2>{{home.install.title}}</h2>
+        <div class="install-row" data-reveal>
+          <a class="install-item" data-link="chrome">
+            <span class="tile tile--chrome"
+              ><svg viewBox="0 0 48 48" aria-hidden="true">
+                <path
+                  fill="#ea4335"
+                  d="M24 13h19.05A22 22 0 0 0 4.95 13l9.52 16.5A11 11 0 0 1 24 13z"
+                />
+                <path
+                  fill="#fbbc04"
+                  d="M33.53 29.5 24 46a22 22 0 0 0 19.05-33H24a11 11 0 0 1 9.53 16.5z"
+                />
+                <path
+                  fill="#34a853"
+                  d="M14.47 29.5 4.95 13A22 22 0 0 0 24 46l9.53-16.5a11 11 0 0 1-19.06 0z"
+                />
+                <circle cx="24" cy="24" r="11" fill="#fff" />
+                <circle cx="24" cy="24" r="8.6" fill="#1a73e8" /></svg
+            ></span>
+            <strong>{{home.install.chrome}}</strong>
+            <span class="install-text">{{home.install.chromeText}}</span>
+            <span class="btn btn--primary btn--small"
+              >{{home.install.chromeButton}}<span class="btn-arrow" aria-hidden="true"></span
+            ></span>
+          </a>
+          <a class="install-item" data-link="figma">
+            <span class="tile tile--figma"
+              ><svg viewBox="0 0 38 57" aria-hidden="true">
+                <path fill="#1abcfe" d="M19 28.5a9.5 9.5 0 1 1 19 0 9.5 9.5 0 0 1-19 0z" />
+                <path fill="#0acf83" d="M0 47.5A9.5 9.5 0 0 1 9.5 38H19v9.5a9.5 9.5 0 1 1-19 0z" />
+                <path fill="#ff7262" d="M19 0v19h9.5a9.5 9.5 0 1 0 0-19H19z" />
+                <path
+                  fill="#f24e1e"
+                  d="M0 9.5A9.5 9.5 0 0 0 9.5 19H19V0H9.5A9.5 9.5 0 0 0 0 9.5z"
+                />
+                <path
+                  fill="#a259ff"
+                  d="M0 28.5A9.5 9.5 0 0 0 9.5 38H19V19H9.5A9.5 9.5 0 0 0 0 28.5z"
+                /></svg
+            ></span>
+            <strong>{{home.install.figma}}</strong>
+            <span class="install-text">{{home.install.figmaText}}</span>
+            <span class="btn btn--dark btn--small"
+              >{{home.install.figmaButton}}<span class="btn-arrow" aria-hidden="true"></span
+            ></span>
+          </a>
+          <a class="install-item" data-link="docs">
+            <span class="tile tile--guide"
+              ><svg
+                viewBox="0 0 20 20"
+                aria-hidden="true"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M4 4.5A1.5 1.5 0 0 1 5.5 3H16v12H5.5A1.5 1.5 0 0 0 4 16.5z" />
+                <path d="M4 16.5A1.5 1.5 0 0 0 5.5 18H16M7.5 6.5h5" /></svg
+            ></span>
+            <strong>{{home.install.guides}}</strong>
+            <span class="install-text">{{home.install.guidesText}}</span>
+            <span class="link">{{home.install.guidesLink}} <span aria-hidden="true">›</span></span>
+          </a>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-top">
+        <div class="footer-brand">
+          <a class="footer-logo" href="#top" aria-label="{{footer.top}}" data-logo></a>
+          <p>{{footer.tagline}}</p>
+          <a class="btn btn--primary btn--small" data-link="chrome"
+            >{{home.hero.chrome}}<span class="btn-arrow" aria-hidden="true"></span
+          ></a>
+        </div>
+        <nav class="footer-cols" aria-label="{{footer.label}}">
+          <div>
+            <h3>{{footer.product}}</h3>
+            <ul>
+              <li><a data-link="chrome">{{home.install.chrome}}</a></li>
+              <li><a data-link="figma">{{home.install.figma}}</a></li>
+              <li><a href="{{@base}}sample/">{{footer.sample}}</a></li>
+              <li><a href="{{@base}}gallery/">{{nav.gallery}}</a></li>
+              <li><a data-link="docs">{{nav.guides}}</a></li>
+            </ul>
+          </div>
+          <div>
+            <h3>{{footer.project}}</h3>
+            <ul>
+              <li><a data-link="repo">GitHub</a></li>
+              <li><a data-link="changelog">{{footer.changelog}}</a></li>
+              <li><a data-link="releases">{{footer.releases}}</a></li>
+              <li><a data-link="issues">{{footer.issues}}</a></li>
+            </ul>
+          </div>
+          <div>
+            <h3>{{footer.trust}}</h3>
+            <ul>
+              <li><a href="{{@base}}privacy/">{{nav.privacy}}</a></li>
+              <li><a data-link="security">{{footer.security}}</a></li>
+              <li><a data-link="license">{{footer.license}}</a></li>
+              <li><a data-link="format">{{footer.format}}</a></li>
+            </ul>
+          </div>
+        </nav>
+      </div>
+      <div class="footer-base">
+        <p>{{footer.credit}}</p>
+        {{@langlist}}
+        <p>
+          <a data-link="changelog">{{footer.version}} <span data-version></span></a> · © 2026
+        </p>
+      </div>
+      <a class="footer-mark" href="#top" aria-label="{{footer.top}}" data-wordmark></a>
+    </footer>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

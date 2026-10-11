@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="{{@lang}}">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    {{@head}}
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  </head>
+  <body>
+    <header class="nav">
+      <a class="nav-logo" href="{{@base}}" aria-label="{{nav.homeLabel}}" data-logo></a>
+      <nav aria-label="{{nav.label}}">
+        <a href="{{@base}}">{{nav.home}}</a>
+        <a href="{{@base}}gallery/" aria-current="page">{{nav.gallery}}</a>
+        <a data-link="docs">{{nav.guides}}</a>
+        <a data-link="repo">GitHub</a>
+      </nav>
+      {{@langs}}
+      <a class="nav-cta" href="{{@base}}#install">{{nav.cta}}</a>
+    </header>
+
+    <main class="gallery">
+      <div class="gallery-head">
+        <h1>{{gallery.heading}}</h1>
+        <p>{{gallery.intro}}</p>
+      </div>
+
+      <ul class="gallery-list">
+        <li class="gallery-item">
+          <a class="gallery-shot" href="/gallery/test-page.recast" download>
+            <img
+              src="/gallery/test-page.jpg"
+              alt="{{gallery.sample.alt}}"
+              width="1440"
+              height="900"
+              loading="lazy"
+            />
+          </a>
+          <div class="gallery-meta">
+            <h2>{{gallery.sample.name}}</h2>
+            <p>{{gallery.sample.text}}</p>
+            <p class="gallery-facts num">{{gallery.sample.facts}}</p>
+            <p class="gallery-actions">
+              <a class="btn btn--dark btn--small" href="/gallery/test-page.recast" download
+                >{{gallery.download}}<span class="btn-arrow" aria-hidden="true"></span
+              ></a>
+              <a class="link" href="{{@base}}sample/"
+                >{{gallery.view}} <span aria-hidden="true">›</span></a
+              >
+            </p>
+          </div>
+        </li>
+        <li class="gallery-item">
+          <a class="gallery-shot" href="/gallery/pagerecast-site.recast" download>
+            <img
+              src="/gallery/pagerecast-site.jpg"
+              alt="{{gallery.site.alt}}"
+              width="1440"
+              height="900"
+              loading="lazy"
+            />
+          </a>
+          <div class="gallery-meta">
+            <h2>{{gallery.site.name}}</h2>
+            <p>{{gallery.site.text}}</p>
+            <p class="gallery-facts num">{{gallery.site.facts}}</p>
+            <p class="gallery-actions">
+              <a class="btn btn--dark btn--small" href="/gallery/pagerecast-site.recast" download
+                >{{gallery.download}}<span class="btn-arrow" aria-hidden="true"></span
+              ></a>
+              <a class="link" href="{{@base}}"
+                >{{gallery.view}} <span aria-hidden="true">›</span></a
+              >
+            </p>
+          </div>
+        </li>
+      </ul>
+
+      <section class="gallery-share">
+        <h2>{{gallery.share.title}}</h2>
+        <ol>
+          <li>{{gallery.share.step1}}</li>
+          <li>{{gallery.share.step2}}</li>
+          <li>{{gallery.share.step3}}</li>
+        </ol>
+      </section>
+    </main>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

@@ -1,31 +1,23 @@
 import '@fontsource-variable/hanken-grotesk/wght.css'
 import './site.css'
 import logo from '../../../assets/brand/logo.svg?raw'
-import { CHROME, DOCS, FIGMA, REPO, SHADES } from './links'
+import { fill, lang, strings } from './strings'
 
 declare const __VERSION__: string
 
 const base = import.meta.env.BASE_URL
 const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches
 
-const links: Record<string, string> = {
-  chrome: CHROME,
-  figma: FIGMA,
-  docs: DOCS,
-  repo: REPO,
-  shades: SHADES,
-  format: `${REPO}/blob/main/docs/scene-format.md`,
-  privacy: '/privacy/',
-  changelog: `${REPO}/blob/main/CHANGELOG.md`,
-  releases: `${REPO}/releases`,
-  issues: `${REPO}/issues/new/choose`,
-  security: `${REPO}/blob/main/SECURITY.md`,
-  license: `${REPO}/blob/main/LICENSE`,
+/** The home page's translated strings (i18n/<lang>.json, home.runtime). */
+interface HomeStrings {
+  devices: Record<string, string>
+  light: string
+  dark: string
+  viewerAlt: { light: string; dark: string }
+  viewerCaption: string
+  notes: Record<string, { title: string; detail: string }>
 }
-for (const a of document.querySelectorAll<HTMLAnchorElement>('[data-link]')) {
-  a.href = links[a.dataset.link!] ?? '#'
-  a.rel = 'noopener'
-}
+const t = strings<HomeStrings>()
 // The wordmark follows the text colour, so the logo works in both themes.
 const themedLogo = logo.replace('fill="#0A0A0B" transform', 'fill="currentColor" transform')
 for (const el of document.querySelectorAll('[data-logo]')) el.innerHTML = themedLogo
@@ -83,7 +75,7 @@ function countUp(scope: HTMLElement, stats: Demo['stats']) {
       const p = reduced ? 1 : Math.min(1, (now - start) / 1200)
       const eased = 1 - Math.pow(1 - p, 3)
       for (const [el, value] of counters)
-        el.textContent = Math.round(value * eased).toLocaleString('en')
+        el.textContent = Math.round(value * eased).toLocaleString(lang)
       if (p < 1) requestAnimationFrame(tick)
     }
     requestAnimationFrame(tick)
@@ -157,20 +149,14 @@ function viewer(data: Demo) {
   const widthGroup = root?.querySelector<HTMLElement>('[data-viewer-widths]')
   if (!root || !image || !stage || !frame || !caption || !widthGroup) return
   const widths = [...new Set(data.widths.map((w) => w.width))].sort((a, b) => b - a)
-  const names: Record<number, string> = {
-    1440: 'Desktop',
-    1280: 'Laptop',
-    768: 'Tablet',
-    390: 'Mobile',
-  }
   widthGroup.innerHTML = widths
     .map(
       (w, i) =>
-        `<button type="button" role="radio" aria-checked="${i === 0}" data-width="${w}">${names[w] ?? w} <span>${w}</span></button>`,
+        `<button type="button" role="radio" aria-checked="${i === 0}" data-width="${w}">${t.devices[w] ?? w} <span>${w}</span></button>`,
     )
     .join('')
   let width = widths[0]!
-  let theme = 'light'
+  let theme: 'light' | 'dark' = 'light'
   const max = Math.max(...widths)
   const render = () => {
     const shot =
@@ -188,14 +174,14 @@ function viewer(data: Demo) {
       image.onload = () => (image.style.opacity = '1')
       image.src = `${base}demo/${shot.file}`
     }
-    image.alt = `The sample page captured at ${width} px in ${theme} mode`
-    caption.innerHTML = `<b>${width} px</b> · ${theme === 'dark' ? 'Dark' : 'Light'} · one frame in Figma`
+    image.alt = fill(t.viewerAlt[theme], { width })
+    caption.innerHTML = `<b>${width} px</b> · ${fill(t.viewerCaption, { theme: t[theme] })}`
   }
   root.addEventListener('click', (event) => {
     const button = (event.target as HTMLElement).closest('button')
     if (!button) return
     if (button.dataset.width) width = Number(button.dataset.width)
-    if (button.dataset.theme) theme = button.dataset.theme
+    if (button.dataset.theme) theme = button.dataset.theme as typeof theme
     for (const b of button.parentElement!.querySelectorAll('button')) {
       b.setAttribute('aria-checked', String(b === button))
     }
@@ -226,8 +212,10 @@ function anatomy(data: Demo['anatomy']) {
     stage.append(box, pin)
     const item = document.createElement('li')
     item.innerHTML = `<strong></strong><span></span>`
-    item.querySelector('strong')!.textContent = note.title
-    item.querySelector('span')!.textContent = note.detail
+    // explode.json is written in English; the dictionary has each note translated.
+    const text = t.notes[note.title] ?? note
+    item.querySelector('strong')!.textContent = text.title
+    item.querySelector('span')!.textContent = text.detail
     list.appendChild(item)
     return { note, box, pin, item }
   })

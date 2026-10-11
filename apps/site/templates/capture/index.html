@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="{{@lang}}">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    {{@head}}
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  </head>
+  <body>
+    <header class="nav">
+      <a class="nav-logo" href="{{@base}}" aria-label="{{nav.homeLabel}}" data-logo></a>
+      <nav aria-label="{{nav.label}}">
+        <a href="{{@base}}">{{nav.home}}</a>
+        <a data-link="docs">{{nav.guides}}</a>
+        <a data-link="repo">GitHub</a>
+      </nav>
+      {{@langs}}
+    </header>
+
+    <main class="legal capture" data-state="checking">
+      <h1>{{capture.heading}}</h1>
+      <p class="capture-target" id="capture-target">{{capture.reading}}</p>
+
+      <!-- Shown once the extension answers. -->
+      <div class="capture-run" id="capture-run" hidden>
+        <button type="button" class="btn btn--primary" id="capture-start">{{capture.start}}</button>
+        <p class="capture-status" id="capture-status" role="status" aria-live="polite">
+          {{capture.status}}
+        </p>
+        <button type="button" class="btn btn--secondary" id="capture-copy" hidden>
+          {{capture.copy}}
+        </button>
+      </div>
+
+      <!-- Shown when no extension answers within a few seconds. -->
+      <div id="capture-install" hidden>
+        <h2>{{capture.installTitle}}</h2>
+        <p>{{capture.installText}}</p>
+        <p>
+          <a class="btn btn--primary" data-link="chrome">{{capture.installButton}}</a>
+        </p>
+        <p>{{capture.installAfter}}</p>
+      </div>
+
+      <p class="capture-note">{{capture.note}}</p>
+    </main>
+
+    <script type="module" src="/src/main.ts"></script>
+    <script type="module" src="/src/capture.ts"></script>
+  </body>
+</html>

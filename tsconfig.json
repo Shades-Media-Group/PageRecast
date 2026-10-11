@@ -12,7 +12,8 @@
     "scripts",
     "*.config.ts",
     "apps/site/src",
-    "apps/site/vite.config.ts"
+    "apps/site/vite.config.ts",
+    "apps/site/pages.ts"
   ],
   "exclude": ["**/dist", "**/node_modules", "e2e/fixtures"]
 }

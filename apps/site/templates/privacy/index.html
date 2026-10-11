@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="{{@lang}}">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    {{@head}}
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  </head>
+  <body>
+    <header class="nav">
+      <a class="nav-logo" href="{{@base}}" aria-label="{{nav.homeLabel}}" data-logo></a>
+      <nav aria-label="{{nav.label}}">
+        <a href="{{@base}}">{{nav.home}}</a>
+        <a data-link="docs">{{nav.guides}}</a>
+        <a data-link="repo">GitHub</a>
+      </nav>
+      {{@langs}}
+      <a class="nav-cta" href="{{@base}}#install">{{nav.cta}}</a>
+    </header>
+
+    <main class="legal">
+      <h1>{{privacy.heading}}</h1>
+      <p class="legal-date">{{privacy.updated}}</p>
+
+      <p>{{privacy.intro}}</p>
+
+      <h2>{{privacy.shortTitle}}</h2>
+      <p>{{privacy.short}}</p>
+
+      <h2>{{privacy.chromeTitle}}</h2>
+      <ul>
+        <li>{{privacy.chromePage}}</li>
+        <li>{{privacy.chromeTabs}}</li>
+        <li>{{privacy.chromeStorage}}</li>
+      </ul>
+      <p>{{privacy.chromeNetwork}}</p>
+
+      <h2>{{privacy.firefoxTitle}}</h2>
+      <p>{{privacy.firefox}}</p>
+
+      <h2>{{privacy.pluginTitle}}</h2>
+      <ul>
+        <li>{{privacy.pluginCapture}}</li>
+        <li>{{privacy.pluginImages}}</li>
+        <li>{{privacy.pluginStorage}}</li>
+        <li>{{privacy.pluginAgents}}</li>
+      </ul>
+      <p>{{privacy.pluginWeb}}</p>
+
+      <h2>{{privacy.dataTitle}}</h2>
+      <p>{{privacy.data}}</p>
+
+      <h2>{{privacy.childrenTitle}}</h2>
+      <p>{{privacy.children}}</p>
+
+      <h2>{{privacy.changesTitle}}</h2>
+      <p>{{privacy.changes}}</p>
+
+      <h2>{{privacy.contactTitle}}</h2>
+      <p>
+        <a href="mailto:support@shades.md">support@shades.md</a> ·
+        <a data-link="shades">Shades Media Group</a>
+      </p>
+    </main>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

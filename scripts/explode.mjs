@@ -30,7 +30,7 @@ const SCALE = 2
 const STILL =
   '*,*::before,*::after{animation:none!important;transition:none!important}' +
   '[data-reveal]{opacity:1!important;transform:none!important}' +
-  '[data-explode],#widths,#layers{display:none!important}' +
+  '[data-explode],#widths,#layers,.g-consent,.g-prefs{display:none!important}' +
   '.nav{position:static!important}html{scroll-behavior:auto!important}'
 
 // Counts from the real capture of the page at 1440, light.
@@ -107,9 +107,8 @@ await light.screenshot({
   clip: { x: a.row[0], y: a.row[1], width: a.row[2], height: a.row[3] },
   fullPage: true,
 })
-const dark = await open(WIDTH, 'dark')
+const dark = await open(WIDTH, 'dark', PLANE_HEIGHT)
 const darkText = (await read(dark)).text.color
-await dark.close()
 const anatomy = {
   image: 'anatomy.png',
   width: Math.round(a.row[2]),
@@ -150,16 +149,16 @@ const settle = (page) =>
   }, anatomyUrl)
 
 // Each plane hides everything except one kind of layer.
-await settle(light)
-await light.evaluate(() => {
-  for (const el of document.querySelectorAll('body *')) {
-    const cs = getComputedStyle(el)
-    const r = el.getBoundingClientRect()
-    if (cs.backgroundColor !== 'rgba(0, 0, 0, 0)' && r.width < innerWidth * 0.95) {
-      el.setAttribute('data-surface', '')
+const markSurfaces = (page) =>
+  page.evaluate(() => {
+    for (const el of document.querySelectorAll('body *')) {
+      const cs = getComputedStyle(el)
+      const r = el.getBoundingClientRect()
+      if (cs.backgroundColor !== 'rgba(0, 0, 0, 0)' && r.width < innerWidth * 0.95) {
+        el.setAttribute('data-surface', '')
+      }
     }
-  }
-})
+  })
 const hideText =
   '*{color:transparent!important;-webkit-text-fill-color:transparent!important;text-shadow:none!important}' +
   '.btn-arrow{background:transparent!important}'
@@ -183,17 +182,26 @@ const planes = [
   { name: 'Images and vectors', file: 'plane-media.png', css: hideText + clearAll, png: true },
   { name: 'Text', file: 'plane-text.png', css: hideMedia + clearAll, png: true },
 ]
-for (const plane of planes) {
-  const handle = await light.addStyleTag({ content: plane.css })
-  await light.screenshot({
-    path: join(out, plane.file),
-    clip: { x: 0, y: 0, width: WIDTH, height: PLANE_HEIGHT },
-    omitBackground: plane.png,
-    ...(plane.png ? {} : { type: 'jpeg', quality: 84 }),
-  })
-  await handle.evaluate((el) => el.remove())
+// The same planes in both themes; the site shows the pair matching its own.
+const dark_ = (file) => file.replace(/(\.\w+)$/, '-dark$1')
+for (const [page, name] of [
+  [light, (file) => file],
+  [dark, dark_],
+]) {
+  await settle(page)
+  await markSurfaces(page)
+  for (const plane of planes) {
+    const handle = await page.addStyleTag({ content: plane.css })
+    await page.screenshot({
+      path: join(out, name(plane.file)),
+      clip: { x: 0, y: 0, width: WIDTH, height: PLANE_HEIGHT },
+      omitBackground: plane.png,
+      ...(plane.png ? {} : { type: 'jpeg', quality: 84 }),
+    })
+    await handle.evaluate((el) => el.remove())
+  }
+  await page.close()
 }
-await light.close()
 
 // The top of the page at every captured width and theme.
 const views = [...new Set(file.captures.map((c) => `${c.viewport.width}-${c.theme}`))]
@@ -216,12 +224,12 @@ await writeFile(
     width: WIDTH,
     height: PLANE_HEIGHT,
     viewHeight: HEIGHT,
-    planes: planes.map(({ name, file }) => ({ name, image: file })),
+    planes: planes.map(({ name, file }) => ({ name, image: file, dark: dark_(file) })),
     stats,
     widths,
     anatomy,
   }),
 )
 console.log(
-  `demo: ${planes.length} planes; ${stats.layers} layers, ${stats.texts} text, ${stats.images} images`,
+  `demo: ${planes.length} planes in two themes; ${stats.layers} layers, ${stats.texts} text, ${stats.images} images`,
 )

@@ -268,6 +268,7 @@ code {
 .explode {
   position: relative;
   height: 230vh;
+  height: 230svh;
   margin-top: clamp(32px, 5vw, 64px);
 }
 .explode-sticky {
@@ -276,6 +277,7 @@ code {
   display: grid;
   grid-template-rows: 1fr auto;
   height: calc(100vh - 52px);
+  height: calc(100svh - 52px);
   padding-bottom: 32px;
 }
 .explode-stage {
@@ -294,18 +296,32 @@ code {
 .explode-plane {
   position: absolute;
   inset: 0;
+  background-image: var(--light);
   background-size: 100% 100%;
-  transform-style: preserve-3d;
+  backface-visibility: hidden;
   will-change: transform;
 }
 .explode-plane--0 {
-  border-radius: 6px;
+  border-radius: calc(var(--s) * 10px);
   box-shadow:
     0 0 0 1px var(--line),
-    0 90px 140px -50px rgba(10, 10, 11, 0.5);
+    0 calc(var(--s) * 90px) calc(var(--s) * 140px) calc(var(--s) * -50px) rgba(10, 10, 11, 0.5);
 }
 .explode-plane:not(.explode-plane--0) {
-  filter: drop-shadow(0 26px 28px rgba(10, 10, 11, 0.32));
+  filter: drop-shadow(0 calc(var(--s) * 26px) calc(var(--s) * 28px) rgba(10, 10, 11, 0.32));
+}
+@media (prefers-color-scheme: dark) {
+  .explode-plane {
+    background-image: var(--dark);
+  }
+  .explode-plane--0 {
+    box-shadow:
+      0 0 0 1px rgba(255, 255, 255, 0.16),
+      0 calc(var(--s) * 90px) calc(var(--s) * 140px) calc(var(--s) * -40px) rgba(0, 0, 0, 0.7);
+  }
+  .explode-plane:not(.explode-plane--0) {
+    filter: drop-shadow(0 calc(var(--s) * 26px) calc(var(--s) * 28px) rgba(0, 0, 0, 0.55));
+  }
 }
 .explode-stats {
   position: relative;
@@ -1121,6 +1137,7 @@ code {
 @media (max-width: 860px) {
   .explode {
     height: 170vh;
+    height: 170svh;
   }
   .explode-stats div {
     padding: 0 10px;

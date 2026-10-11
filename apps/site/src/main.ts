@@ -42,7 +42,7 @@ interface Demo {
   width: number
   height: number
   viewHeight: number
-  planes: { name: string; image: string }[]
+  planes: { name: string; image: string; dark?: string }[]
   stats: { layers: number; texts: number; images: number }
   widths: { file: string; label: string; width: number }[]
   anatomy: {
@@ -125,43 +125,83 @@ function explode(data: Demo) {
 
   const stack = document.createElement('div')
   stack.className = 'explode-stack'
-  stack.style.width = `${data.width}px`
-  stack.style.height = `${data.height}px`
   const planes = data.planes.map((plane, i) => {
     const el = document.createElement('div')
     el.className = `explode-plane explode-plane--${i}`
-    el.style.backgroundImage = `url(${base}demo/${plane.image})`
+    // Both themes' rasters; the stylesheet shows the pair matching the site's theme.
+    el.style.setProperty('--light', `url(${base}demo/${plane.image})`)
+    el.style.setProperty('--dark', `url(${base}demo/${plane.dark ?? plane.image})`)
     el.setAttribute('aria-hidden', 'true')
     stack.appendChild(el)
     return el
   })
   stage.appendChild(stack)
 
-  const layout = () => {
-    const rect = section.getBoundingClientRect()
-    const travel = Math.max(1, rect.height - innerHeight)
-    const t = reducedMotion()
-      ? 1
-      : Math.min(1, Math.max(0, (innerHeight * 0.35 - rect.top) / travel) * 1.25)
-    const scale = Math.min(
+  // The stack is sized to what is on screen instead of a 1440 px layer scaled
+  // down, so phones rasterise small layers once instead of huge ones every frame.
+  let scale = 0
+  const size = () => {
+    scale = Math.min(
       0.6,
       (stage.clientWidth * 0.72) / data.width,
       (stage.clientHeight * 0.95) / data.height,
     )
-    stack.style.transform = `translate(-50%, -50%) scale(${scale}) rotateX(${t * 52}deg) rotateZ(${t * -26}deg)`
+    stack.style.width = `${data.width * scale}px`
+    stack.style.height = `${data.height * scale}px`
+    stack.style.setProperty('--s', String(scale))
+  }
+
+  // Mobile browsers change innerHeight as their toolbars slide; only a new width
+  // (rotation, a resized window) is a real resize.
+  let viewWidth = innerWidth
+  let viewHeight = innerHeight
+  const target = () => {
+    if (reducedMotion()) return 1
+    const rect = section.getBoundingClientRect()
+    const travel = Math.max(1, rect.height - viewHeight)
+    return Math.min(1, Math.max(0, ((viewHeight * 0.35 - rect.top) / travel) * 1.25))
+  }
+
+  let t = -1
+  const paint = (next: number) => {
+    if (next === t) return
+    t = next
+    stack.style.transform = `translate(-50%, -50%) rotateX(${t * 52}deg) rotateZ(${t * -26}deg)`
     planes.forEach((plane, i) => {
-      plane.style.transform = `translateZ(${t * i * 170}px)`
+      plane.style.transform = `translateZ(${t * i * 170 * scale}px)`
     })
     section.style.setProperty('--t', t.toFixed(3))
   }
-  layout()
+
+  // The layers ease toward the scroll position, so uneven scroll events on
+  // touch screens still read as one smooth movement.
   let frame = 0
-  const schedule = () => {
-    cancelAnimationFrame(frame)
-    frame = requestAnimationFrame(layout)
+  let last = 0
+  const step = (now: number) => {
+    const goal = target()
+    const ease = reducedMotion() ? 1 : 1 - Math.exp(-(now - (last || now - 16)) / 90)
+    last = now
+    const next = Math.abs(goal - t) < 0.001 ? goal : t + (goal - t) * ease
+    paint(next)
+    frame = next === goal ? 0 : requestAnimationFrame(step)
   }
-  addEventListener('scroll', schedule, { passive: true })
-  addEventListener('resize', schedule)
+  const run = () => {
+    if (frame) return
+    last = 0
+    frame = requestAnimationFrame(step)
+  }
+
+  size()
+  paint(target())
+  addEventListener('scroll', run, { passive: true })
+  addEventListener('resize', () => {
+    if (innerWidth === viewWidth && Math.abs(innerHeight - viewHeight) < 160) return
+    viewWidth = innerWidth
+    viewHeight = innerHeight
+    size()
+    t = -1
+    paint(target())
+  })
 }
 
 /** Width and theme viewer: one stage, the real capture at true relative scale. */

@@ -19,6 +19,7 @@ Use Node 22 (`.nvmrc`).
 - In the product (both apps, store listings) the credit is "Free and open source. Built by Shades Media Group". The README credits Cristian Brinza.
 - Never name or compare against other products in anything public: README, docs, UI, commits, listings.
 - Conventional commits, one logical change each, no AI attribution lines.
+- **Email:** every email is built with `shades-gradient/email` and follows Gradient's [email guide](https://github.com/Shades-Media-Group/gradient/blob/main/docs/guides/email.md). One-time codes lead the subject with the code and sit on the copyable code pass. Meetings attach an .ics invitation with Google and Outlook links. Bookings get a ticket pass and schema.org markup. Each kind ships a test that checks these.
 
 ## Design rules (the panels must read as hand-built, never templated)
 

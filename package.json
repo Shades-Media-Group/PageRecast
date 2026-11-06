@@ -76,5 +76,11 @@
     "website-to-figma",
     "design-tools",
     "web-to-design"
-  ]
+  ],
+  "resolutions": {
+    "undici": "^7.30.1",
+    "body-parser": "^2.4.0",
+    "zod": "^4.6.6",
+    "basic-ftp": "^6.2.1"
+  }
 }
